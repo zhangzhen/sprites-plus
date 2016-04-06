@@ -4,7 +4,7 @@
 #include "libraryinsertsizeestimator.h"
 #include "api/BamReader.h"
 
-class BamToolsLibInsertSizeEstimator : ILibraryInsertSizeEstimator
+class BamToolsLibInsertSizeEstimator : public ILibraryInsertSizeEstimator
 {
 public:
     BamToolsLibInsertSizeEstimator(BamTools::BamReader *pBamReader);

@@ -1,12 +1,16 @@
 #include "TargetRegionToLeftFinder.h"
+#include <algorithm>
 
-TargetRegionToLeftFinder::TargetRegionToLeftFinder(ITargetRegionFinder *pRegionFinder)
-    : ITargetRegionFinder(pRegionFinder, pPartitioner, pQualifier, pPosPicker)
+TargetRegionToLeftFinder::TargetRegionToLeftFinder(ISpanningPairsReader* pPairsReader,
+                                                   IBiPartitioner* pPartitioner,
+                                                   IBiPartitionQualifier* pQualifier,
+                                                   IPositionPicker* pPosPicker)
+    : LeafTargetRegionFinder(pPairsReader, pPartitioner, pQualifier, pPosPicker)
 {
 }
 
 
-ChromosomeRegion *TargetRegionToLeftFinder::GetFinalRegion()
+TargetRegion *TargetRegionToLeftFinder::GetFinalRegion(const GenomePosition &gPos)
 {
     std::vector<int> positions;
     if (heterozygous)
@@ -26,10 +30,11 @@ ChromosomeRegion *TargetRegionToLeftFinder::GetFinalRegion()
     int end = finalPos + pairs[0]->GetReadLength();
     int start = end - pPairsReader->GetMaxInsertSize();
 
-    return new ChromosomeRegion(pairs[0]->GetReferenceId(),
-                                start,
-                                end,
-                                positions.size(),
-                                heterozygous);
+    return new TargetRegion(pairs[0]->GetReferenceId(),
+            start,
+            end,
+            gPos.GetPosition(),
+            positions.size(),
+            heterozygous);
 
 }

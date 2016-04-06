@@ -1,7 +1,7 @@
-#include "BamToolsRGToLIbMapReader.h"
+#include "BamToolsRGToLibMapReader.h"
 #include "BamToolsLibInsertSizeEstimator.h"
 #include "BamToolsSCReadsReader.h"
-#include "PerChromDeleletionCaller.h"
+#include "PerChromDeletionCaller.h"
 #include "MaxDistDiffBiPartitioner.h"
 #include "AnovaBiPartitionQualifier.h"
 #include "MedianPositionPicker.h"
@@ -30,7 +30,7 @@ void MakeLibraries(IReadGroupToLibraryMapReader *pMapReader, std::map<std::strin
         return;
     }
 
-    libaries[NORGTAGLIBNAME] = new Library(NORGTAGLIBNAME, NORGTAGREADGROUPNAME);
+    libraries[NORGTAGLIBNAME] = new Library(NORGTAGLIBNAME, NORGTAGREADGROUPNAME);
 }
 
 void EstimateInsertSizeForLibrarys(ILibraryInsertSizeEstimator *pEstimator, std::map<std::string, Library*> &libraries)
@@ -41,21 +41,26 @@ void EstimateInsertSizeForLibrarys(ILibraryInsertSizeEstimator *pEstimator, std:
     }
 }
 
-void FindVariantCalls(PerChromDeleletionCaller &caller, IVariantsWriter *pVarsWriter)
-{
-    std::vector<IVariant*> variants;
-    caller.call(variants);
-    caller.Clear();
-    if (!variants.empty()) pVarsWriter->write(variants);
-}
+//void FindVariantCalls(PerChromDeletionCaller &caller, IVariantsWriter *pVarsWriter)
+//{
+//    std::vector<IVariant*> variants;
+//    caller.Call(variants);
+//    caller.Clear();
+//    if (!variants.empty()) pVarsWriter->write(variants);
+//}
 
+void FindTargetRegions(PerChromDeletionCaller &caller)
+{
+    std::vector<TargetRegion *> regions;
+    caller.FindTargetRegions(regions);
+}
 
 int main(int argc, char *argv[])
 {
     BamTools::BamReader *pBamReader = new BamTools::BamReader();
     pBamReader->Open("filename");
 
-    IReadGroupToLibraryMapReader *pMapReader = new BamToolsRGToLIbMapReader(pBamReader);
+    IReadGroupToLibraryMapReader *pMapReader = new BamToolsRGToLibMapReader(pBamReader);
     std::map<std::string, Library*> libraries;
     MakeLibraries(pMapReader, libraries);
     ILibraryInsertSizeEstimator *pEstimator = new BamToolsLibInsertSizeEstimator(pBamReader);
@@ -66,8 +71,14 @@ int main(int argc, char *argv[])
     int prevId = -1;
     int currentId;
 
-    ISpanningPairsReader *pPairsToLeftReader = new BamToolsPairsToLeftReader(libraries[NORGTAGLIBNAME], pBamReader);
-    ISpanningPairsReader *pPairsToRightReader = new BamToolsPairsToRightReader(libraries[NORGTAGLIBNAME], pBamReader);
+    ISpanningPairsReader *pPairsToLeftReader;
+    ISpanningPairsReader *pPairsToRightReader;
+
+    if (libraries.size() == 1)
+    {
+        pPairsToLeftReader = new BamToolsPairsToLeftReader(libraries.begin()->second, pBamReader);
+        pPairsToRightReader = new BamToolsPairsToRightReader(libraries.begin()->second, pBamReader);
+    }
     IBiPartitioner* pPartitioner = new MaxDistDiffBiPartitioner();
     IBiPartitionQualifier* pQualifier = new AnovaBiPartitionQualifier(0.000001);
     IPositionPicker* pPosPicker = new MedianPositionPicker();
@@ -81,18 +92,20 @@ int main(int argc, char *argv[])
                                                                             pPosPicker);
 
     ISoftClippedRead *pRead;
-    PerChromDeleletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder);
+    PerChromDeletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder);
     while (pRead = pReadsReader->NextRead())
     {
         currentId = pRead->GetReferenceId();
         if (prevId != currentId)
         {
-            FindVariantCalls(caller, pVarsWriter);
+            FindTargetRegions(caller);
+//            FindVariantCalls(caller, pVarsWriter);
         }
         caller.AddRead(pRead);
         prevId = currentId;
     }
-    FindVariantCalls(caller,pVarsWriter);
+    FindTargetRegions(caller);
+//    FindVariantCalls(caller,pVarsWriter);
 
     return 0;
 }

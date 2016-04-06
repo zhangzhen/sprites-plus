@@ -1,14 +1,15 @@
 #include "TargetRegionToRightFinder.h"
+#include <algorithm>
 
 TargetRegionToRightFinder::TargetRegionToRightFinder(ISpanningPairsReader *pPairsReader,
                                                      IBiPartitioner *pPartitioner,
                                                      IBiPartitionQualifier *pQualifier,
                                                      IPositionPicker *pPosPicker)
-    : ITargetRegionFinder(pRegionFinder, pPartitioner, pQualifier, pPosPicker)
+    : LeafTargetRegionFinder(pPairsReader, pPartitioner, pQualifier, pPosPicker)
 {
 }
 
-ChromosomeRegion *TargetRegionToRightFinder::GetFinalRegion()
+TargetRegion *TargetRegionToRightFinder::GetFinalRegion(const GenomePosition &gPos)
 {
     std::vector<int> positions;
     if (heterozygous)
@@ -28,10 +29,10 @@ ChromosomeRegion *TargetRegionToRightFinder::GetFinalRegion()
     int start = finalPos;
     int end = start + pPairsReader->GetMaxInsertSize();
 
-    return new ChromosomeRegion(pairs[0]->GetReferenceId(),
-                                start,
-                                end,
-                                positions.size(),
-                                heterozygous);
+    return new TargetRegion(pairs[0]->GetReferenceId(),
+            start,
+            end,
+            positions.size(),
+            heterozygous);
 
 }

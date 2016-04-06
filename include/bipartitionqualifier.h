@@ -2,6 +2,7 @@
 #define BIPARTITIONQUALIFIER_H
 
 #include "SpanningPair.h"
+#include <vector>
 
 class IBiPartitionQualifier
 {

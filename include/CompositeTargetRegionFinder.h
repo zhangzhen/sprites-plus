@@ -12,7 +12,7 @@ public:
     {
         children.push_back(pRegionFinder);
     }
-    ChromosomeRegion *FindRegion(const GenomePosition &gPos);
+    TargetRegion *FindRegion(const GenomePosition &gPos);
 
 private:
     std::vector<ITargetRegionFinder*> children;

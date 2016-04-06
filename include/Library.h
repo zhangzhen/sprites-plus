@@ -9,7 +9,7 @@ class Library
 public:
     Library(const std::string &name, const std::string &readGroup);
     std::string GetName() const { return name; }
-    void AddReadGroup(const std::string &readGroup) { m.insert(readGroup); }
+    void AddReadGroup(const std::string &readGroup) { readGroups.insert(readGroup); }
     int GetMeanInsertSize() const { return meanInsertSize; }
     void SetMeanInsertSize(int newMeanInsertSize) { meanInsertSize = newMeanInsertSize; }
     int GetInsertSizeSd() const { return insertSizeSd; }

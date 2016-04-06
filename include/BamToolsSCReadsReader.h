@@ -4,7 +4,7 @@
 #include "softclippedreadsreader.h"
 #include "api/BamReader.h"
 
-class BamToolsSCReadsReader : ISoftClippedReadsReader
+class BamToolsSCReadsReader : public ISoftClippedReadsReader
 {
 public:
     BamToolsSCReadsReader(BamTools::BamReader *pBamReader);

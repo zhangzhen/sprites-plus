@@ -1,23 +1,29 @@
 #include "BamToolsPairsToLeftReader.h"
 #include "api/BamAlignment.h"
+#include "error.h"
+#include "globals.h"
 
-BamToolsPairsToLeftReader::BamToolsPairsToLeftReader(Library *pLib, BamTools::BamReader *pReader)
+using namespace std;
+using namespace BamTools;
+
+BamToolsPairsToLeftReader::BamToolsPairsToLeftReader(Library *pLib, BamTools::BamReader *pBamReader)
     : ISpanningPairsReader(pLib),
-      pReader(pReader)
+      pBamReader(pBamReader)
 {
 }
 
-void BamToolsPairsToLeftReader::Init(const GenomePosition &gPos)
+void BamToolsPairsToLeftReader::Init(const GenomePosition &newGPos)
 {
-    int end = gPos.GetPosition();
+    int end = newGPos.GetPosition();
     int start = end - pLib->GetMaxInsertSize();
 
     assert(start > 0);
 
-    if (!pBamReader->SetRegion(gPos.GetReferenceId(), start - 1, gPos.GetReferenceId(), end))
+    if (!pBamReader->SetRegion(newGPos.GetReferenceId(), start - 1, newGPos.GetReferenceId(), end))
     {
         error("Could not set the region.");
     }
+    ISpanningPairsReader::Init(newGPos);
 }
 
 SpanningPair *BamToolsPairsToLeftReader::NextPair()
@@ -25,13 +31,17 @@ SpanningPair *BamToolsPairsToLeftReader::NextPair()
     BamAlignment al;
     while (pBamReader->GetNextAlignment(al))
     {
-        std::string rg = al.HasTag("RG") ? al.GetTag("RG") : NORGTAGREADGROUPNAME;
+        string rg;
+        if (!al.GetTag("RG", rg))
+        {
+            rg = NORGTAGREADGROUPNAME;
+        }
 
         if (!al.IsReverseStrand() && al.IsMateReverseStrand() && al.RefID == al.MateRefID
                 && al.GetEndPosition() < gPos.GetPosition() && al.Position < al.MatePosition
                 && pLib->InLibrary(rg))
         {
-            return new SpanningPair(abs(al.InsertSize), al.MatePosition + 1, al.Position + 1, al.Length);
+            return new SpanningPair(al.RefID, abs(al.InsertSize), al.MatePosition + 1, al.Position + 1, al.Length);
         }
     }
 

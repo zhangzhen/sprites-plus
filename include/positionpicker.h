@@ -1,6 +1,8 @@
 #ifndef POSITIONPICKER_H
 #define POSITIONPICKER_H
 
+#include <vector>
+
 class IPositionPicker
 {
 public:

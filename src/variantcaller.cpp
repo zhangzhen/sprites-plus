@@ -10,7 +10,7 @@ IVariantCaller::IVariantCaller(ISoftClippedRead *pRead)
 void IVariantCaller::AddRead(ISoftClippedRead *pRead)
 {
     if (pRead->GetType() == reads[0]->GetType()
-        && pRead->GetClippingPosition() == reads[0]->GetClippingPosition())
+        && pRead->GetClipPosition() == reads[0]->GetClipPosition())
     {
         reads.push_back(pRead);
     }

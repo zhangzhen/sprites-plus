@@ -1,19 +1,21 @@
 #include "DeletionCaller.h"
 
 DeletionCaller::DeletionCaller(ISoftClippedRead *pRead,
-                               ITargetRegionFinder *pRegionFinder,
-                               ISequenceFetcher *pSeqFetcher,
-                               ISequenceAligner *pSeqAligner)
+                               ITargetRegionFinder *pRegionFinder)
+//                               ITargetRegionFinder *pRegionFinder,
+//                               ISequenceFetcher *pSeqFetcher,
+//                               ISequenceAligner *pSeqAligner)
     : IVariantCaller(pRead),
-      pRegionFinder(pRegionFinder),
-      pSeqFetcher(pSeqFetcher),
-      pSeqAligner(pSeqAligner)
+      pRegionFinder(pRegionFinder)
+//      pRegionFinder(pRegionFinder),
+//      pSeqFetcher(pSeqFetcher),
+//      pSeqAligner(pSeqAligner)
 {
 }
 
-ChromosomeRegion *DeletionCaller::FindTargetRegion()
+TargetRegion *DeletionCaller::FindTargetRegion()
 {
-    return pRegionFinder->FindRegion();
+    return pRegionFinder->FindRegion(reads[0]->GetClipPosition());
 }
 
 

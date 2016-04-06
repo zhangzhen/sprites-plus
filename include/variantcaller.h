@@ -11,12 +11,12 @@ class IVariantCaller
 public:
     IVariantCaller(ISoftClippedRead *pRead);
     void AddRead(ISoftClippedRead *pRead);
-    GenomePosition GetClippingPosition() { return reads[0]->GetClippingPosition(); }
+    GenomePosition GetClipPosition() { return reads[0]->GetClipPosition(); }
     virtual ~IVariantCaller() {}
     virtual IVariant* FindCall() = 0;
     std::string GetReadType() { return reads[0]->GetType(); }
 
-private:
+protected:
     std::vector<ISoftClippedRead *> reads;
 };
 

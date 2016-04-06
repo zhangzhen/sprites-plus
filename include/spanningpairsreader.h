@@ -13,11 +13,12 @@ public:
     int GetMaxInsertSize() const { return pLib->GetMaxInsertSize(); }
 
     virtual ~ISpanningPairsReader() {}
-    virtual void Init(const GenomePosition &gPos) = 0;
+    virtual void Init(const GenomePosition &newGPos) { gPos = newGPos; }
     virtual SpanningPair *NextPair() = 0;
 
-private:
+protected:
     Library *pLib;
+    GenomePosition gPos;
 };
 
 #endif // SPANNINGPAIRSREADER_H

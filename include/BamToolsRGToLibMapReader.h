@@ -4,10 +4,10 @@
 #include "readgrouptolibrarymapreader.h"
 #include "api/BamReader.h"
 
-class BamToolsRGToLIbMapReader : public IReadGroupToLibraryMapReader
+class BamToolsRGToLibMapReader : public IReadGroupToLibraryMapReader
 {
 public:
-    BamToolsRGToLIbMapReader(BamTools::BamReader *pBamReader);
+    BamToolsRGToLibMapReader(BamTools::BamReader *pBamReader);
 
     bool GetMap(std::map<std::string, std::string> &readGroupToLibMap);
 

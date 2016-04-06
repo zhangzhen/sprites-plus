@@ -1,17 +1,24 @@
 #include "LeafTargetRegionFinder.h"
+#include "statistics.h"
+#include <algorithm>
 
 LeafTargetRegionFinder::LeafTargetRegionFinder(ISpanningPairsReader *pPairsReader,
                                                IBiPartitioner *pPartitioner,
                                                IBiPartitionQualifier *pQualifier,
                                                IPositionPicker *pPosPicker)
+    : pPairsReader(pPairsReader),
+      pPartitioner(pPartitioner),
+      pQualifier(pQualifier),
+      pPosPicker(pPosPicker),
+      heterozygous(false)
 {
 }
 
-ChromosomeRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
+TargetRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
 {
-    pairs.clear();
-    pPairsReader->Init(gPos);
+    Clear();
 
+    pPairsReader->Init(gPos);
     SpanningPair *pPair;
     while (pPair = pPairsReader->NextPair())
     {
@@ -21,8 +28,8 @@ ChromosomeRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
     std::vector<int> insertSizes(pairs.size());
     transform(begin(pairs), end(pairs), begin(insertSizes), [](SpanningPair *p){ return p->GetInsertSize(); });
 
-    std::vector<int> labels = pPartitioner->Partition(insertSizes);
-    bool heterozygous = pQualifier->IsQualified(insertSizes, labels);
+    labels = pPartitioner->Partition(insertSizes);
+    heterozygous = pQualifier->IsQualified(insertSizes, labels);
 
     std::vector<int> qualifiedInsertSizes;
     if (heterozygous)
@@ -38,7 +45,7 @@ ChromosomeRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
     }
     if (IsInsertSizeAnormalous(qualifiedInsertSizes, pPairsReader->GetMeanInsertSize(), 100))
     {
-        return GetFinalRegion();
+        return GetFinalRegion(gPos);
     }
     return NULL;
 }

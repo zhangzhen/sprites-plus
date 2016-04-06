@@ -8,7 +8,7 @@ class BamToolsPairsToRightReader : public ISpanningPairsReader
 {
 public:
     BamToolsPairsToRightReader(Library *pLib, BamTools::BamReader *pBamReader);
-    void Init(const GenomePosition &gPos);
+    void Init(const GenomePosition &newGPos);
     SpanningPair *NextPair();
 
 private:

@@ -7,6 +7,8 @@ class MedianPositionPicker : public IPositionPicker
 {
 public:
     MedianPositionPicker();
+
+    int Pick(std::vector<int> positions);
 };
 
 #endif // MEDIANPOSITIONPICKER_H

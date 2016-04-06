@@ -1,6 +1,9 @@
 #ifndef STATISTICS_H
 #define STATISTICS_H
 
+#include <cmath>
+#include <numeric>
+
 template <typename ForwardIterator>
 double GetMean(ForwardIterator begin, ForwardIterator end)
 {
@@ -29,7 +32,7 @@ double GetStandardDeviation(ForwardIterator begin, ForwardIterator end)
     return sqrt(sum / distance(begin, end));
 }
 
-bool IsInsertSizeAnormalous(const std::vector<int>& insertSizes, int libMean, int diffThreshold)
+inline bool IsInsertSizeAnormalous(const std::vector<int>& insertSizes, int libMean, int diffThreshold)
 {
     int mean = (int)round(GetMean(begin(insertSizes), end(insertSizes)));
     return abs(mean - libMean) >= diffThreshold;

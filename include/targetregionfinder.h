@@ -1,7 +1,7 @@
 #ifndef TARGETREGIONFINDER_H
 #define TARGETREGIONFINDER_H
 
-#include "ChromosomeRegion.h"
+#include "TargetRegion.h"
 #include "SpanningPair.h"
 #include "spanningpairsreader.h"
 #include "bipartitioner.h"
@@ -13,7 +13,7 @@ class ITargetRegionFinder
 
 public:
     virtual ~ITargetRegionFinder() {}
-    virtual ChromosomeRegion* FindRegion(const GenomePosition &gPos) = 0;
+    virtual TargetRegion* FindRegion(const GenomePosition &gPos) = 0;
 
 };
 

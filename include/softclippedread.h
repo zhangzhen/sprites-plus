@@ -2,6 +2,7 @@
 #define SOFTCLIPPEDREAD_H
 
 #include "GenomePosition.h"
+#include "variant.h"
 
 class ISoftClippedRead
 {
@@ -19,6 +20,7 @@ public:
 
     virtual ~ISoftClippedRead() {}
     GenomePosition GetClipPosition() const { return clipPosition; }
+    int GetReferenceId() const { return clipPosition.GetReferenceId(); }
     virtual IVariant* FindCall() = 0;
     virtual std::string GetType() = 0;
 

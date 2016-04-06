@@ -1,6 +1,8 @@
 #ifndef VARIANT_H
 #define VARIANT_H
 
+#include <string>
+
 class IVariant
 {
 public:

@@ -2,12 +2,8 @@
 
 ChromosomeRegion::ChromosomeRegion(int referenceId,
                                    int startPos,
-                                   int endPos,
-                                   int numOfPairs,
-                                   bool heterozygous)
+                                   int endPos)
     : start(GenomePosition(referenceId, startPos)),
-      end(GenomePosition(referenceId, endPos)),
-      numOfPairs(numOfPairs),
-      heterozygous(heterozygous)
+      end(GenomePosition(referenceId, endPos))
 {
 }

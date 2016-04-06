@@ -1,19 +1,24 @@
 #include "MaxDistDiffBiPartitioner.h"
 
+#include <numeric>
+#include <algorithm>
+
+using namespace std;
+
 MaxDistDiffBiPartitioner::MaxDistDiffBiPartitioner()
 {
 }
 
 std::vector<int> MaxDistDiffBiPartitioner::Partition(const std::vector<int> &insertSizes)
 {
-    std::vector<int> indices(insertSizes.size());
-    std::itoa(std::begin(indices), std::end(indices), 0);
-    std::sort(std::begin(indices), std::end(indices),
+    vector<int> indices(insertSizes.size());
+    iota(begin(indices), end(indices), 0);
+    sort(begin(indices), end(indices),
               [&](int x, int y) { return insertSizes[x] < insertSizes[y]; });
 
-    std::vector<int> result[insertSizes.size()];
-    std::adjacent_difference(std::begin(indices), std::end(indices), std::begin(result),
+    vector<int> result(insertSizes.size());
+    adjacent_difference(begin(indices), end(indices), begin(result),
                              [&](int x, int y) { return insertSizes[x] - insertSizes[y]; });
-    int indexOfIndices = std::distance(std::begin(result),
-                              std::max_element(std::begin(result)+1, std::end(result)));
+    int indexOfIndices = distance(begin(result),
+                              max_element(begin(result)+1, end(result)));
 }

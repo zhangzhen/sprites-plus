@@ -1,4 +1,9 @@
 #include "BamToolsLibInsertSizeEstimator.h"
+#include "globals.h"
+#include "statistics.h"
+
+using namespace std;
+using namespace BamTools;
 
 BamToolsLibInsertSizeEstimator::BamToolsLibInsertSizeEstimator(BamTools::BamReader *pBamReader)
     : pBamReader(pBamReader)
@@ -14,7 +19,11 @@ bool BamToolsLibInsertSizeEstimator::estimate(Library *pLib)
 
     while (pBamReader->GetNextAlignmentCore(al) && cnt < 10000)
     {
-        std::string rg = al.HasTag("RG") ? al.GetTag("RG") : NORGTAGREADGROUPNAME;
+        string rg;
+        if (!al.GetTag("RG", rg))
+        {
+            rg = NORGTAGREADGROUPNAME;
+        }
 
         if (al.IsProperPair() && al.MatePosition > al.Position
             && pLib->InLibrary(rg) && al.InsertSize < 10000)

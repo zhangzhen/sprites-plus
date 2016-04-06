@@ -12,7 +12,7 @@ public:
                              IPositionPicker* pPosPicker);
 
 protected:
-    ChromosomeRegion *GetFinalRegion();
+    TargetRegion *GetFinalRegion(const GenomePosition &gPos);
 };
 
 #endif // TARGETREGIONTOLEFTFINDER_H

@@ -4,15 +4,15 @@
 #include "spanningpairsreader.h"
 #include "api/BamReader.h"
 
-class BamToolsPairsToLeftReader : ISpanningPairsReader
+class BamToolsPairsToLeftReader : public ISpanningPairsReader
 {
 public:
-    BamToolsPairsToLeftReader(Library *pLib, BamTools::BamReader *pReader);
-    void Init(const GenomePosition &gPos);
+    BamToolsPairsToLeftReader(Library *pLib, BamTools::BamReader *pBamReader);
+    void Init(const GenomePosition &newGPos);
     SpanningPair *NextPair();
 
 private:
-    BamTools::BamReader *pReader;
+    BamTools::BamReader *pBamReader;
 };
 
 #endif // BAMTOOLSPAIRSTOLEFTREADER_H
