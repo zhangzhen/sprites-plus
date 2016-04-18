@@ -38,4 +38,32 @@ inline bool IsInsertSizeAnormalous(const std::vector<int>& insertSizes, int libM
     return abs(mean - libMean) >= diffThreshold;
 }
 
+template <typename ForwardIterator>
+double GetSSB(ForwardIterator first, ForwardIterator last, double totalMean)
+{
+    double sum = 0.0;
+
+    while (first != last)
+    {
+        double mean = GetMean(begin(*first), end(*first));
+        sum += (*first).size() * (mean - totalMean) * (mean - totalMean);
+        first++;
+    }
+
+    return sum;
+}
+
+template <typename ForwardIterator>
+double GetSSE(ForwardIterator first, ForwardIterator last, double totalMean)
+{
+    double sum = 0.0;
+
+    while (first != last)
+    {
+        sum += accumulate(begin(*first), end(*first), 0.0, StandardDeviationHelper(totalMean));
+        first++;
+    }
+    return sum;
+}
+
 #endif // STATISTICS_H
