@@ -60,7 +60,8 @@ double GetSSE(ForwardIterator first, ForwardIterator last, double totalMean)
 
     while (first != last)
     {
-        sum += accumulate(begin(*first), end(*first), 0.0, StandardDeviationHelper(totalMean));
+        double mean = GetMean(begin(*first), end(*first));
+        sum += accumulate(begin(*first), end(*first), 0.0, StandardDeviationHelper(mean));
         first++;
     }
     return sum;

@@ -13,7 +13,13 @@ message("The include directory of BamTools is $ENV{BAMTOOLS_HOME}/include")
 link_directories($ENV{BAMTOOLS_HOME}/lib)
 add_definitions(-std=c++11)
 
+find_package(Boost REQUIRED)
+include_directories(${Boost_INCLUDE_DIRS})
+set(LIBRARIES ${LIBRARIES} ${Boost_LIBRARIES})
+
 include_directories(include)
+
+add_subdirectory(test)
 
 #add_executable(sprites2 main.cpp error.cpp Helper.cpp Deletion.cpp Thirdparty/overlapper.cpp
 #    BamStatCalculator.cpp ClipReader.cpp clip.cpp FaidxWrapper.cpp range.cpp SoftClippedReadCluster.cpp)

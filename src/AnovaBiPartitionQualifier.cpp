@@ -22,20 +22,26 @@ bool AnovaBiPartitionQualifier::IsQualified(const std::vector<int> &insertSizes,
         groupMap[labels[i]].push_back(insertSizes[i]);
     }
 
+    vector<vector<int>> groups;
+    for (auto &elt : groupMap)
+    {
+        groups.push_back(elt.second);
+    }
+
     double totalMean = GetMean(begin(insertSizes), end(insertSizes));
 
-    double ssb = GetSSB(begin(groupMap), end(groupMap), totalMean);
-    int df1 = groupMap.size() - 1;
+    double ssb = GetSSB(begin(groups), end(groups), totalMean);
+    int df1 = groups.size() - 1;
     double msb = ssb / df1;
 
-    double sse = GetSSE(begin(groupMap), end(groupMap), totalMean);
-    int df2 = insertSizes.size() - groupMap.size();
+    double sse = GetSSE(begin(groups), end(groups), totalMean);
+    int df2 = insertSizes.size() - groups.size();
     double mse = sse / df2;
 
     double fValue = msb / mse;
 
     fisher_f dist(df1, df2);
-    double pValue = cdf(dist, fValue);
+    double pValue = 1- cdf(dist, fValue);
 
     return pValue < threshold;
 }
