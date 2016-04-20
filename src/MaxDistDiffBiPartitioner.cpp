@@ -2,6 +2,8 @@
 
 #include <numeric>
 #include <algorithm>
+#include <iostream>
+#include <iterator>
 
 using namespace std;
 
@@ -16,9 +18,20 @@ std::vector<int> MaxDistDiffBiPartitioner::Partition(const std::vector<int> &ins
     sort(begin(indices), end(indices),
               [&](int x, int y) { return insertSizes[x] < insertSizes[y]; });
 
-    vector<int> result(insertSizes.size());
-    adjacent_difference(begin(indices), end(indices), begin(result),
-                             [&](int x, int y) { return insertSizes[x] - insertSizes[y]; });
-    int indexOfIndices = distance(begin(result),
-                              max_element(begin(result)+1, end(result)));
+    vector<int> result(insertSizes.size() - 1);
+    for (size_t i = 1; i < insertSizes.size(); i++)
+    {
+        result[i-1] = insertSizes[indices[i]] - insertSizes[indices[i-1]];
+    }
+
+    int indexOfIndices = distance(begin(result), max_element(begin(result), end(result))) + 1;
+    int maxIndex = indices[indexOfIndices];
+
+    vector<int> labels(insertSizes.size());
+    for (size_t i = 0; i < insertSizes.size(); i++)
+    {
+        labels[indices[i]] = i < indexOfIndices ? 0 : 1;
+    }
+
+    return labels;
 }
