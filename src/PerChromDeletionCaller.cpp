@@ -53,7 +53,7 @@ void PerChromDeletionCaller::FindTargetRegions(std::vector<TargetRegion *> &regi
     TargetRegion *pReg;
     for (auto &elt : callerMap)
     {
-        if(pReg = elt.second->FindTargetRegion())
+        if((pReg = elt.second->FindTargetRegion()))
         {
             regions.push_back(pReg);
         }

@@ -11,17 +11,23 @@ public:
                      int referenceId,
                      int clipPosition,
                      const std::string &sequence,
-                     int mapQuality)
+                     int mapQuality,
+                     int clippedLength,
+                     int smallDelSize,
+                     int smallInsSize)
         : name(name),
           clipPosition(referenceId, clipPosition),
           sequence(sequence),
-          mapQuality(mapQuality)
+          mapQuality(mapQuality),
+          clippedLength(clippedLength),
+          smallDelSize(smallDelSize),
+          smallInsSize(smallInsSize)
     {}
 
     virtual ~ISoftClippedRead() {}
     GenomePosition GetClipPosition() const { return clipPosition; }
     int GetReferenceId() const { return clipPosition.GetReferenceId(); }
-    virtual IVariant* FindCall() = 0;
+//    virtual IVariant* FindCall() = 0;
     virtual std::string GetType() = 0;
 
 private:
@@ -29,6 +35,9 @@ private:
     GenomePosition clipPosition;
     std::string sequence;
     int mapQuality;
+    int clippedLength;
+    int smallDelSize;
+    int smallInsSize;
 };
 
 #endif // SOFTCLIPPEDREAD_H

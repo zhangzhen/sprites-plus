@@ -10,6 +10,7 @@
 #include "BamToolsPairsToLeftReader.h"
 #include "BamToolsPairsToRightReader.h"
 #include "globals.h"
+#include "error.h"
 
 void MakeLibraries(IReadGroupToLibraryMapReader *pMapReader, std::map<std::string, Library*> &libraries)
 {
@@ -58,7 +59,14 @@ void FindTargetRegions(PerChromDeletionCaller &caller)
 int main(int argc, char *argv[])
 {
     BamTools::BamReader *pBamReader = new BamTools::BamReader();
-    pBamReader->Open("filename");
+    if (!pBamReader->Open("/home/zhangz/data/HET.10x.0.05/aln.11.sort.bam"))
+    {
+        error("Could not open the input BAM file.");
+    }
+    if (!pBamReader->LocateIndex())
+    {
+        error("Could not locate the index file");
+    }
 
     IReadGroupToLibraryMapReader *pMapReader = new BamToolsRGToLibMapReader(pBamReader);
     std::map<std::string, Library*> libraries;
@@ -66,7 +74,7 @@ int main(int argc, char *argv[])
     ILibraryInsertSizeEstimator *pEstimator = new BamToolsLibInsertSizeEstimator(pBamReader);
     EstimateInsertSizeForLibrarys(pEstimator, libraries);
 
-    ISoftClippedReadsReader *pReadsReader = new BamToolsSCReadsReader(pBamReader);
+    ISoftClippedReadsReader *pReadsReader = new BamToolsSCReadsReader(pBamReader, 5, 20);
 
     int prevId = -1;
     int currentId;
@@ -80,7 +88,7 @@ int main(int argc, char *argv[])
         pPairsToRightReader = new BamToolsPairsToRightReader(libraries.begin()->second, pBamReader);
     }
     IBiPartitioner* pPartitioner = new MaxDistDiffBiPartitioner();
-    IBiPartitionQualifier* pQualifier = new AnovaBiPartitionQualifier(0.000001);
+    IBiPartitionQualifier* pQualifier = new AnovaBiPartitionQualifier(0.00001);
     IPositionPicker* pPosPicker = new MedianPositionPicker();
     ITargetRegionFinder *pRegionToLeftFinder = new TargetRegionToLeftFinder(pPairsToRightReader,
                                                                             pPartitioner,
@@ -93,7 +101,7 @@ int main(int argc, char *argv[])
 
     ISoftClippedRead *pRead;
     PerChromDeletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder);
-    while (pRead = pReadsReader->NextRead())
+    while ((pRead = pReadsReader->NextRead()))
     {
         currentId = pRead->GetReferenceId();
         if (prevId != currentId)

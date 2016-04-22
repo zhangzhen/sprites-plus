@@ -25,7 +25,6 @@ std::vector<int> MaxDistDiffBiPartitioner::Partition(const std::vector<int> &ins
     }
 
     int indexOfIndices = distance(begin(result), max_element(begin(result), end(result))) + 1;
-    int maxIndex = indices[indexOfIndices];
 
     vector<int> labels(insertSizes.size());
     for (size_t i = 0; i < insertSizes.size(); i++)
