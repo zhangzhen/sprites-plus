@@ -19,6 +19,8 @@ public:
     int GetNumOfPairs() const { return numOfPairs; }
     int IsHeterozygous() const { return heterozygous; }
 
+    friend std::ostream &operator <<(std::ostream& stream, const TargetRegion& tRegion);
+
 private:
     ChromosomeRegion cRegion;
     int fromClipPosition;

@@ -1,6 +1,8 @@
 #ifndef GENOMEPOSITION_H
 #define GENOMEPOSITION_H
 
+#include <iostream>
+
 class GenomePosition
 {
 public:
@@ -12,6 +14,8 @@ public:
     {
         return referenceId == other.referenceId && position == other.position;
     }
+
+    friend std::ostream &operator <<(std::ostream& stream, const GenomePosition& gPos);
 
 private:
     int referenceId;

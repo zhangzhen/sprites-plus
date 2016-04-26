@@ -12,6 +12,8 @@
 #include "globals.h"
 #include "error.h"
 
+using namespace std;
+
 void MakeLibraries(IReadGroupToLibraryMapReader *pMapReader, std::map<std::string, Library*> &libraries)
 {
     std::map<std::string, std::string> readGroupToLibMap;
@@ -54,6 +56,11 @@ void FindTargetRegions(PerChromDeletionCaller &caller)
 {
     std::vector<TargetRegion *> regions;
     caller.FindTargetRegions(regions);
+    for (auto &pRegion : regions)
+    {
+        cout << *pRegion << endl;
+    }
+    caller.Clear();
 }
 
 int main(int argc, char *argv[])
@@ -90,11 +97,11 @@ int main(int argc, char *argv[])
     IBiPartitioner* pPartitioner = new MaxDistDiffBiPartitioner();
     IBiPartitionQualifier* pQualifier = new AnovaBiPartitionQualifier(0.00001);
     IPositionPicker* pPosPicker = new MedianPositionPicker();
-    ITargetRegionFinder *pRegionToLeftFinder = new TargetRegionToLeftFinder(pPairsToRightReader,
+    ITargetRegionFinder *pRegionToLeftFinder = new TargetRegionToLeftFinder(pPairsToLeftReader,
                                                                             pPartitioner,
                                                                             pQualifier,
                                                                             pPosPicker);
-    ITargetRegionFinder *pRegionToRightFinder = new TargetRegionToRightFinder(pPairsToLeftReader,
+    ITargetRegionFinder *pRegionToRightFinder = new TargetRegionToRightFinder(pPairsToRightReader,
                                                                             pPartitioner,
                                                                             pQualifier,
                                                                             pPosPicker);
@@ -104,7 +111,7 @@ int main(int argc, char *argv[])
     while ((pRead = pReadsReader->NextRead()))
     {
         currentId = pRead->GetReferenceId();
-        if (prevId != currentId)
+        if (prevId != -1 && prevId != currentId)
         {
             FindTargetRegions(caller);
 //            FindVariantCalls(caller, pVarsWriter);

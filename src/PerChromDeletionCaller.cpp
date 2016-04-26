@@ -1,4 +1,7 @@
 #include "PerChromDeletionCaller.h"
+#include <iterator>
+
+using namespace std;
 
 PerChromDeletionCaller::PerChromDeletionCaller(ITargetRegionFinder *pRegionToLeftFinder,
                                                  ITargetRegionFinder *pRegionToRightFinder)
@@ -51,8 +54,15 @@ void PerChromDeletionCaller::Clear()
 void PerChromDeletionCaller::FindTargetRegions(std::vector<TargetRegion *> &regions)
 {
     TargetRegion *pReg;
+//    copy(begin(conflictSet), end(conflictSet), ostream_iterator<int>(cout, " "));
+    cout << callerMap.size() << endl;
+
     for (auto &elt : callerMap)
     {
+        if (conflictSet.count(elt.first))
+        {
+            continue;
+        }
         if((pReg = elt.second->FindTargetRegion()))
         {
             regions.push_back(pReg);

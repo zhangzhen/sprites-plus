@@ -1,6 +1,8 @@
 #include "TargetRegionToRightFinder.h"
 #include <algorithm>
 
+using namespace std;
+
 TargetRegionToRightFinder::TargetRegionToRightFinder(ISpanningPairsReader *pPairsReader,
                                                      IBiPartitioner *pPartitioner,
                                                      IBiPartitionQualifier *pQualifier,
@@ -11,6 +13,8 @@ TargetRegionToRightFinder::TargetRegionToRightFinder(ISpanningPairsReader *pPair
 
 TargetRegion *TargetRegionToRightFinder::GetFinalRegion(const GenomePosition &gPos)
 {
+    cout << gPos << endl;
+
     std::vector<int> positions;
     if (heterozygous)
     {
@@ -32,6 +36,7 @@ TargetRegion *TargetRegionToRightFinder::GetFinalRegion(const GenomePosition &gP
     return new TargetRegion(pairs[0]->GetReferenceId(),
             start,
             end,
+            gPos.GetPosition(),
             positions.size(),
             heterozygous);
 

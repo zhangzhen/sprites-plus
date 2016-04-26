@@ -53,7 +53,7 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
                     (size == 1 ||
                      (size == 2 && clipSizes[0] <= 5)))
             {
-                return new FiveEndForwardSCRead(al.Name,
+                return new FiveEndReverseSCRead(al.Name,
                                                 al.RefID,
                                                 genomePositions[size - 1] + 1,
                                                 al.QueryBases,

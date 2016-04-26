@@ -1,6 +1,8 @@
 #include "TargetRegionToLeftFinder.h"
 #include <algorithm>
 
+using namespace std;
+
 TargetRegionToLeftFinder::TargetRegionToLeftFinder(ISpanningPairsReader* pPairsReader,
                                                    IBiPartitioner* pPartitioner,
                                                    IBiPartitionQualifier* pQualifier,
@@ -12,6 +14,8 @@ TargetRegionToLeftFinder::TargetRegionToLeftFinder(ISpanningPairsReader* pPairsR
 
 TargetRegion *TargetRegionToLeftFinder::GetFinalRegion(const GenomePosition &gPos)
 {
+//    cout << gPos << endl;
+
     std::vector<int> positions;
     if (heterozygous)
     {

@@ -2,6 +2,8 @@
 #include "statistics.h"
 #include <algorithm>
 
+using namespace std;
+
 LeafTargetRegionFinder::LeafTargetRegionFinder(ISpanningPairsReader *pPairsReader,
                                                IBiPartitioner *pPartitioner,
                                                IBiPartitionQualifier *pQualifier,
@@ -18,9 +20,11 @@ TargetRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
 {
     Clear();
 
+//    cout << gPos << endl;
+
     pPairsReader->Init(gPos);
     SpanningPair *pPair;
-    while (pPair = pPairsReader->NextPair())
+    while ((pPair = pPairsReader->NextPair()))
     {
         pairs.push_back(pPair);
     }
@@ -30,6 +34,8 @@ TargetRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
 
     labels = pPartitioner->Partition(insertSizes);
     heterozygous = pQualifier->IsQualified(insertSizes, labels);
+
+//    cout << heterozygous << endl;
 
     std::vector<int> qualifiedInsertSizes;
     if (heterozygous)
