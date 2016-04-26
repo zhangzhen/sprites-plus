@@ -65,6 +65,7 @@ public:
         ss << getClipPosition() << "\t" << getType();
         return ss.str();
     }
+    virtual int lengthOfSoftclippedPart() = 0;
 
 protected:
 
@@ -73,7 +74,6 @@ protected:
     virtual void fecthSizesForSpanningPairs(BamTools::BamReader &reader, int inslength, std::vector<int>& sizes) = 0;
     virtual void toTargetRegions(const std::string &referenceName, int insLength, std::vector<IRange> &ranges, std::vector<TargetRegion> &regions) = 0;
 
-    virtual int lengthOfSoftclippedPart() = 0;
     int lengthOfMappedPart() {
         return sequence.size() - lengthOfSoftclippedPart();
     }

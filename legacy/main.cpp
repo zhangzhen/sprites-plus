@@ -15,6 +15,7 @@
 #include "clip.h"
 #include "range.h"
 #include "Thirdparty/Timer.h"
+#include "SoftClippedReadCluster.h"
 
 #include "easylogging++.h"
 
@@ -161,6 +162,7 @@ int main(int argc, char *argv[]) {
 
 //    Timer* pTimer = new Timer("Preprocessing split reads");
     Timer* pTimer = new Timer("Calling deletions");
+    std::map<int, SoftClippedReadCluster*> readClusters;
     AbstractClip *pClip;
 //    std::vector<AbstractClip*> clips;
     int currentId = -1;
@@ -169,14 +171,31 @@ int main(int argc, char *argv[]) {
         if (currentId != pClip->getReferenceId()) {
             currentId = pClip->getReferenceId();
             LINFO << "Proccessing " << currentId;
+            for (auto& elt : readClusters) {
+                try {
+                    auto del = elt.second->call(bamReader, faidx, insLength, opt::minOverlap, identityRate, opt::minMapQual);
+                    deletions.push_back(del);
+                } catch (ErrorException& ex) {
+                }
+            }
+            readClusters.clear();
         }
-//        LINFO << "Proccessing " << pClip->getName();
-        try {
-            auto del = pClip->call(bamReader, faidx, insLength, opt::minOverlap, identityRate, opt::minMapQual);
-            deletions.push_back(del);
-        } catch (ErrorException& ex) {
-    //            std::cout << ex.getMessage() << std::endl;
+        if (readClusters.find(pClip->getClipPosition()) == readClusters.end()) {
+            readClusters[pClip->getClipPosition()] = new SoftClippedReadCluster(pClip);
+        } else {
+            readClusters[pClip->getClipPosition()]->add(pClip);
         }
+    }
+
+    if (!readClusters.empty()) {
+        for (auto& elt : readClusters) {
+            try {
+                auto del = elt.second->call(bamReader, faidx, insLength, opt::minOverlap, identityRate, opt::minMapQual);
+                deletions.push_back(del);
+            } catch (ErrorException& ex) {
+            }
+        }
+        readClusters.clear();
     }
     delete pTimer;
 
