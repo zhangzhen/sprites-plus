@@ -55,7 +55,7 @@ void PerChromDeletionCaller::FindTargetRegions(std::vector<TargetRegion *> &regi
 {
     TargetRegion *pReg;
 //    copy(begin(conflictSet), end(conflictSet), ostream_iterator<int>(cout, " "));
-    cout << callerMap.size() << endl;
+//    cout << callerMap.size() << endl;
 
     for (auto &elt : callerMap)
     {

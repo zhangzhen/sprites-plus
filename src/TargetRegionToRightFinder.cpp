@@ -13,7 +13,7 @@ TargetRegionToRightFinder::TargetRegionToRightFinder(ISpanningPairsReader *pPair
 
 TargetRegion *TargetRegionToRightFinder::GetFinalRegion(const GenomePosition &gPos)
 {
-    cout << gPos << endl;
+//    cout << gPos << endl;
 
     std::vector<int> positions;
     if (heterozygous)

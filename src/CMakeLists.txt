@@ -18,7 +18,7 @@ BamToolsPairsToRightReader.cpp TargetRegionToLeftFinder.cpp TargetRegionToRightF
 MaxDistDiffBiPartitioner.cpp AnovaBiPartitionQualifier.cpp MedianPositionPicker.cpp
 DeletionCaller.cpp SpanningPair.cpp error.cpp LeafTargetRegionFinder.cpp
 variantcaller.cpp GenomePosition.cpp TargetRegion.cpp ChromosomeRegion.cpp
-FiveEndForwardSCRead.cpp FiveEndReverseSCRead.cpp)
+FiveEndForwardSCRead.cpp FiveEndReverseSCRead.cpp BamToolsRefNameFetcher.cpp)
 #file(GLOB SOURCES "*.cpp")
 
 add_executable(sprites2 ${SOURCES})
