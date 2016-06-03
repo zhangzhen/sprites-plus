@@ -13,7 +13,25 @@
 #include "globals.h"
 #include "error.h"
 
-using namespace std;
+#include <boost/program_options/options_description.hpp>
+#include <boost/program_options/parsers.hpp>
+#include <boost/program_options/variables_map.hpp>
+
+namespace po = boost::program_options;
+
+#include <string>
+
+//using namespace std;
+
+#define PROGRAM_NAME "sprites2"
+#define PROGRAM_VERSION "2.0.1"
+#define PROGRAM_BUGREPORT "zhangz@csu.edu.cn"
+
+const std::string PROGRAM_VERSION_MESSAGE =
+        PROGRAM_NAME " Version " PROGRAM_VERSION "\n"
+        "Written by Zhen Zhang.\n"
+        "Report bugs to " PROGRAM_BUGREPORT "\n"
+        "Copyright 2016 netlab.csu.edu.cn\n";
 
 void MakeLibraries(IReadGroupToLibraryMapReader *pMapReader, std::map<std::string, Library*> &libraries)
 {
@@ -59,21 +77,83 @@ void FindTargetRegions(PerChromDeletionCaller &caller, IReferenceNameFetcher *pR
     caller.FindTargetRegions(regions);
     for (auto &pRegion : regions)
     {
-        cout << pRefNameFetcher->Fetch(pRegion->GetReferenceId())
+        std::cout << pRefNameFetcher->Fetch(pRegion->GetReferenceId())
              << "\t" << pRegion->GetStartPosition()
              << "\t" << pRegion->GetEndPosition()
              << "\t" << pRegion->GetFromClipPosition()
              << "\t" << pRegion->GetNumOfPairs()
              << "\t" << pRegion->IsHeterozygous()
-             << endl;
+             << std::endl;
     }
     caller.Clear();
 }
 
 int main(int argc, char *argv[])
 {
+
+    po::options_description desc("Allowed options");
+
+    desc.add_options()
+        ("help,h", "Display this help message")
+        ("version,v", "Display the version number")
+        ("reffile,r", po::value<std::string>()->required(), "Reference file (*)")
+        ("outfile,o", po::value<std::string>()->required(), "Output file for deletion calls (*)")
+        ("error-rate,e", po::value<double>()->default_value(0.04, "0.04"), "Max error rate")
+        ("min-overlap,m", po::value<int>()->default_value(12), "Min overlap required between two reads")
+        ("mapping-qual", po::value<int>()->default_value(1), "Min mapping quality of a read")
+        ("allowed-num,n", po::value<int>()->default_value(5), "Min size of soft-clipped part")
+        ("insert-mean,i", po::value<int>(), "Mean of insert size")
+        ("insert-sd,s", po::value<int>(), "Standard deviation of insert size")
+        ("bamfile", po::value<std::string>()->required(), "Input BAM file (*)");
+
+    po::positional_options_description p;
+    p.add("bamfile", -1);
+    po::variables_map vm;
+
+    try
+    {
+        po::store(po::command_line_parser(argc, argv).options(desc).positional(p).run(), vm);
+
+        if(vm.count("help"))
+        {
+            std::cout << "Usage: sprites2 [options] <bamfile>" << std::endl;
+            std::cout << desc;
+            std::cout << "Note: options marked by an asterisk are required." << std::endl;
+            return 0;
+        }
+
+        if(vm.count("version"))
+        {
+            std::cout << PROGRAM_VERSION_MESSAGE;
+            return 0;
+        }
+
+        po::notify(vm);
+    }
+    catch(std::exception& e)
+    {
+        std::cerr << "Error: " << e.what() << std::endl;
+        std::cout << "Usage: sprites2 [options] <bamfile>" << std::endl;
+        std::cout << desc;
+        std::cout << "Note: options marked by an asterisk are required." << std::endl;
+        return 0;
+    }
+    catch(...)
+    {
+        std::cerr << "Unknown error!" << std::endl;
+        return 0;
+    }
+
+    std::string bamfile;
+
+    if (vm.count("bamfile"))
+    {
+        bamfile = vm["bamfile"].as<std::string>();
+    }
+
+
     BamTools::BamReader *pBamReader = new BamTools::BamReader();
-    if (!pBamReader->Open("/home/zhangz/data/HET.10x.0.05/aln.11.sort.bam"))
+    if (!pBamReader->Open(bamfile))
     {
         error("Could not open the input BAM file.");
     }

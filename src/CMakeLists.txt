@@ -6,7 +6,11 @@ include_directories($ENV{BAMTOOLS_HOME}/include)
 message("The include directory of BamTools is $ENV{BAMTOOLS_HOME}/include")
 link_directories($ENV{BAMTOOLS_HOME}/lib)
 
-find_package(Boost REQUIRED)
+set(BOOST_INCLUDEDIR "/usr/local/include/boost")
+set(BOOST_LIBRARYDIR "/usr/loca/lib")
+set(Boost_USE_STATIC_LIBS ON)
+
+find_package(Boost COMPONENTS program_options REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 set(LIBRARIES ${LIBRARIES} ${Boost_LIBRARIES})
 
@@ -26,4 +30,5 @@ set(LIBRARIES ${LIBRARIES} ${HTSlib_LIBRARIES} $ENV{BAMTOOLS_HOME}/lib/libbamtoo
 
 target_link_libraries(sprites2 ${LIBRARIES})
 
+set_target_properties(sprites2 PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 set_target_properties(sprites2 PROPERTIES OUTPUT_NAME sprites2${BUILD_POSTFIX})
