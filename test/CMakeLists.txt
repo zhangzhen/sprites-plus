@@ -9,3 +9,5 @@ set(testSources AnovaQualifierTest.cpp MaxDiffPartitionerTest.cpp)
 add_executable(sprites2test testmain.cpp ${testSources} ${sources})
 
 target_link_libraries(sprites2test ${LIBRARIES})
+
+set_target_properties(sprites2test PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)

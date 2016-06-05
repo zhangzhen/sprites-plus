@@ -2,6 +2,7 @@
 #define SPANNINGPAIR_H
 
 #include <string>
+#include <iostream>
 
 class SpanningPair
 {
@@ -16,6 +17,8 @@ public:
     int GetLeftReadPosition() const { return leftReadPosition; }
     int GetRightReadPosition() const { return rightReadPosition; }
     int GetReadLength() const { return readLength; }
+
+    friend std::ostream &operator <<(std::ostream& stream, const SpanningPair& sPair);
 
 private:
     int referenceId;

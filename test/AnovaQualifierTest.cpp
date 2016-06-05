@@ -46,3 +46,16 @@ TEST(AnovaBiPartitionQualifier, IsQualified_Neg)
     };
     CHECK(!pQualifier->IsQualified(insertSizes, labels));
 }
+
+TEST(AnovaBiPartitionQualifier, IsQualified_Neg2)
+{
+    vector<int> insertSizes = {
+        435, 388, 396, 353, 1385,
+        1222
+    };
+    vector<int> labels = {
+        0, 0, 0, 0, 1,
+        1
+    };
+    CHECK(!pQualifier->IsQualified(insertSizes, labels));
+}

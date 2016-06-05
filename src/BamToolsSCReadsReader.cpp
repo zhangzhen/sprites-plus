@@ -39,6 +39,10 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
                     (size == 1 ||
                      (size == 2 && clipSizes[1] <= 5)))
             {
+//                if (genomePositions[0] + 1 == 37130093)
+//                {
+//                    cout << "debug here..." << endl;
+//                }
                 return new FiveEndForwardSCRead(al.Name,
                                                 al.RefID,
                                                 genomePositions[0] + 1,
@@ -53,6 +57,10 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
                     (size == 1 ||
                      (size == 2 && clipSizes[0] <= 5)))
             {
+//                if (genomePositions[0] + 1 == 37130093)
+//                {
+//                    cout << "debug here..." << endl;
+//                }
                 return new FiveEndReverseSCRead(al.Name,
                                                 al.RefID,
                                                 genomePositions[size - 1] + 1,
