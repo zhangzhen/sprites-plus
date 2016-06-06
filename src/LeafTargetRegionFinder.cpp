@@ -37,7 +37,7 @@ TargetRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
     std::vector<int> insertSizes(pairs.size());
     transform(begin(pairs), end(pairs), begin(insertSizes), [](SpanningPair *p){ return p->GetInsertSize(); });
 
-//    if (gPos.GetPosition() == 37130093)
+//    if (gPos.GetPosition() == 153452463)
 //    {
 //        for (auto p : pairs)
 //        {

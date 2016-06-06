@@ -63,7 +63,7 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
 //                }
                 return new FiveEndReverseSCRead(al.Name,
                                                 al.RefID,
-                                                genomePositions[size - 1] + 1,
+                                                genomePositions[size - 1],
                                                 al.QueryBases,
                                                 al.MapQuality,
                                                 al.CigarData[al.CigarData.size() - 1].Length,
