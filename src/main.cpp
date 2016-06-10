@@ -101,7 +101,9 @@ int main(int argc, char *argv[])
         ("error-rate,e", po::value<double>()->default_value(0.04, "0.04"), "Max error rate")
         ("min-overlap,m", po::value<int>()->default_value(12), "Min overlap required between two reads")
         ("mapping-qual", po::value<int>()->default_value(1), "Min mapping quality of a read")
-        ("allowed-num,n", po::value<int>()->default_value(5), "Min size of soft-clipped part")
+        ("sig-clip,c", po::value<int>()->default_value(20), "Significant size of soft-clipped part")
+        ("ignored-num,n", po::value<int>()->default_value(5), "Number of soft-clipped bases should not be considered")
+        ("alpha-level,a", po::value<double>()->default_value(0.0005, "0.0005"), "Alpha level for Anova")
         ("insert-mean,i", po::value<int>(), "Mean of insert size")
         ("insert-sd,s", po::value<int>(), "Standard deviation of insert size")
         ("bamfile", po::value<std::string>()->required(), "Input BAM file (*)");
@@ -168,7 +170,10 @@ int main(int argc, char *argv[])
     ILibraryInsertSizeEstimator *pEstimator = new BamToolsLibInsertSizeEstimator(pBamReader);
     EstimateInsertSizeForLibrarys(pEstimator, libraries);
 
-    ISoftClippedReadsReader *pReadsReader = new BamToolsSCReadsReader(pBamReader, 5, 20);
+    ISoftClippedReadsReader *pReadsReader = new BamToolsSCReadsReader(
+                pBamReader,
+                vm["sig-clip"].as<int>(),
+                vm["ignored-num"].as<int>());
 
     int prevId = -1;
     int currentId;
@@ -182,7 +187,7 @@ int main(int argc, char *argv[])
         pPairsToRightReader = new BamToolsPairsToRightReader(libraries.begin()->second, pBamReader);
     }
     IBiPartitioner* pPartitioner = new MaxDistDiffBiPartitioner();
-    IBiPartitionQualifier* pQualifier = new AnovaBiPartitionQualifier(0.00001);
+    IBiPartitionQualifier* pQualifier = new AnovaBiPartitionQualifier(vm["alpha-level"].as<double>());
     IPositionPicker* pPosPicker = new MedianPositionPicker();
     ITargetRegionFinder *pRegionToLeftFinder = new TargetRegionToLeftFinder(pPairsToLeftReader,
                                                                             pPartitioner,

@@ -6,10 +6,10 @@
 using namespace std;
 using namespace BamTools;
 
-BamToolsSCReadsReader::BamToolsSCReadsReader(BamTools::BamReader *pBamReader, int minClip, int allowedNum)
+BamToolsSCReadsReader::BamToolsSCReadsReader(BamTools::BamReader *pBamReader, int sigClipSize, int ignoredNum)
     : pBamReader(pBamReader),
-      minClip(minClip),
-      allowedNum(allowedNum)
+      sigClipSize(sigClipSize),
+      ignoredNum(ignoredNum)
 {
 }
 
@@ -35,9 +35,9 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
             }
 
             if (!al.IsReverseStrand() && al.Position == genomePositions[0] &&
-                    clipSizes[0] >= allowedNum &&
+                    clipSizes[0] >= sigClipSize &&
                     (size == 1 ||
-                     (size == 2 && clipSizes[1] <= 5)))
+                     (size == 2 && clipSizes[1] <= ignoredNum)))
             {
 //                if (genomePositions[0] + 1 == 37130093)
 //                {
@@ -53,9 +53,9 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
                                                 smallInsSize);
             }
             if (al.IsReverseStrand() && al.Position != genomePositions[size - 1] &&
-                    clipSizes[size - 1] >= allowedNum &&
+                    clipSizes[size - 1] >= sigClipSize &&
                     (size == 1 ||
-                     (size == 2 && clipSizes[0] <= 5)))
+                     (size == 2 && clipSizes[0] <= ignoredNum)))
             {
 //                if (genomePositions[0] + 1 == 37130093)
 //                {
