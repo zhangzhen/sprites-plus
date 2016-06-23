@@ -1,0 +1,51 @@
+#ifndef INTERVAL_H
+#define INTERVAL_H
+
+#include <cassert>
+#include <iostream>
+
+class Interval
+{
+public:
+    Interval(int start, int end)
+        : start(start),
+          end(end)
+    {
+        CheckRep();
+    }
+
+    int GetStart() const { return start; }
+    int GetEnd() const { return end; }
+    int Length() const { return end - start + 1; }
+
+    bool operator == (const Interval& other) const
+    {
+        return start == other.start && end == other.end;
+    }
+
+    bool operator != (const Interval& other) const
+    {
+        return !(*this == other);
+    }
+
+    void Flip(int totalLength)
+    {
+        int tmp = totalLength - start - 1;
+        start = totalLength - end - 1;
+        end = tmp;
+        CheckRep();
+    }
+
+    friend std::ostream& operator <<(std::ostream& stream, const Interval& interval);
+
+private:
+    int start;
+    int end;
+
+    void CheckRep()
+    {
+        assert(start <= end);
+    }
+};
+
+#endif // INTERVAL_H

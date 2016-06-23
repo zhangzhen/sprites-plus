@@ -24,6 +24,6 @@ IVariant *DeletionCaller::FindCall()
     return NULL;
 //    ChromosomeRegion *pTargetReg = pRegionFinder->FindRegion(positions);
 //    string targetSeq = pSeqFetcher->Fetch(*pTargetReg);
-//    AlignmentResults alignmentResults = pSeqAligner->Align(targetSeq, reads[0]->GetSequence());
-//    return reads[0]->FindCall(alignmentResults);
+//    AlignmentResult alignmentResult = pSeqAligner->Align(targetSeq, reads[0]->GetSequence());
+//    return reads[0]->FindCall(alignmentResult);
 }
