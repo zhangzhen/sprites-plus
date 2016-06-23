@@ -45,6 +45,7 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
 //                }
                 return new FiveEndForwardSCRead(al.Name,
                                                 al.RefID,
+                                                pBamReader->GetReferenceData()[al.RefID].RefName,
                                                 genomePositions[0] + 1,
                                                 al.QueryBases,
                                                 al.MapQuality,
@@ -63,6 +64,7 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
 //                }
                 return new FiveEndReverseSCRead(al.Name,
                                                 al.RefID,
+                                                pBamReader->GetReferenceData()[al.RefID].RefName,
                                                 genomePositions[size - 1],
                                                 al.QueryBases,
                                                 al.MapQuality,

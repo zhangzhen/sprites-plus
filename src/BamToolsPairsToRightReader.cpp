@@ -51,7 +51,12 @@ SpanningPair* BamToolsPairsToRightReader::NextPair()
                 && al.Position + 1 >= gPos.GetPosition() && al.MatePosition + al.Length < gPos.GetPosition()
                 && pLib->InLibrary(rg))
         {
-            return new SpanningPair(al.RefID, abs(al.InsertSize), al.MatePosition + 1, al.Position + 1, al.Length);
+            return new SpanningPair(al.RefID,
+                                    pBamReader->GetReferenceData()[al.RefID].RefName,
+                                    abs(al.InsertSize),
+                                    al.MatePosition + 1,
+                                    al.Position + 1,
+                                    al.Length);
         }
     }
 

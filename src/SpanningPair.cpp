@@ -3,11 +3,13 @@
 using namespace std;
 
 SpanningPair::SpanningPair(int referenceId,
+                           const string& referenceName,
                            int insertSize,
                            int leftReadPosition,
                            int rightReadPosition,
                            int readLength)
     : referenceId(referenceId),
+      referenceName(referenceName),
       insertSize(insertSize),
       leftReadPosition(leftReadPosition),
       rightReadPosition(rightReadPosition),

@@ -7,7 +7,7 @@ class FiveEndReverseSCRead : public ISoftClippedRead
 {
 public:
     FiveEndReverseSCRead(const std::string &name,
-                         int referenceId,
+                         int referenceId, const std::string &referenceName,
                          int clipPosition,
                          const std::string &sequence,
                          int mapQuality,

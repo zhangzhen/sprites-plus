@@ -7,6 +7,7 @@ class TargetRegion
 {
 public:
     TargetRegion(int referenceId,
+                 const std::string &referenceName,
                  int startPos,
                  int endPos,
                  int fromClipPosition,

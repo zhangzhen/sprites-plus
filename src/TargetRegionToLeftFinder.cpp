@@ -35,6 +35,7 @@ TargetRegion *TargetRegionToLeftFinder::GetFinalRegion(const GenomePosition &gPo
     int start = end - pPairsReader->GetMaxInsertSize();
 
     return new TargetRegion(pairs[0]->GetReferenceId(),
+            pairs[0]->GetReferenceName(),
             start,
             end,
             gPos.GetPosition(),

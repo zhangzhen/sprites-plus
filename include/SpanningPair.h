@@ -8,11 +8,13 @@ class SpanningPair
 {
 public:
     SpanningPair(int referenceId,
+                 const std::string &referenceName,
                  int insertSize,
                  int leftReadPosition,
                  int rightReadPosition,
                  int readLength);
     int GetReferenceId() const { return referenceId; }
+    std::string GetReferenceName() const { return referenceName; }
     int GetInsertSize() const { return insertSize; }
     int GetLeftReadPosition() const { return leftReadPosition; }
     int GetRightReadPosition() const { return rightReadPosition; }
@@ -22,6 +24,7 @@ public:
 
 private:
     int referenceId;
+    std::string referenceName;
     int insertSize;
     int leftReadPosition;
     int rightReadPosition;

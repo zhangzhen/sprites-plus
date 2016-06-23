@@ -9,6 +9,7 @@ class ISoftClippedRead
 public:
     ISoftClippedRead(const std::string &name,
                      int referenceId,
+                     const std::string& referenceName,
                      int clipPosition,
                      const std::string &sequence,
                      int mapQuality,
@@ -16,7 +17,7 @@ public:
                      int smallDelSize,
                      int smallInsSize)
         : name(name),
-          clipPosition(referenceId, clipPosition),
+          clipPosition(referenceId, referenceName, clipPosition),
           sequence(sequence),
           mapQuality(mapQuality),
           clippedLength(clippedLength),
@@ -27,6 +28,7 @@ public:
     virtual ~ISoftClippedRead() {}
     GenomePosition GetClipPosition() const { return clipPosition; }
     int GetReferenceId() const { return clipPosition.GetReferenceId(); }
+    std::string GetReferenceName() const { return clipPosition.GetReferenceName(); }
 //    virtual IVariant* FindCall() = 0;
     virtual std::string GetType() = 0;
 

@@ -71,19 +71,13 @@ void EstimateInsertSizeForLibrarys(ILibraryInsertSizeEstimator *pEstimator, std:
 //    if (!variants.empty()) pVarsWriter->write(variants);
 //}
 
-void FindTargetRegions(PerChromDeletionCaller &caller, IReferenceNameFetcher *pRefNameFetcher)
+void FindTargetRegions(PerChromDeletionCaller &caller)
 {
     std::vector<TargetRegion *> regions;
     caller.FindTargetRegions(regions);
     for (auto &pRegion : regions)
     {
-        std::cout << pRefNameFetcher->Fetch(pRegion->GetReferenceId())
-             << "\t" << pRegion->GetStartPosition()
-             << "\t" << pRegion->GetEndPosition()
-             << "\t" << pRegion->GetFromClipPosition()
-             << "\t" << pRegion->GetNumOfPairs()
-             << "\t" << pRegion->IsHeterozygous()
-             << std::endl;
+        std::cout << *pRegion << std::endl;
     }
     caller.Clear();
 }
@@ -198,7 +192,7 @@ int main(int argc, char *argv[])
                                                                             pQualifier,
                                                                             pPosPicker);
 
-    IReferenceNameFetcher *pRefNameFetcher = new BamToolsRefNameFetcher(pBamReader);
+//    IReferenceNameFetcher *pRefNameFetcher = new BamToolsRefNameFetcher(pBamReader);
 
     ISoftClippedRead *pRead;
     PerChromDeletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder);
@@ -207,13 +201,13 @@ int main(int argc, char *argv[])
         currentId = pRead->GetReferenceId();
         if (prevId != -1 && prevId != currentId)
         {
-            FindTargetRegions(caller, pRefNameFetcher);
+            FindTargetRegions(caller);
 //            FindVariantCalls(caller, pVarsWriter);
         }
         caller.AddRead(pRead);
         prevId = currentId;
     }
-    FindTargetRegions(caller, pRefNameFetcher);
+    FindTargetRegions(caller);
 //    FindVariantCalls(caller,pVarsWriter);
 
     return 0;

@@ -8,6 +8,7 @@ class FiveEndForwardSCRead : public ISoftClippedRead
 public:
     FiveEndForwardSCRead(const std::string &name,
                          int referenceId,
+                         const std::string &referenceName,
                          int clipPosition,
                          const std::string &sequence,
                          int mapQuality,
