@@ -8,10 +8,11 @@ class PerChromDeletionCaller
 {
 public:
     PerChromDeletionCaller(ITargetRegionFinder *pRegionToLeftFinder,
-                             ITargetRegionFinder *pRegionToRightFinder);
-//                             ITargetRegionFinder *pRegionToRightFinder,
-//                             ISequenceFetcher *pSeqFetcher,
-//                             ISequenceAligner *pSeqAligner);
+//                         ITargetRegionFinder *pRegionToRightFinder);
+                           ITargetRegionFinder *pRegionToRightFinder,
+                           ISequenceFetcher *pSeqFetcher,
+                           ISequenceAligner *pPrefixAligner,
+                           ISequenceAligner *pSuffixAligner);
     void AddRead(ISoftClippedRead *pRead);
     void Clear();
     void FindTargetRegions(std::vector<TargetRegion *> &regions);
@@ -22,8 +23,9 @@ private:
     std::set<int> conflictSet;
     ITargetRegionFinder *pRegionToLeftFinder;
     ITargetRegionFinder *pRegionToRightFinder;
-//    ISequenceFetcher *pSeqFetcher;
-//    ISequenceAligner pSeqAligner;
+    ISequenceFetcher *pSeqFetcher;
+    ISequenceAligner *pPrefixAligner;
+    ISequenceAligner *pSuffixAligner;
 };
 
 #endif // PERCHROMDELETIONCALLER_H

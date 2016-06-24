@@ -9,9 +9,11 @@
 #include "TargetRegionToRightFinder.h"
 #include "BamToolsPairsToLeftReader.h"
 #include "BamToolsPairsToRightReader.h"
-#include "BamToolsRefNameFetcher.h"
 #include "globals.h"
 #include "error.h"
+#include "HTSlibSequenceFetcher.h"
+#include "CustomSeqAligner.h"
+#include "ReverseCustomSeqAligner.h"
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
@@ -192,10 +194,15 @@ int main(int argc, char *argv[])
                                                                             pQualifier,
                                                                             pPosPicker);
 
+    ISequenceFetcher *pSeqFetcher = new HTSlibSequenceFetcher(vm["reffile"].as<std::string>());
+
+    ISequenceAligner *pPrefixAligner = new ReverseCustomSeqAligner(new CustomSeqAligner());
+    ISequenceAligner *pSuffixAligner = new CustomSeqAligner();
+
 //    IReferenceNameFetcher *pRefNameFetcher = new BamToolsRefNameFetcher(pBamReader);
 
     ISoftClippedRead *pRead;
-    PerChromDeletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder);
+    PerChromDeletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder, pSeqFetcher, pPrefixAligner, pSuffixAligner);
     while ((pRead = pReadsReader->NextRead()))
     {
         currentId = pRead->GetReferenceId();

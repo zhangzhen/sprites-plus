@@ -3,6 +3,7 @@
 
 #include "GenomePosition.h"
 #include "variant.h"
+#include "AlignmentResult.h"
 
 class ISoftClippedRead
 {
@@ -29,7 +30,8 @@ public:
     GenomePosition GetClipPosition() const { return clipPosition; }
     int GetReferenceId() const { return clipPosition.GetReferenceId(); }
     std::string GetReferenceName() const { return clipPosition.GetReferenceName(); }
-//    virtual IVariant* FindCall() = 0;
+    std::string GetSequence() const { return sequence; }
+    virtual IVariant* FindCall(int refStartPos, AlignmentResult alnResult) = 0;
     virtual std::string GetType() = 0;
 
 private:

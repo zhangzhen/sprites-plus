@@ -17,6 +17,8 @@ public:
                          int smallInsSize);
 
     std::string GetType();
+
+    IVariant *FindCall(int refStartPos, AlignmentResult alnResult);
 };
 
 #endif // FIVEENDFORWARDSCREAD_H

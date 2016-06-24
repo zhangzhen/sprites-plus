@@ -9,12 +9,23 @@ FiveEndForwardSCRead::FiveEndForwardSCRead(const std::string &name,
                                            int clippedLength,
                                            int smallDelSize,
                                            int smallInsSize)
-    : ISoftClippedRead(name, referenceId, referenceName, clipPosition, sequence, mapQuality, clippedLength, smallDelSize, smallInsSize)
+    : ISoftClippedRead(name,
+                       referenceId,
+                       referenceName,
+                       clipPosition,
+                       sequence,
+                       mapQuality,
+                       clippedLength,
+                       smallDelSize,
+                       smallInsSize)
 {
 }
-
 
 std::string FiveEndForwardSCRead::GetType()
 {
     return "5F";
+}
+
+IVariant *FiveEndForwardSCRead::FindCall(int refStartPos, AlignmentResult alnResult)
+{
 }

@@ -1,16 +1,22 @@
 #include "HTSlibSequenceFetcher.h"
 #include "error.h"
 
-HTSlibSequenceFetcher::HTSlibSequenceFetcher(faidx_t *faidx)
-    : faidx(faidx)
+HTSlibSequenceFetcher::HTSlibSequenceFetcher(const string& fastaFile)
 {
+    fai = fai_load(fastaFile.c_str());
+    if (fai == NULL) error("Cannot load the indexed fasta.");
+}
+
+HTSlibSequenceFetcher::~ISequenceFetcher()
+{
+    if (fai != NULL) fai_destroy(fai);
 }
 
 std::string HTSlibSequenceFetcher::Fetch(const ChromosomeRegion &region)
 {
     int len;
     char *s = faidx_fetch_seq(
-                faidx,
+                fai,
                 (char *)region.GetReferenceName().c_str(),
                 region.GetStartPosition() - 1,
                 region.GetEndPosition() - 1,

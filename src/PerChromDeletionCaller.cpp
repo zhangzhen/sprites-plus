@@ -4,15 +4,17 @@
 using namespace std;
 
 PerChromDeletionCaller::PerChromDeletionCaller(ITargetRegionFinder *pRegionToLeftFinder,
-                                                 ITargetRegionFinder *pRegionToRightFinder)
-//                                                   ITargetRegionFinder *pRegionToRightFinder,
-//                                                   ISequenceFetcher *pSeqFetcher,
-//                                                   ISequenceAligner *pSeqAligner)
+//                                                 ITargetRegionFinder *pRegionToRightFinder)
+                                               ITargetRegionFinder *pRegionToRightFinder,
+                                               ISequenceFetcher *pSeqFetcher,
+                                               ISequenceAligner *pPrefixAligner,
+                                               ISequenceAligner *pSuffixAligner)
     : pRegionToLeftFinder(pRegionToLeftFinder),
-      pRegionToRightFinder(pRegionToRightFinder)
-//      pRegionToRightFinder(pRegionToRightFinder),
-//      pSeqFetcher(pSeqFetcher),
-//      pSeqAligner(pSeqAligner)
+//      pRegionToRightFinder(pRegionToRightFinder)
+      pRegionToRightFinder(pRegionToRightFinder),
+      pSeqFetcher(pSeqFetcher),
+      pPrefixAligner(pPrefixAligner),
+      pSuffixAligner(pSuffixAligner)
 {
 }
 
@@ -34,13 +36,13 @@ void PerChromDeletionCaller::AddRead(ISoftClippedRead *pRead)
     {
         if (pRead->GetType() == "5F")
         {
-//            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder, pSeqFetcher, pSeqAligner);
-            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder);
+            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder, pSeqFetcher, pPrefixAligner);
+//            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder);
         }
         else if (pRead->GetType() == "5R")
         {
-//            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder, pSeqFetcher, pSeqAligner);
-            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder);
+            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder, pSeqFetcher, pSuffixAligner);
+//            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder);
         }
     }
 }
