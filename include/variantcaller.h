@@ -3,7 +3,8 @@
 
 #include "softclippedread.h"
 #include "GenomePosition.h"
-#include "targetregionfinder.h"
+#include "CallParams.h"
+
 #include <vector>
 
 class IVariantCaller
@@ -13,7 +14,7 @@ public:
     void AddRead(ISoftClippedRead *pRead);
     GenomePosition GetClipPosition() { return reads[0]->GetClipPosition(); }
     virtual ~IVariantCaller() {}
-    virtual IVariant* FindCall() = 0;
+    virtual IVariant* FindCall(const CallParams& cParams) = 0;
     std::string GetReadType() { return reads[0]->GetType(); }
 
 protected:

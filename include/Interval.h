@@ -14,6 +14,10 @@ public:
         CheckRep();
     }
 
+    Interval()
+        : Interval(0, 0)
+    {}
+
     int GetStart() const { return start; }
     int GetEnd() const { return end; }
     int Length() const { return end - start + 1; }

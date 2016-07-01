@@ -16,6 +16,8 @@ public:
                          int smallInsSize);
 
     std::string GetType();
+
+    IVariant *FindCall(int refStartPos, AlignmentResult alnResult, bool heterozygous);
 };
 
 #endif // FIVEENDREVERSESCREAD_H

@@ -72,7 +72,19 @@ void PerChromDeletionCaller::FindTargetRegions(std::vector<TargetRegion *> &regi
     }
 }
 
-bool PerChromDeletionCaller::Call(std::vector<IVariant *> &variants)
+void PerChromDeletionCaller::FindCalls(const CallParams &cParams, std::vector<IVariant *> &variants)
 {
-    return false;
+    IVariant *pVariant;
+    for (auto &elt : callerMap)
+    {
+        if (conflictSet.count(elt.first))
+        {
+            continue;
+        }
+        if((pVariant = elt.second->FindCall(cParams)))
+        {
+            variants.push_back(pVariant);
+        }
+    }
+
 }

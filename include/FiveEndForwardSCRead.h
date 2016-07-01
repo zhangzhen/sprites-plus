@@ -18,7 +18,7 @@ public:
 
     std::string GetType();
 
-    IVariant *FindCall(int refStartPos, AlignmentResult alnResult);
+    IVariant *FindCall(int refStartPos, AlignmentResult alnResult, bool heterozygous);
 };
 
 #endif // FIVEENDFORWARDSCREAD_H

@@ -4,11 +4,9 @@
 
 #include <algorithm>
 
-using namespace std;
-
 TEST_GROUP(SequenceAligner)
 {
-    string s1, s2, s1_rev, s2_rev;
+    std::string s1, s2, s1_rev, s2_rev;
     ISequenceAligner *pSeqAligner, *pSeqAligner2;
 
     void setup()
@@ -41,20 +39,19 @@ TEST(SequenceAligner, CustomSeqAlignerAlign)
     AlignmentResult actual = pSeqAligner->Align(s1, s2, sParam);
 
     CHECK_EQUAL(59, actual.GetScore());
-    CHECK_EQUAL("32M", actual.GetCigar());
+    CHECK("32M" == actual.GetCigar());
 
     CHECK(Interval(118, 149) == actual.GetMatch2());
 
-    cout << actual.GetMatch1() << endl;
 
 }
 
 TEST(SequenceAligner, ReverseCustomSeqAlignerAlign)
 {
-    pSeqAligner = new ReverseCustomSeqAligner(new CustomSeqAligner());
+    pSeqAligner2 = new ReverseCustomSeqAligner(new CustomSeqAligner());
     ScoreParam sParam(2, -3, -10000);
 
-    AlignmentResult actual = pSeqAligner->Align(s1_rev, s2_rev, sParam);
+    AlignmentResult actual = pSeqAligner2->Align(s1_rev, s2_rev, sParam);
 
     CHECK(Interval(0, 31) == actual.GetMatch2());
 

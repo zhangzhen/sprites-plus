@@ -1,13 +1,17 @@
 #include "HTSlibSequenceFetcher.h"
 #include "error.h"
 
+#include <algorithm>
+
+using namespace std;
+
 HTSlibSequenceFetcher::HTSlibSequenceFetcher(const string& fastaFile)
 {
     fai = fai_load(fastaFile.c_str());
     if (fai == NULL) error("Cannot load the indexed fasta.");
 }
 
-HTSlibSequenceFetcher::~ISequenceFetcher()
+HTSlibSequenceFetcher::~HTSlibSequenceFetcher()
 {
     if (fai != NULL) fai_destroy(fai);
 }

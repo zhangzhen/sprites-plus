@@ -16,7 +16,7 @@ public:
     void AddRead(ISoftClippedRead *pRead);
     void Clear();
     void FindTargetRegions(std::vector<TargetRegion *> &regions);
-    bool Call(std::vector<IVariant*> &variants);
+    void FindCalls(const CallParams& cParams, std::vector<IVariant*> &variants);
 
 private:
     std::map<int, DeletionCaller*> callerMap;

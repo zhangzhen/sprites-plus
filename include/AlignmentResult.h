@@ -32,7 +32,12 @@ public:
     int GetAlignmentLength();
     int GetEditDistance();
 
-    int NumOfAlignedBasesForS2()
+    bool IsQualified(int minClip, double maxErrorRate)
+    {
+        return NumOfAlignedBasesForS2() >= minClip && GetPercentageIdentity() >= 100*(1 - maxErrorRate);
+    }
+
+    int NumOfAlignedBasesForS2() const
     {
         return match2.Length();
     }

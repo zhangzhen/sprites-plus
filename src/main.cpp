@@ -65,21 +65,24 @@ void EstimateInsertSizeForLibrarys(ILibraryInsertSizeEstimator *pEstimator, std:
     }
 }
 
-//void FindVariantCalls(PerChromDeletionCaller &caller, IVariantsWriter *pVarsWriter)
-//{
-//    std::vector<IVariant*> variants;
-//    caller.Call(variants);
-//    caller.Clear();
-//    if (!variants.empty()) pVarsWriter->write(variants);
-//}
+void FindVariantCalls(PerChromDeletionCaller &caller, const CallParams &cParams, std::ostream& out)
+{
+    std::vector<IVariant*> variants;
+    caller.FindCalls(cParams, variants);
+    for (auto &pVariant : variants)
+    {
+        out << pVariant->ToBedpe() << std::endl;
+    }
+    caller.Clear();
+}
 
-void FindTargetRegions(PerChromDeletionCaller &caller)
+void FindTargetRegions(PerChromDeletionCaller &caller, std::ostream& out)
 {
     std::vector<TargetRegion *> regions;
     caller.FindTargetRegions(regions);
     for (auto &pRegion : regions)
     {
-        std::cout << *pRegion << std::endl;
+        out << *pRegion << std::endl;
     }
     caller.Clear();
 }
@@ -95,7 +98,7 @@ int main(int argc, char *argv[])
         ("reffile,r", po::value<std::string>()->required(), "Reference file (*)")
         ("outfile,o", po::value<std::string>()->required(), "Output file for deletion calls (*)")
         ("error-rate,e", po::value<double>()->default_value(0.04, "0.04"), "Max error rate")
-        ("min-overlap,m", po::value<int>()->default_value(12), "Min overlap required between two reads")
+        ("min-aligned,m", po::value<int>()->default_value(12), "Min aligned bases of re-aligning a soft-clipped read")
         ("mapping-qual", po::value<int>()->default_value(1), "Min mapping quality of a read")
         ("sig-clip,c", po::value<int>()->default_value(20), "Significant size of soft-clipped part")
         ("ignored-num,n", po::value<int>()->default_value(5), "Number of soft-clipped bases should not be considered")
@@ -199,7 +202,8 @@ int main(int argc, char *argv[])
     ISequenceAligner *pPrefixAligner = new ReverseCustomSeqAligner(new CustomSeqAligner());
     ISequenceAligner *pSuffixAligner = new CustomSeqAligner();
 
-//    IReferenceNameFetcher *pRefNameFetcher = new BamToolsRefNameFetcher(pBamReader);
+    CallParams cParams(vm["min-aligned"].as<int>(), vm["error-rate"].as<double>());
+
 
     ISoftClippedRead *pRead;
     PerChromDeletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder, pSeqFetcher, pPrefixAligner, pSuffixAligner);
@@ -208,14 +212,15 @@ int main(int argc, char *argv[])
         currentId = pRead->GetReferenceId();
         if (prevId != -1 && prevId != currentId)
         {
-            FindTargetRegions(caller);
-//            FindVariantCalls(caller, pVarsWriter);
+            FindTargetRegions(caller, std::cout);
+//            FindVariantCalls(caller, cParams, std::cout);
         }
         caller.AddRead(pRead);
         prevId = currentId;
     }
-    FindTargetRegions(caller);
-//    FindVariantCalls(caller,pVarsWriter);
+//    FindTargetRegions(caller, std::cout);
+
+    FindVariantCalls(caller, cParams, std::cout);
 
     return 0;
 }

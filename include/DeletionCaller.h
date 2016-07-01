@@ -15,7 +15,7 @@ public:
                    ISequenceFetcher *pSeqFetcher,
                    ISequenceAligner *pSeqAligner);
     TargetRegion *FindTargetRegion();
-    IVariant *FindCall();
+    IVariant *FindCall(const CallParams& cParams);
 
 private:
     ITargetRegionFinder *pRegionFinder;

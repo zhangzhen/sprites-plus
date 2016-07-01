@@ -19,12 +19,18 @@ TargetRegion *DeletionCaller::FindTargetRegion()
 }
 
 
-IVariant *DeletionCaller::FindCall()
+IVariant *DeletionCaller::FindCall(const CallParams &cParams)
 {
-//    return NULL;
-    TargetRegion *pTargetReg = FindTargetRegion();
-    std::string targetSeq = pSeqFetcher->Fetch(pTargetReg->GetChromosomeRegion());
-    ScoreParam sParam(2, -3, -10000);
-    AlignmentResult alignmentResult = pSeqAligner->Align(targetSeq, reads[0]->GetSequence(), sParam);
-    return reads[0]->FindCall(pTargetReg->GetStartPosition(), alignmentResult);
+    TargetRegion *pTargetReg;
+    if((pTargetReg = FindTargetRegion()))
+    {
+        std::string targetSeq = pSeqFetcher->Fetch(pTargetReg->GetChromosomeRegion());
+        ScoreParam sParam(2, -3, -10000);
+        AlignmentResult alignmentResult = pSeqAligner->Align(targetSeq, reads[0]->GetSequence(), sParam);
+        if (alignmentResult.IsQualified(cParams.GetMinClip(), cParams.GetMaxErrorRate()))
+        {
+            return reads[0]->FindCall(pTargetReg->GetStartPosition(), alignmentResult, pTargetReg->IsHeterozygous());
+        }
+    }
+    return NULL;
 }
