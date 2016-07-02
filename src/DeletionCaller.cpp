@@ -1,5 +1,7 @@
 #include "DeletionCaller.h"
 
+#include "Deletion.h"
+
 DeletionCaller::DeletionCaller(ISoftClippedRead *pRead,
 //                               ITargetRegionFinder *pRegionFinder)
                                ITargetRegionFinder *pRegionFinder,
@@ -15,7 +17,7 @@ DeletionCaller::DeletionCaller(ISoftClippedRead *pRead,
 
 TargetRegion *DeletionCaller::FindTargetRegion()
 {
-    return pRegionFinder->FindRegion(reads[0]->GetClipPosition());
+    return pRegionFinder->FindRegion(GetClipPosition());
 }
 
 
@@ -29,7 +31,8 @@ IVariant *DeletionCaller::FindCall(const CallParams &cParams)
         AlignmentResult alignmentResult = pSeqAligner->Align(targetSeq, reads[0]->GetSequence(), sParam);
         if (alignmentResult.IsQualified(cParams.GetMinClip(), cParams.GetMaxErrorRate()))
         {
-            return reads[0]->FindCall(pTargetReg->GetStartPosition(), alignmentResult, pTargetReg->IsHeterozygous());
+            ChromosomeRegionWithCi cRegionWithCi = reads[0]->ToRegionWithCi(pTargetReg->GetStartPosition(), alignmentResult);
+            return new Deletion(cRegionWithCi, pTargetReg->IsHeterozygous(), GetClipPosition(), GetReadType(), reads.size());
         }
     }
     return NULL;

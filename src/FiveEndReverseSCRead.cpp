@@ -1,7 +1,5 @@
 #include "FiveEndReverseSCRead.h"
 
-#include "Deletion.h"
-
 
 FiveEndReverseSCRead::FiveEndReverseSCRead(const std::string &name,
                                            int referenceId,
@@ -22,7 +20,7 @@ std::string FiveEndReverseSCRead::GetType()
     return "5R";
 }
 
-IVariant *FiveEndReverseSCRead::FindCall(int refStartPos, AlignmentResult alnResult, bool heterozygous)
+ChromosomeRegionWithCi FiveEndReverseSCRead::ToRegionWithCi(int refStartPos, AlignmentResult alnResult)
 {
     int delta = alnResult.GetMatch2().GetStart() - GetSequence().length() + clippedLength;
 
@@ -38,11 +36,8 @@ IVariant *FiveEndReverseSCRead::FindCall(int refStartPos, AlignmentResult alnRes
         interval = Interval(0, abs(delta));
     }
 
-    return new Deletion(GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), startPos),
-                        interval,
-                        GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), endPos),
-                        interval,
-                        heterozygous,
-                        clipPosition,
-                        GetType());
+    return ChromosomeRegionWithCi(GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), startPos),
+                                  interval,
+                                  GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), endPos),
+                                  interval);
 }

@@ -17,7 +17,7 @@ public:
 
     std::string GetType();
 
-    IVariant *FindCall(int refStartPos, AlignmentResult alnResult, bool heterozygous);
+    ChromosomeRegionWithCi ToRegionWithCi(int refStartPos, AlignmentResult alnResult);
 };
 
 #endif // FIVEENDREVERSESCREAD_H

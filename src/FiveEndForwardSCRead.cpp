@@ -28,7 +28,7 @@ std::string FiveEndForwardSCRead::GetType()
     return "5F";
 }
 
-IVariant *FiveEndForwardSCRead::FindCall(int refStartPos, AlignmentResult alnResult, bool heterozygous)
+ChromosomeRegionWithCi FiveEndForwardSCRead::ToRegionWithCi(int refStartPos, AlignmentResult alnResult)
 {
     int delta = clippedLength - alnResult.GetMatch2().GetEnd() - 1;
 
@@ -44,11 +44,8 @@ IVariant *FiveEndForwardSCRead::FindCall(int refStartPos, AlignmentResult alnRes
         interval = Interval(0, abs(delta));
     }
 
-    return new Deletion(GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), startPos),
-                        interval,
-                        GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), endPos),
-                        interval,
-                        heterozygous,
-                        clipPosition,
-                        GetType());
+    return ChromosomeRegionWithCi(GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), startPos),
+                                  interval,
+                                  GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), endPos),
+                                  interval);
 }

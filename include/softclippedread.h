@@ -2,8 +2,8 @@
 #define SOFTCLIPPEDREAD_H
 
 #include "GenomePosition.h"
-#include "variant.h"
 #include "AlignmentResult.h"
+#include "ChromosomeRegionWithCi.h"
 
 class ISoftClippedRead
 {
@@ -31,7 +31,7 @@ public:
     int GetReferenceId() const { return clipPosition.GetReferenceId(); }
     std::string GetReferenceName() const { return clipPosition.GetReferenceName(); }
     std::string GetSequence() const { return sequence; }
-    virtual IVariant* FindCall(int refStartPos, AlignmentResult alnResult, bool heterozygous) = 0;
+    virtual ChromosomeRegionWithCi ToRegionWithCi(int refStartPos, AlignmentResult alnResult) = 0;
     virtual std::string GetType() = 0;
 
 protected:

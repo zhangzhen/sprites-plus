@@ -6,20 +6,16 @@
 class Deletion : public IVariant
 {
 public:
-    Deletion(const GenomePosition& start,
-             const Interval& startInterval,
-             const GenomePosition& end,
-             const Interval& endInterval,
+    Deletion(const ChromosomeRegionWithCi& cRegionWithCi,
              bool heterozygous,
              const GenomePosition& fromClipPosition,
-             const std::string& fromReadType)
-        : IVariant(start,
-                   startInterval,
-                   end,
-                   endInterval,
+             const std::string& fromReadType,
+             int numOfReads)
+        : IVariant(cRegionWithCi,
                    heterozygous,
                    fromClipPosition,
-                   fromReadType)
+                   fromReadType,
+                   numOfReads)
     {}
 
     std::string GetType() { return "DEL"; }

@@ -6,12 +6,13 @@ using namespace std;
 string Deletion::ToBedpe()
 {
     stringstream ss;
-    ss << start.GetReferenceName()
-       << "\t" << start.GetPosition() + startInterval.GetStart()
-       << "\t" << start.GetPosition() + startInterval.GetEnd()
-       << "\t" << end.GetReferenceName()
-       << "\t" << end.GetPosition() + endInterval.GetStart()
-       << "\t" << end.GetPosition() + startInterval.GetEnd()
-       << "\t" << CallName();
+    ss << cRegionWithCi.GetReferenceName()
+       << "\t" << cRegionWithCi.GetStartPosition() + cRegionWithCi.GetStartInterval().GetStart() - 1
+       << "\t" << cRegionWithCi.GetStartPosition() + cRegionWithCi.GetStartInterval().GetEnd()
+       << "\t" << cRegionWithCi.GetReferenceName()
+       << "\t" << cRegionWithCi.GetEndPosition() + cRegionWithCi.GetEndInterval().GetStart() - 1
+       << "\t" << cRegionWithCi.GetEndPosition() + cRegionWithCi.GetEndInterval().GetEnd()
+       << "\t" << CallName()
+       << "\t" << numOfReads;
     return ss.str();
 }

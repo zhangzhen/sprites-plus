@@ -1,6 +1,7 @@
 #ifndef VARIANTCALLER_H
 #define VARIANTCALLER_H
 
+#include "variant.h"
 #include "softclippedread.h"
 #include "GenomePosition.h"
 #include "CallParams.h"

@@ -1,6 +1,7 @@
 #ifndef VARIANT_H
 #define VARIANT_H
 
+#include "ChromosomeRegionWithCi.h"
 #include "GenomePosition.h"
 #include "Interval.h"
 
@@ -10,33 +11,29 @@
 class IVariant
 {
 public:
-    IVariant(const GenomePosition& start,
-             const Interval& startInterval,
-             const GenomePosition& end,
-             const Interval& endInterval,
+    IVariant(const ChromosomeRegionWithCi& cRegionWithCi,
              bool heterozygous,
              const GenomePosition& fromClipPosition,
-             const std::string& fromReadType)
-        : start(start),
-          startInterval(startInterval),
-          end(end),
-          endInterval(endInterval),
+             const std::string& fromReadType,
+             int numOfReads)
+        : cRegionWithCi(cRegionWithCi),
           heterozygous(heterozygous),
           fromClipPosition(fromClipPosition),
-          fromReadType(fromReadType)
+          fromReadType(fromReadType),
+          numOfReads(numOfReads)
     {}
 
     virtual ~IVariant() {}
 
     int GetLength() const
     {
-        return end.GetPosition() - start.GetPosition() - 1;
+        return cRegionWithCi.GetLength() - 2;
     }
 
     std::string CallName()
     {
         std::stringstream ss;
-        ss << GetType() << fromClipPosition.GetReferenceName() << ":" << fromClipPosition.GetPosition() << "." << fromReadType;
+        ss << GetType() << "." << fromClipPosition.GetReferenceName() << ":" << fromClipPosition.GetPosition() << "." << fromReadType;
 
         return ss.str();
     }
@@ -46,13 +43,11 @@ public:
     virtual std::string ToBedpe() = 0;
 
 protected:
-    GenomePosition start;
-    Interval startInterval;
-    GenomePosition end;
-    Interval endInterval;
+    ChromosomeRegionWithCi cRegionWithCi;
     bool heterozygous;
     GenomePosition fromClipPosition;
     std::string fromReadType;
+    int numOfReads;
 
 };
 

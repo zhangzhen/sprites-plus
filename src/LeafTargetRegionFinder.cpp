@@ -37,13 +37,13 @@ TargetRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
     std::vector<int> insertSizes(pairs.size());
     transform(begin(pairs), end(pairs), begin(insertSizes), [](SpanningPair *p){ return p->GetInsertSize(); });
 
-//    if (gPos.GetPosition() == 36949583)
-//    {
-//        for (auto p : pairs)
-//        {
-//            cout << *p << endl;
-//        }
-//    }
+    if (gPos.GetPosition() == 61608090)
+    {
+        for (auto p : pairs)
+        {
+            cout << *p << endl;
+        }
+    }
 
     labels = pPartitioner->Partition(insertSizes);
     heterozygous = pQualifier->IsQualified(insertSizes, labels);
