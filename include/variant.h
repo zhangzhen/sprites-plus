@@ -38,6 +38,13 @@ public:
         return ss.str();
     }
 
+    bool QuasiEquals(IVariant& other)
+    {
+        return GetType() == other.GetType() && cRegionWithCi.QuasiEquals(other.cRegionWithCi);
+    }
+
+    int GetNumOfReads() const { return numOfReads; }
+
     virtual std::string GetType() = 0;
 
     virtual std::string ToBedpe() = 0;

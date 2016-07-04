@@ -1,7 +1,7 @@
 #ifndef SOFTCLIPPEDREAD_H
 #define SOFTCLIPPEDREAD_H
 
-#include "GenomePosition.h"
+#include "ChromosomeRegion.h"
 #include "AlignmentResult.h"
 #include "ChromosomeRegionWithCi.h"
 
@@ -31,8 +31,10 @@ public:
     int GetReferenceId() const { return clipPosition.GetReferenceId(); }
     std::string GetReferenceName() const { return clipPosition.GetReferenceName(); }
     std::string GetSequence() const { return sequence; }
+//    int GetReadLength() const { return sequence.length(); }
     virtual ChromosomeRegionWithCi ToRegionWithCi(int refStartPos, AlignmentResult alnResult) = 0;
     virtual std::string GetType() = 0;
+    virtual std::string GetClippedPart() = 0;
 
 protected:
     std::string name;

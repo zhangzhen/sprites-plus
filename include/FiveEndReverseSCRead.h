@@ -17,6 +17,8 @@ public:
 
     std::string GetType();
 
+    std::string GetClippedPart();
+
     ChromosomeRegionWithCi ToRegionWithCi(int refStartPos, AlignmentResult alnResult);
 };
 

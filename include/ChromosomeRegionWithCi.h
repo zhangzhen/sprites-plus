@@ -26,6 +26,11 @@ public:
     Interval GetEndInterval() const { return endInterval; }
     int GetLength() const { return end.GetPosition() - start.GetPosition() + 1; }
 
+    bool QuasiEquals(const ChromosomeRegionWithCi& other) const
+    {
+        return start == other.start && end == other.end;
+    }
+
 private:
     GenomePosition start;
     Interval startInterval;

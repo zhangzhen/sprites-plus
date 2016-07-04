@@ -29,6 +29,11 @@ IVariant *DeletionCaller::FindCall(const CallParams &cParams)
         std::string targetSeq = pSeqFetcher->Fetch(pTargetReg->GetChromosomeRegion());
         ScoreParam sParam(2, -3, -10000);
         AlignmentResult alignmentResult = pSeqAligner->Align(targetSeq, reads[0]->GetSequence(), sParam);
+        if (GetClipPosition().GetPosition() == 42056489)
+        {
+            std::cout << targetSeq << std::endl;
+            std::cout << reads[0]->GetSequence() << std::endl;
+        }
         if (alignmentResult.IsQualified(cParams.GetMinClip(), cParams.GetMaxErrorRate()))
         {
             ChromosomeRegionWithCi cRegionWithCi = reads[0]->ToRegionWithCi(pTargetReg->GetStartPosition(), alignmentResult);

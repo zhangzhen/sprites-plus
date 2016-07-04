@@ -20,6 +20,11 @@ std::string FiveEndReverseSCRead::GetType()
     return "5R";
 }
 
+std::string FiveEndReverseSCRead::GetClippedPart()
+{
+    return sequence.substr(sequence.length() - clippedLength);
+}
+
 ChromosomeRegionWithCi FiveEndReverseSCRead::ToRegionWithCi(int refStartPos, AlignmentResult alnResult)
 {
     int delta = alnResult.GetMatch2().GetStart() - GetSequence().length() + clippedLength;

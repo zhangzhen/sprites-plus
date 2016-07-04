@@ -49,9 +49,8 @@ AlignmentResult CustomSeqAligner::Align(const std::string &seq1, const std::stri
     // Check every column of the last row
     // The first column is skipped to avoid empty alignments
     for(size_t i = 1; i < num_columns; ++i) {
-        int v = score_matrix[i][num_rows - 1];
         if(score_matrix[i][num_rows - 1] > max_row_value) {
-            max_row_value = v;
+            max_row_value = score_matrix[i][num_rows - 1];
             max_row_index = i;
         }
     }

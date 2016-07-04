@@ -25,7 +25,7 @@ int AlignmentResult::GetAlignmentLength()
 
 int AlignmentResult::GetEditDistance()
 {
-    if (editDistance != 1)
+    if (editDistance != -1)
     {
         return editDistance;
     }

@@ -88,3 +88,30 @@ void PerChromDeletionCaller::FindCalls(const CallParams &cParams, std::vector<IV
     }
 
 }
+
+std::vector<IVariant *> PerChromDeletionCaller::MergeCalls(const std::vector<IVariant *> &variants)
+{
+    vector<IVariant*> result;
+
+    if (variants.empty()) return result;
+
+    size_t current = 0;
+    result.push_back(variants[current]);
+    int s = variants[current]->GetNumOfReads();
+
+    for (size_t i = 1; i < variants.size(); ++i)
+    {
+        if (variants[current]->QuasiEquals(*variants[i]))
+        {
+            s += variants[i]->GetNumOfReads();
+        }
+        else
+        {
+            current = i;
+            result.push_back(variants[current]);
+            s = variants[current]->GetNumOfReads();
+        }
+    }
+
+    return result;
+}

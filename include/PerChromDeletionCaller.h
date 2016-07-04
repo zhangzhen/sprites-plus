@@ -17,6 +17,7 @@ public:
     void Clear();
     void FindTargetRegions(std::vector<TargetRegion *> &regions);
     void FindCalls(const CallParams& cParams, std::vector<IVariant*> &variants);
+    std::vector<IVariant*> MergeCalls(const std::vector<IVariant*>& variants);
 
 private:
     std::map<int, DeletionCaller*> callerMap;

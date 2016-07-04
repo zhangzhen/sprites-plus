@@ -24,16 +24,19 @@ TEST_GROUP(SequenceAligner)
         reverse_copy(begin(s1), end(s1), back_inserter(s1_rev));
         reverse_copy(begin(s2), end(s2), back_inserter(s2_rev));
 
+        pSeqAligner = new CustomSeqAligner();
+        pSeqAligner2 = new ReverseCustomSeqAligner(new CustomSeqAligner());
+
     }
     void teardown()
     {
         delete pSeqAligner;
+        delete pSeqAligner2;
     }
 };
 
 TEST(SequenceAligner, CustomSeqAlignerAlign)
 {
-    pSeqAligner = new CustomSeqAligner();
     ScoreParam sParam(2, -3, -10000);
 
     AlignmentResult actual = pSeqAligner->Align(s1, s2, sParam);
@@ -43,16 +46,33 @@ TEST(SequenceAligner, CustomSeqAlignerAlign)
 
     CHECK(Interval(118, 149) == actual.GetMatch2());
 
-
 }
 
 TEST(SequenceAligner, ReverseCustomSeqAlignerAlign)
 {
-    pSeqAligner2 = new ReverseCustomSeqAligner(new CustomSeqAligner());
     ScoreParam sParam(2, -3, -10000);
 
     AlignmentResult actual = pSeqAligner2->Align(s1_rev, s2_rev, sParam);
 
     CHECK(Interval(0, 31) == actual.GetMatch2());
 
+}
+
+TEST(SequenceAligner, PrefixAlignerIssue1)
+{
+    std::string s11 = "TGCTTTTATACGTGACATGCATGGACACAGCAGCCTCTAAATATCTTGACATTTTTCTCTCGTAAGCAGAATCACTAACATTTTATTGAGTATAACTTTT"
+            "TTAGCTAATTCCCTCACCGTTTTATGTGGTAAAAGTCACTATTTTCCTTGGGAGCAGAGCAGGCCGTGAACCCAGGTCTGTCTGCTTTGAAACACATTCA"
+            "CACTGTACTGCCACTGGGTAATGATGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATCATCATCATCACCACCATCATCATCATC"
+            "ATCATCATCACCACCATCATCATTTCATCAGGCCTCAAAAGTTTACCTGCATGATTTACTTTGACCCTAACCATATTTTCCACCTGTTTCCTAGGAGTCT"
+            "TTTCCAGTATTCCTCTGTACTCCTCCCTCTCTCAGCCCATAGAGTCGCAATACACAATTATGGCTTCTTTATGTTTCACCTCTTGTTGTTCACTATGCTT"
+            "TTATGTTTCCTTATCTCCTCCTCCCAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAAGCTGGGGCTGTGGGTACCACATGGGC"
+            "TGTCCCCAGCCCATGTAGCACCTGCCAGGGCTCTGCACATCTCATCAAGAGCTG";
+    std::string s22 = "TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATCTTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCC"
+            "CAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA";
+
+    ScoreParam sParam(2, -3, -5);
+    AlignmentResult actual = pSeqAligner2->Align(s11, s22, sParam);
+
+    std::cout << actual.NumOfAlignedBasesForS2() << std::endl;
+    std::cout << actual.GetPercentageIdentity() << std::endl;
 }

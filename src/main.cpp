@@ -69,7 +69,8 @@ void FindVariantCalls(PerChromDeletionCaller &caller, const CallParams &cParams,
 {
     std::vector<IVariant*> variants;
     caller.FindCalls(cParams, variants);
-    for (auto &pVariant : variants)
+    auto finalVariants = caller.MergeCalls(variants);
+    for (auto &pVariant : finalVariants)
     {
         out << pVariant->ToBedpe() << std::endl;
     }
