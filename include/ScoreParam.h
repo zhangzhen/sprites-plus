@@ -17,10 +17,13 @@ public:
         return mismatch;
     }
 
-    int GetGapPenalty() const
-    {
-        return gap;
-    }
+    int GetGap() const { return gap; }
+
+    int GetMatch() const {return match; }
+
+    int GetMismatch() const { return mismatch; }
+
+    int GetGapStart() const { return gapStart; }
 
 private:
     int match;

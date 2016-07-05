@@ -22,6 +22,13 @@ public:
     int GetEnd() const { return end; }
     int Length() const { return end - start + 1; }
 
+    Interval& operator += (int x)
+    {
+        start += x;
+        end += x;
+        return *this;
+    }
+
     bool operator == (const Interval& other) const
     {
         return start == other.start && end == other.end;
@@ -51,5 +58,8 @@ private:
         assert(start <= end);
     }
 };
+
+const Interval operator + (const Interval& one, int x);
+
 
 #endif // INTERVAL_H

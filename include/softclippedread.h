@@ -9,16 +9,14 @@ class ISoftClippedRead
 {
 public:
     ISoftClippedRead(const std::string &name,
-                     int referenceId,
-                     const std::string& referenceName,
-                     int clipPosition,
-                     const std::string &sequence,
+                     const ChromosomeRegion& alignedRegion,
+                     const std::string& sequence,
                      int mapQuality,
                      int clippedLength,
                      int smallDelSize,
                      int smallInsSize)
         : name(name),
-          clipPosition(referenceId, referenceName, clipPosition),
+          alignedRegion(alignedRegion),
           sequence(sequence),
           mapQuality(mapQuality),
           clippedLength(clippedLength),
@@ -27,18 +25,22 @@ public:
     {}
 
     virtual ~ISoftClippedRead() {}
-    GenomePosition GetClipPosition() const { return clipPosition; }
-    int GetReferenceId() const { return clipPosition.GetReferenceId(); }
-    std::string GetReferenceName() const { return clipPosition.GetReferenceName(); }
+    int GetReferenceId() const { return alignedRegion.GetReferenceId(); }
+    std::string GetReferenceName() const { return alignedRegion.GetReferenceName(); }
     std::string GetSequence() const { return sequence; }
 //    int GetReadLength() const { return sequence.length(); }
+    ChromosomeRegion GetAlignedRegion() const { return alignedRegion; }
+
+    virtual GenomePosition GetClipPosition() = 0;
+
     virtual ChromosomeRegionWithCi ToRegionWithCi(int refStartPos, AlignmentResult alnResult) = 0;
+
     virtual std::string GetType() = 0;
     virtual std::string GetClippedPart() = 0;
 
 protected:
     std::string name;
-    GenomePosition clipPosition;
+    ChromosomeRegion alignedRegion;
     std::string sequence;
     int mapQuality;
     int clippedLength;

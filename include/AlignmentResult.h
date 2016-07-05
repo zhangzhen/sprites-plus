@@ -1,7 +1,7 @@
 #ifndef ALIGNMENTRESULT_H
 #define ALIGNMENTRESULT_H
 
-#include "Interval.h"
+#include "AlignmentFragment.h"
 
 #include <string>
 
@@ -10,19 +10,18 @@ class AlignmentResult
 public:
     AlignmentResult(const std::string& seq1,
                     const std::string& seq2,
-                    const Interval& match1,
-                    const Interval& match2,
                     int score,
-                    const std::string& cigar)
+                    const AlignmentFragment& aFragment1,
+                    const AlignmentFragment& aFragment2)
         : seq1(seq1),
           seq2(seq2),
-          match1(match1),
-          match2(match2),
           score(score),
-          cigar(cigar),
-          alignmentLength(-1),
-          editDistance(-1)
+          aFragment1(aFragment2)
     {}
+
+    void SetAFragment1(const AlignmentFragment& newFragment1) { aFragment1 = newFragment1; }
+
+    void SetAFragment2(const AlignmentFragment& newFragment2) { aFragment2 = newFragment2; }
 
     double GetPercentageIdentity()
     {
@@ -59,13 +58,10 @@ private:
     std::string seq1;
     std::string seq2;
 
-    Interval match1;
-    Interval match2;
+    AlignmentFragment aFragment1;
+    AlignmentFragment aFragment2;
 
     int score;
-    std::string cigar;
-    int alignmentLength;
-    int editDistance;
 
 };
 

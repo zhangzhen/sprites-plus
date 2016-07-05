@@ -3,24 +3,25 @@
 
 
 FiveEndForwardSCRead::FiveEndForwardSCRead(const std::string &name,
-                                           int referenceId,
-                                           const std::string& referenceName,
-                                           int clipPosition,
+                                           const ChromosomeRegion &alignedRegion,
                                            const std::string &sequence,
                                            int mapQuality,
                                            int clippedLength,
                                            int smallDelSize,
                                            int smallInsSize)
     : ISoftClippedRead(name,
-                       referenceId,
-                       referenceName,
-                       clipPosition,
+                       alignedRegion,
                        sequence,
                        mapQuality,
                        clippedLength,
                        smallDelSize,
                        smallInsSize)
 {
+}
+
+GenomePosition FiveEndForwardSCRead::GetClipPosition()
+{
+    return alignedRegion.GetStart();
 }
 
 std::string FiveEndForwardSCRead::GetType()
@@ -35,22 +36,26 @@ std::string FiveEndForwardSCRead::GetClippedPart()
 
 ChromosomeRegionWithCi FiveEndForwardSCRead::ToRegionWithCi(int refStartPos, AlignmentResult alnResult)
 {
+    GenomePosition clipPosition = GetClipPosition();
+
     int delta = clippedLength - alnResult.GetMatch2().GetEnd() - 1;
 
     int endPos = clipPosition.GetPosition();
 
     int startPos = refStartPos + alnResult.GetMatch1().GetEnd();
 
-    Interval interval;
+    Interval cInterval;
 
     if (delta < 0)
     {
         startPos += delta;
-        interval = Interval(0, abs(delta));
+        cInterval = Interval(0, abs(delta));
     }
 
-    return ChromosomeRegionWithCi(GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), startPos),
-                                  interval,
-                                  GenomePosition(clipPosition.GetReferenceId(), clipPosition.GetReferenceName(), endPos),
-                                  interval);
+    return ChromosomeRegionWithCi(GetReferenceId(),
+                                  GetReferenceName(),
+                                  startPos,
+                                  cInterval,
+                                  endPos,
+                                  cInterval);
 }
