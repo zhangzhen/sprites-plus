@@ -22,6 +22,22 @@ public:
 
     int GetLength() const { return interval.Length(); }
 
+    void CutHead(int newPos)
+    {
+        if (newPos > interval.GetStart())
+        {
+            interval.SetStart(newPos);
+        }
+    }
+
+    void CutTail(int newPos)
+    {
+        if (newPos < interval.GetEnd())
+        {
+            interval.SetEnd(newPos);
+        }
+    }
+
     friend std::ostream &operator <<(std::ostream& stream, const ChromosomeRegion& cRegion);
     friend bool operator == (const ChromosomeRegion& one, const ChromosomeRegion& two);
 

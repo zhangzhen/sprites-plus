@@ -22,6 +22,17 @@ public:
     int GetEnd() const { return end; }
     int Length() const { return end - start + 1; }
 
+    void SetStart(int newStart)
+    {
+        assert(newStart <= end);
+        start = newStart;
+    }
+    void SetEnd(int newEnd)
+    {
+        assert(start <= newEnd);
+        end = newEnd;
+    }
+
     Interval& operator += (int x)
     {
         start += x;

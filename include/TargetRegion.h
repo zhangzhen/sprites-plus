@@ -20,6 +20,7 @@ public:
     int GetNumOfPairs() const { return numOfPairs; }
     int IsHeterozygous() const { return heterozygous; }
     ChromosomeRegion GetChromosomeRegion() const { return cRegion; }
+    ChromosomeRegion GetShortChromoRegion() const;
 
     friend std::ostream &operator <<(std::ostream& stream, const TargetRegion& tRegion);
 
