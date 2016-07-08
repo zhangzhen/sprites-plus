@@ -16,7 +16,7 @@ HTSlibSequenceFetcher::~HTSlibSequenceFetcher()
     if (fai != NULL) fai_destroy(fai);
 }
 
-std::string HTSlibSequenceFetcher::Fetch(const ChromosomeRegion &region)
+ChromoFragment HTSlibSequenceFetcher::Fetch(const ChromosomeRegion &region)
 {
     int len;
     char *s = faidx_fetch_seq(
@@ -28,5 +28,5 @@ std::string HTSlibSequenceFetcher::Fetch(const ChromosomeRegion &region)
     if (s == NULL) error("cannot fetch the reference sequence");
     string str(s);
     transform(str.begin(), str.end(), str.begin(), ::toupper);
-    return str;
+    return ChromoFragment(region.GetStart(), str);
 }

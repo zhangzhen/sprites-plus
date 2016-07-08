@@ -9,7 +9,7 @@ class HTSlibSequenceFetcher : public ISequenceFetcher
 public:
     HTSlibSequenceFetcher(const std::string &fastaFile);
     ~HTSlibSequenceFetcher();
-    std::string Fetch(const ChromosomeRegion& region);
+    ChromoFragment Fetch(const ChromosomeRegion& region);
 
 private:
     faidx_t *fai;

@@ -1,9 +1,11 @@
 #ifndef SOFTCLIPPEDREAD_H
 #define SOFTCLIPPEDREAD_H
 
-#include "ChromosomeRegion.h"
 #include "AlignmentResult.h"
 #include "ChromosomeRegionWithCi.h"
+#include "ChromoFragment.h"
+#include "CallParams.h"
+
 
 class ISoftClippedRead
 {
@@ -33,7 +35,13 @@ public:
 
     virtual GenomePosition GetClipPosition() = 0;
 
-    virtual ChromosomeRegionWithCi ToRegionWithCi(int refStartPos, AlignmentResult alnResult) = 0;
+    virtual bool IsQualified(const AlignmentResult& aResult, const CallParams& cParams) = 0;
+
+    virtual ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult) = 0;
+
+    virtual ChromoFragment CutFragment(const ChromoFragment& cFragment) = 0;
+
+    virtual ChromoFragment ExtendFragment(const ChromoFragment& cFragment) = 0;
 
     virtual std::string GetType() = 0;
     virtual std::string GetClippedPart() = 0;

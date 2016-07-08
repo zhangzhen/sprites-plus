@@ -7,14 +7,14 @@ PerChromDeletionCaller::PerChromDeletionCaller(ITargetRegionFinder *pRegionToLef
 //                                                 ITargetRegionFinder *pRegionToRightFinder)
                                                ITargetRegionFinder *pRegionToRightFinder,
                                                ISequenceFetcher *pSeqFetcher,
-                                               ISequenceAligner *pPrefixAligner,
-                                               ISequenceAligner *pSuffixAligner)
+                                               IReadRealigner *pPrefixRealigner,
+                                               IReadRealigner *pSuffixRealigner)
     : pRegionToLeftFinder(pRegionToLeftFinder),
 //      pRegionToRightFinder(pRegionToRightFinder)
       pRegionToRightFinder(pRegionToRightFinder),
       pSeqFetcher(pSeqFetcher),
-      pPrefixAligner(pPrefixAligner),
-      pSuffixAligner(pSuffixAligner)
+      pPrefixRealigner(pPrefixRealigner),
+      pSuffixRealigner(pSuffixRealigner)
 {
 }
 
@@ -36,12 +36,12 @@ void PerChromDeletionCaller::AddRead(ISoftClippedRead *pRead)
     {
         if (pRead->GetType() == "5F")
         {
-            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder, pSeqFetcher, pPrefixAligner);
+            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder, pSeqFetcher, pPrefixRealigner);
 //            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder);
         }
         else if (pRead->GetType() == "5R")
         {
-            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder, pSeqFetcher, pSuffixAligner);
+            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder, pSeqFetcher, pSuffixRealigner);
 //            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder);
         }
     }

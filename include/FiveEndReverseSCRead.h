@@ -20,7 +20,13 @@ public:
 
     std::string GetClippedPart();
 
-    ChromosomeRegionWithCi ToRegionWithCi(int refStartPos, AlignmentResult alnResult);
+    ChromoFragment CutFragment(const ChromoFragment &cFragment);
+
+    ChromoFragment ExtendFragment(const ChromoFragment &cFragment);
+
+    ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult);
+
+    bool IsQualified(const AlignmentResult &aResult, const CallParams &cParams);
 };
 
 #endif // FIVEENDREVERSESCREAD_H

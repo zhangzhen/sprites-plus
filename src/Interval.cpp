@@ -12,3 +12,11 @@ const Interval operator + (const Interval& one, int x)
     result += x;
     return result;
 }
+
+void Interval::Flip(int origLength)
+{
+    int tmp = origLength - start - 1;
+    start = origLength - end - 1;
+    end = tmp;
+    CheckRep();
+}

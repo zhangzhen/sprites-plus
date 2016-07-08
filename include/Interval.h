@@ -50,13 +50,7 @@ public:
         return !(*this == other);
     }
 
-    void Flip(int totalLength)
-    {
-        int tmp = totalLength - start - 1;
-        start = totalLength - end - 1;
-        end = tmp;
-        CheckRep();
-    }
+    void Flip(int origLength);
 
     friend std::ostream& operator <<(std::ostream& stream, const Interval& interval);
 

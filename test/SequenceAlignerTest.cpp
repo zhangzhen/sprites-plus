@@ -42,9 +42,8 @@ TEST(SequenceAligner, CustomSeqAlignerAlign)
     AlignmentResult actual = pSeqAligner->Align(s1, s2, sParam);
 
     CHECK_EQUAL(59, actual.GetScore());
-    CHECK("32M" == actual.GetCigar());
 
-    CHECK(Interval(118, 149) == actual.GetMatch2());
+    CHECK(Interval(118, 149) == actual.GetAlignmentFragment1().GetMatch2());
 
 }
 
@@ -54,7 +53,7 @@ TEST(SequenceAligner, ReverseCustomSeqAlignerAlign)
 
     AlignmentResult actual = pSeqAligner2->Align(s1_rev, s2_rev, sParam);
 
-    CHECK(Interval(0, 31) == actual.GetMatch2());
+    CHECK(Interval(0, 31) == actual.GetAlignmentFragment1().GetMatch2());
 
 }
 
@@ -73,6 +72,8 @@ TEST(SequenceAligner, PrefixAlignerIssue1)
     ScoreParam sParam(2, -3, -5);
     AlignmentResult actual = pSeqAligner2->Align(s11, s22, sParam);
 
-    std::cout << actual.NumOfAlignedBasesForS2() << std::endl;
-    std::cout << actual.GetPercentageIdentity() << std::endl;
+    actual.GetAlignmentFragment1().PrintAlignment();
+
+    std::cout << actual.GetAlignmentFragment1().GetMatch2Length() << std::endl;
+    std::cout << actual.GetAlignmentFragment1().GetPercentageIdentity() << std::endl;
 }

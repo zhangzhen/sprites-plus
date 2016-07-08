@@ -23,7 +23,8 @@ MaxDistDiffBiPartitioner.cpp AnovaBiPartitionQualifier.cpp MedianPositionPicker.
 DeletionCaller.cpp SpanningPair.cpp error.cpp LeafTargetRegionFinder.cpp
 variantcaller.cpp GenomePosition.cpp TargetRegion.cpp ChromosomeRegion.cpp
 FiveEndForwardSCRead.cpp FiveEndReverseSCRead.cpp HTSlibSequenceFetcher.cpp
-CustomSeqAligner.cpp AlignmentResult.cpp Deletion.cpp)
+CustomSeqAligner.cpp AlignmentResult.cpp Deletion.cpp AlignmentFragment.cpp
+Interval.cpp readrealigner.cpp)
 #file(GLOB SOURCES "*.cpp")
 
 add_executable(sprites2 ${SOURCES})

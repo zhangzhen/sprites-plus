@@ -28,13 +28,38 @@ std::string FiveEndReverseSCRead::GetClippedPart()
     return sequence.substr(sequence.length() - clippedLength);
 }
 
-ChromosomeRegionWithCi FiveEndReverseSCRead::ToRegionWithCi(int refStartPos, AlignmentResult alnResult)
+ChromoFragment FiveEndReverseSCRead::CutFragment(const ChromoFragment &cFragment)
 {
-    int delta = alnResult.GetMatch2().GetStart() - GetSequence().length() + clippedLength;
+    if (GetReferenceId() != cFragment.GetReferenceId())
+    {
+        error("This fragment cannot be cut because the fragment and the read are not on the same chromosome.");
+    }
+
+    int pos1 = cFragment.GetStartPos();
+
+    int pos2 = GetClipPosition().GetPosition();
+
+    if (pos1 <= pos2)
+    {
+        return ChromoFragment(GenomePosition(GetReferenceId(), GetReferenceName(), pos2),
+                              cFragment.GetSequence().substr(pos2 - pos1 + 1));
+    }
+
+    return cFragment;
+}
+
+ChromoFragment FiveEndReverseSCRead::ExtendFragment(const ChromoFragment &cFragment)
+{
+    return cFragment;
+}
+
+ChromosomeRegionWithCi FiveEndReverseSCRead::ToRegionWithCi(const AlignmentResult &aResult)
+{
+    int delta = aResult.GetAlignmentFragment1().GetMatch2().GetStart() - GetSequence().length() + clippedLength;
 
     int startPos = GetClipPosition().GetPosition();
 
-    int endPos = refStartPos + alnResult.GetMatch1().GetStart();
+    int endPos = aResult.GetAlignmentFragment1().GetMatch1().GetStart();
 
     Interval cInterval;
 
@@ -50,4 +75,17 @@ ChromosomeRegionWithCi FiveEndReverseSCRead::ToRegionWithCi(int refStartPos, Ali
                                   cInterval,
                                   endPos,
                                   cInterval);
+}
+
+bool FiveEndReverseSCRead::IsQualified(const AlignmentResult &aResult, const CallParams &cParams)
+{
+    if (aResult.HasSingleFragment())
+    {
+        return aResult.GetAlignmentFragment1().GetMatch2Length() >= cParams.GetMinClip() &&
+                aResult.GetAlignmentFragment1().GetPercentageIdentity() >= (1 - cParams.GetMaxErrorRate()) * 100;
+    }
+
+    return aResult.GetAlignmentFragment2().GetMatch2Length() >= cParams.GetMinClip() &&
+            aResult.GetAlignmentFragment2().GetPercentageIdentity() >= (1 - cParams.GetMaxErrorRate()) * 100;
+
 }

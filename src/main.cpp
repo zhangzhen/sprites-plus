@@ -12,6 +12,7 @@
 #include "globals.h"
 #include "error.h"
 #include "HTSlibSequenceFetcher.h"
+#include "WholeReadRealigner.h"
 #include "CustomSeqAligner.h"
 #include "ReverseCustomSeqAligner.h"
 
@@ -200,14 +201,15 @@ int main(int argc, char *argv[])
 
     ISequenceFetcher *pSeqFetcher = new HTSlibSequenceFetcher(vm["reffile"].as<std::string>());
 
-    ISequenceAligner *pPrefixAligner = new ReverseCustomSeqAligner(new CustomSeqAligner());
-    ISequenceAligner *pSuffixAligner = new CustomSeqAligner();
+    IReadRealigner *pPrefixRealigner = new WholeReadRealigner(new ReverseCustomSeqAligner(new CustomSeqAligner()));
+
+    IReadRealigner *pSuffixRealigner = new WholeReadRealigner(new CustomSeqAligner());
 
     CallParams cParams(vm["min-aligned"].as<int>(), vm["error-rate"].as<double>());
 
 
     ISoftClippedRead *pRead;
-    PerChromDeletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder, pSeqFetcher, pPrefixAligner, pSuffixAligner);
+    PerChromDeletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder, pSeqFetcher, pPrefixRealigner, pSuffixRealigner);
     while ((pRead = pReadsReader->NextRead()))
     {
         currentId = pRead->GetReferenceId();

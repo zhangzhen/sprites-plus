@@ -20,10 +20,7 @@ public:
 
         AlignmentResult res = SeqAlignerDecorator::Align(s1, s2, sParam);
 
-        res.SetSeq1(seq1);
-        res.SetSeq2(seq2);
-        res.FlipMatch1(seq1.length());
-        res.FlipMatch2(seq2.length());
+        res.Flip();
 
         return res;
 

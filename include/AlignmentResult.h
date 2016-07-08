@@ -2,6 +2,7 @@
 #define ALIGNMENTRESULT_H
 
 #include "AlignmentFragment.h"
+#include "error.h"
 
 #include <string>
 
@@ -15,44 +16,52 @@ public:
                     const AlignmentFragment& aFragment2)
         : seq1(seq1),
           seq2(seq2),
+          aFragment1(aFragment1),
+          aFragment2(aFragment2),
           score(score),
-          aFragment1(aFragment2)
+          single(false)
     {}
 
-    void SetAFragment1(const AlignmentFragment& newFragment1) { aFragment1 = newFragment1; }
+    AlignmentResult(const std::string& seq1,
+                    const std::string& seq2,
+                    int score,
+                    const AlignmentFragment& aFragment1)
+        : seq1(seq1),
+          seq2(seq2),
+          aFragment1(aFragment1),
+          score(score),
+          single(true)
+    {}
 
-    void SetAFragment2(const AlignmentFragment& newFragment2) { aFragment2 = newFragment2; }
-
-    double GetPercentageIdentity()
+    double GetPercentageIdentity1()
     {
-        return (double)(GetAlignmentLength() - GetEditDistance()) * 100.0f / GetAlignmentLength();
+        return aFragment1.GetPercentageIdentity();
     }
 
-    int GetAlignmentLength();
-    int GetEditDistance();
-
-    bool IsQualified(int minClip, double maxErrorRate)
+    double GetPercentageIdentity2()
     {
-        return NumOfAlignedBasesForS2() >= minClip && GetPercentageIdentity() >= 100*(1 - maxErrorRate);
+        if (single) error("The second alignment fragment is not available");
+        return aFragment2.GetPercentageIdentity();
     }
 
-    int NumOfAlignedBasesForS2() const
+    AlignmentFragment GetAlignmentFragment1() const
     {
-        return match2.Length();
+        return aFragment1;
+    }
+
+    AlignmentFragment GetAlignmentFragment2() const
+    {
+        if (single) error("The second alignment fragment is not available");
+        return aFragment2;
     }
 
     int GetScore() const { return score; }
 
-    std::string GetCigar() const { return cigar; }
+    bool HasSingleFragment() const { return single; }
 
-    void SetSeq1(const std::string& s1) { seq1 = s1; }
-    void SetSeq2(const std::string& s2) { seq2 = s2; }
+    void Flip();
 
-    void FlipMatch1(int seqLength) { match1.Flip(seqLength); }
-    void FlipMatch2(int seqLength) { match2.Flip(seqLength); }
-
-    Interval GetMatch1() const { return match1; }
-    Interval GetMatch2() const { return match2; }
+    void ShiftMatch1(int val);
 
 private:
     std::string seq1;
@@ -62,6 +71,8 @@ private:
     AlignmentFragment aFragment2;
 
     int score;
+
+    bool single;
 
 };
 

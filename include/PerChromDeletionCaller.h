@@ -11,8 +11,8 @@ public:
 //                         ITargetRegionFinder *pRegionToRightFinder);
                            ITargetRegionFinder *pRegionToRightFinder,
                            ISequenceFetcher *pSeqFetcher,
-                           ISequenceAligner *pPrefixAligner,
-                           ISequenceAligner *pSuffixAligner);
+                           IReadRealigner *pPrefixRealigner,
+                           IReadRealigner *pSuffixRealigner);
     void AddRead(ISoftClippedRead *pRead);
     void Clear();
     void FindTargetRegions(std::vector<TargetRegion *> &regions);
@@ -25,8 +25,8 @@ private:
     ITargetRegionFinder *pRegionToLeftFinder;
     ITargetRegionFinder *pRegionToRightFinder;
     ISequenceFetcher *pSeqFetcher;
-    ISequenceAligner *pPrefixAligner;
-    ISequenceAligner *pSuffixAligner;
+    IReadRealigner *pPrefixRealigner;
+    IReadRealigner *pSuffixRealigner;
 };
 
 #endif // PERCHROMDELETIONCALLER_H

@@ -2,6 +2,8 @@
 #define ALIGNMENTFRAGMENT
 
 #include "Interval.h"
+#include "error.h"
+
 #include <string>
 
 class AlignmentFragment
@@ -17,24 +19,39 @@ public:
           match2(match2)
     {}
 
+    AlignmentFragment()
+        : AlignmentFragment("NA", "NA", Interval(), Interval())
+    {}
+
     int GetAlignmentLength() const
     {
         return alignedS1.length();
     }
 
-    int NumOfIdenticalBases() const
-    {
-        int s = 0;
-        for (size_t i = 0; i < GetAlignmentLength(); ++i)
-        {
-            if (alignedS1[i] == alignedS2[2]) s++;
-        }
-        return s;
-    }
+    Interval GetMatch1() const { return match1; }
+    Interval GetMatch2() const { return match2; }
+
+    int NumOfIdenticalBases() const;
+
+    void PrintAlignment() const;
 
     double GetPercentageIdentity()
     {
+        if (GetAlignmentLength() == 0) error("Divided by zero.");
+
         return 100.0f * NumOfIdenticalBases() / GetAlignmentLength();
+    }
+
+    void Flip(int origLength1, int origLength2);
+
+    void ShiftMatch1(int val)
+    {
+        match1 += val;
+    }
+
+    int GetMatch2Length() const
+    {
+        return match2.Length();
     }
 
 private:

@@ -6,12 +6,12 @@ DeletionCaller::DeletionCaller(ISoftClippedRead *pRead,
 //                               ITargetRegionFinder *pRegionFinder)
                                ITargetRegionFinder *pRegionFinder,
                                ISequenceFetcher *pSeqFetcher,
-                               ISequenceAligner *pSeqAligner)
+                               IReadRealigner *pReadRealigner)
     : IVariantCaller(pRead),
 //      pRegionFinder(pRegionFinder)
       pRegionFinder(pRegionFinder),
       pSeqFetcher(pSeqFetcher),
-      pSeqAligner(pSeqAligner)
+      pReadRealigner(pReadRealigner)
 {
 }
 
@@ -26,17 +26,17 @@ IVariant *DeletionCaller::FindCall(const CallParams &cParams)
     TargetRegion *pTargetReg;
     if((pTargetReg = FindTargetRegion()))
     {
-        std::string targetSeq = pSeqFetcher->Fetch(pTargetReg->GetChromosomeRegion());
+        ChromoFragment cFragment = pSeqFetcher->Fetch(pTargetReg->GetChromosomeRegion());
         ScoreParam sParam(2, -3, -10000);
-        AlignmentResult alignmentResult = pSeqAligner->Align(targetSeq, reads[0]->GetSequence(), sParam);
+        AlignmentResult alnResult = pReadRealigner->Realign(cFragment, reads[0], sParam);
         if (GetClipPosition().GetPosition() == 42056489)
         {
-            std::cout << targetSeq << std::endl;
+            std::cout << cFragment.GetSequence() << std::endl;
             std::cout << reads[0]->GetSequence() << std::endl;
         }
-        if (alignmentResult.IsQualified(cParams.GetMinClip(), cParams.GetMaxErrorRate()))
+        if (reads[0]->IsQualified(alnResult, cParams))
         {
-            ChromosomeRegionWithCi cRegionWithCi = reads[0]->ToRegionWithCi(pTargetReg->GetStartPosition(), alignmentResult);
+            ChromosomeRegionWithCi cRegionWithCi = reads[0]->ToRegionWithCi(alnResult);
             return new Deletion(cRegionWithCi, pTargetReg->IsHeterozygous(), GetClipPosition(), GetReadType(), reads.size());
         }
     }
