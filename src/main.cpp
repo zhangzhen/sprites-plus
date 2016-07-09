@@ -215,8 +215,8 @@ int main(int argc, char *argv[])
         currentId = pRead->GetReferenceId();
         if (prevId != -1 && prevId != currentId)
         {
-            FindTargetRegions(caller, std::cout);
-//            FindVariantCalls(caller, cParams, std::cout);
+//            FindTargetRegions(caller, std::cout);
+            FindVariantCalls(caller, cParams, std::cout);
         }
         caller.AddRead(pRead);
         prevId = currentId;

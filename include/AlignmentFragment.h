@@ -54,6 +54,8 @@ public:
         return match2.Length();
     }
 
+    bool operator == (const AlignmentFragment& other) const;
+
 private:
     std::string alignedS1;
     std::string alignedS2;

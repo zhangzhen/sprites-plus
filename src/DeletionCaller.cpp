@@ -27,13 +27,22 @@ IVariant *DeletionCaller::FindCall(const CallParams &cParams)
     if((pTargetReg = FindTargetRegion()))
     {
         ChromoFragment cFragment = pSeqFetcher->Fetch(pTargetReg->GetChromosomeRegion());
+
+//        if (GetClipPosition().GetPosition() == 42056489)
+//        {
+//            std::cout << cFragment.GetSequence() << std::endl;
+//            std::cout << reads[0]->GetSequence() << std::endl;
+//        }
+
         ScoreParam sParam(2, -3, -10000);
         AlignmentResult alnResult = pReadRealigner->Realign(cFragment, reads[0], sParam);
-        if (GetClipPosition().GetPosition() == 42056489)
-        {
-            std::cout << cFragment.GetSequence() << std::endl;
-            std::cout << reads[0]->GetSequence() << std::endl;
-        }
+
+//        if (GetClipPosition().GetPosition() == 100683541)
+//        {
+//            alnResult.GetAlignmentFragment1().PrintAlignment();
+//            std::cout << alnResult.GetAlignmentFragment1().GetPercentageIdentity() << std::endl;
+//        }
+
         if (reads[0]->IsQualified(alnResult, cParams))
         {
             ChromosomeRegionWithCi cRegionWithCi = reads[0]->ToRegionWithCi(alnResult);

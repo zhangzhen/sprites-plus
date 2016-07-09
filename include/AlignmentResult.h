@@ -63,6 +63,8 @@ public:
 
     void ShiftMatch1(int val);
 
+    void PrintAlignment() const;
+
 private:
     std::string seq1;
     std::string seq2;

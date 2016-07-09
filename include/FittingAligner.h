@@ -1,0 +1,5 @@
+#ifndef FITTINGALIGNER
+#define FITTINGALIGNER
+
+#endif // FITTINGALIGNER
+

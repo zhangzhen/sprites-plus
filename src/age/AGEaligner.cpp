@@ -11,7 +11,7 @@
  * Author: Alexej Abyzov
  */
 
-#include "AGEaligner.hh"
+#include "age/AGEaligner.hh"
 
 AGEaligner::AGEaligner(Sequence &s1,Sequence &s2) :
   _s1(s1), _s2(s2),

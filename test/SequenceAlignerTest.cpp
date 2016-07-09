@@ -1,13 +1,14 @@
 #include "CppUTest/TestHarness.h"
 #include "CustomSeqAligner.h"
 #include "ReverseCustomSeqAligner.h"
+#include "AGESuffixAligner.h"
 
 #include <algorithm>
 
 TEST_GROUP(SequenceAligner)
 {
     std::string s1, s2, s1_rev, s2_rev;
-    ISequenceAligner *pSeqAligner, *pSeqAligner2;
+    ISequenceAligner *pSeqAligner, *pSeqAligner2, *pSeqAligner3;
 
     void setup()
     {
@@ -26,12 +27,14 @@ TEST_GROUP(SequenceAligner)
 
         pSeqAligner = new CustomSeqAligner();
         pSeqAligner2 = new ReverseCustomSeqAligner(new CustomSeqAligner());
+        pSeqAligner3 = new AGESuffixAligner();
 
     }
     void teardown()
     {
         delete pSeqAligner;
         delete pSeqAligner2;
+        delete pSeqAligner3;
     }
 };
 
@@ -57,23 +60,33 @@ TEST(SequenceAligner, ReverseCustomSeqAlignerAlign)
 
 }
 
-TEST(SequenceAligner, PrefixAlignerIssue1)
+TEST(SequenceAligner, AGEAlignerAdapter)
 {
-    std::string s11 = "TGCTTTTATACGTGACATGCATGGACACAGCAGCCTCTAAATATCTTGACATTTTTCTCTCGTAAGCAGAATCACTAACATTTTATTGAGTATAACTTTT"
+    std::string v = "TGCTTTTATACGTGACATGCATGGACACAGCAGCCTCTAAATATCTTGACATTTTTCTCTCGTAAGCAGAATCACTAACATTTTATTGAGTATAACTTTT"
             "TTAGCTAATTCCCTCACCGTTTTATGTGGTAAAAGTCACTATTTTCCTTGGGAGCAGAGCAGGCCGTGAACCCAGGTCTGTCTGCTTTGAAACACATTCA"
             "CACTGTACTGCCACTGGGTAATGATGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATCATCATCATCACCACCATCATCATCATC"
             "ATCATCATCACCACCATCATCATTTCATCAGGCCTCAAAAGTTTACCTGCATGATTTACTTTGACCCTAACCATATTTTCCACCTGTTTCCTAGGAGTCT"
             "TTTCCAGTATTCCTCTGTACTCCTCCCTCTCTCAGCCCATAGAGTCGCAATACACAATTATGGCTTCTTTATGTTTCACCTCTTGTTGTTCACTATGCTT"
             "TTATGTTTCCTTATCTCCTCCTCCCAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAAGCTGGGGCTGTGGGTACCACATGGGC"
             "TGTCCCCAGCCCATGTAGCACCTGCCAGGGCTCTGCACATCTCATCAAGAGCTG";
-    std::string s22 = "TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATCTTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCC"
+    std::string w = "TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATCTTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCC"
             "CAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA";
 
-    ScoreParam sParam(2, -3, -5);
-    AlignmentResult actual = pSeqAligner2->Align(s11, s22, sParam);
+    ScoreParam sParam(1, -2, -1, -2);
+    AlignmentResult actual = pSeqAligner3->Align(v, w, sParam);
 
-    actual.GetAlignmentFragment1().PrintAlignment();
+    AlignmentFragment expectedAlnFrag1("TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATC",
+                                       "TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATC",
+                                       Interval(224, 272),
+                                       Interval(0, 48));
 
-    std::cout << actual.GetAlignmentFragment1().GetMatch2Length() << std::endl;
-    std::cout << actual.GetAlignmentFragment1().GetPercentageIdentity() << std::endl;
+    CHECK(expectedAlnFrag1 == actual.GetAlignmentFragment1());
+
+    AlignmentFragment expectedAlnFrag2("TTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCCCAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA",
+                                       "TTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCCCAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA",
+                                       Interval(473, 573),
+                                       Interval(49, 149));
+
+    CHECK(expectedAlnFrag2 == actual.GetAlignmentFragment2());
+
 }

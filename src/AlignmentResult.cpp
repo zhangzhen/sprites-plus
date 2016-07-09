@@ -21,8 +21,20 @@ void AlignmentResult::ShiftMatch1(int val)
 {
     aFragment1.ShiftMatch1(val);
 
-    if (!single) {
+    if (!single)
+    {
         aFragment2.ShiftMatch1(val);
     }
 
+}
+
+void AlignmentResult::PrintAlignment() const
+{
+    aFragment1.PrintAlignment();
+
+    if (!single)
+    {
+        std::cout << "EXCISED REGION" << std::endl;
+        aFragment2.PrintAlignment();
+    }
 }
