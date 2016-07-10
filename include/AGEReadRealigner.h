@@ -11,8 +11,6 @@ public:
         : IReadRealigner(pSeqAligner)
     {}
 
-    // IReadRealigner interface
-private:
     ChromoFragment PreprocessFragment(const ChromoFragment &cFragment, ISoftClippedRead *pRead)
     {
         return pRead->ExtendFragment(cFragment);

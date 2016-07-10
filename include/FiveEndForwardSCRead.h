@@ -25,7 +25,7 @@ public:
 
     ChromoFragment ExtendFragment(const ChromoFragment &cFragment);
 
-    ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult);
+    ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult, int refStartPos);
 
     bool IsQualified(const AlignmentResult &aResult, const CallParams &cParams);
 };

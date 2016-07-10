@@ -39,7 +39,7 @@ public:
 
     virtual bool IsQualified(const AlignmentResult& aResult, const CallParams& cParams) = 0;
 
-    virtual ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult) = 0;
+    virtual ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult, int refStartPos) = 0;
 
     virtual ChromoFragment CutFragment(const ChromoFragment& cFragment) = 0;
 

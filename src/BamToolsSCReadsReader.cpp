@@ -50,7 +50,7 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
                 ChromosomeRegion cRegion(al.RefID,
                                          pBamReader->GetReferenceData()[al.RefID].RefName,
                         genomePositions[0] + 1,
-                        al.GetEndPosition() + 1);
+                        al.GetEndPosition());
                 return new FiveEndForwardSCRead(al.Name,
                                                 cRegion,
                                                 al.QueryBases,

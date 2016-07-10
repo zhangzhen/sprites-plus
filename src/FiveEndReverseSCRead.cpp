@@ -58,6 +58,11 @@ ChromoFragment FiveEndReverseSCRead::CutFragment(const ChromoFragment &cFragment
 
 ChromoFragment FiveEndReverseSCRead::ExtendFragment(const ChromoFragment &cFragment)
 {
+    if (GetReferenceId() != cFragment.GetReferenceId())
+    {
+        error("This fragment cannot be cut because the fragment and the read are not on the same chromosome.");
+    }
+
     int s1 = cFragment.GetStartPos();
     if (s1 <= alignedRegion.GetStartPosition())
     {
@@ -83,14 +88,14 @@ ChromoFragment FiveEndReverseSCRead::ExtendFragment(const ChromoFragment &cFragm
     return newFrag;
 }
 
-ChromosomeRegionWithCi FiveEndReverseSCRead::ToRegionWithCi(const AlignmentResult &aResult)
+ChromosomeRegionWithCi FiveEndReverseSCRead::ToRegionWithCi(const AlignmentResult &aResult, int refStartPos)
 {
-    int s1 = aResult.GetAlignmentFragment1().GetMatch1().GetStart();
+    int s1 = aResult.GetAlignmentFragment1().GetMatch1().GetStart() + refStartPos;
     int s2 = aResult.GetAlignmentFragment1().GetMatch2().GetStart();
 
     if (!aResult.HasSingleFragment())
     {
-        s1 = aResult.GetAlignmentFragment2().GetMatch1().GetStart();
+        s1 = aResult.GetAlignmentFragment2().GetMatch1().GetStart() + refStartPos;
         s2 = aResult.GetAlignmentFragment2().GetMatch2().GetStart();
     }
 

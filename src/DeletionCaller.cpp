@@ -28,24 +28,21 @@ IVariant *DeletionCaller::FindCall(const CallParams &cParams)
     {
         ChromoFragment cFragment = pSeqFetcher->Fetch(pTargetReg->GetChromosomeRegion());
 
-//        if (GetClipPosition().GetPosition() == 42056489)
-//        {
-//            std::cout << cFragment.GetSequence() << std::endl;
-//            std::cout << reads[0]->GetSequence() << std::endl;
-//        }
+//        ScoreParam sParam(2, -3, -10000);
+        ScoreParam sParam(2, -3, -2, -5);
 
-        ScoreParam sParam(2, -3, -10000);
-        AlignmentResult alnResult = pReadRealigner->Realign(cFragment, reads[0], sParam);
+        ChromoFragment modifiedFrag = pReadRealigner->PreprocessFragment(cFragment, reads[0]);
 
-//        if (GetClipPosition().GetPosition() == 100683541)
+        AlignmentResult alnResult = pReadRealigner->Realign(modifiedFrag.GetSequence(), pReadRealigner->GetSeqFromRead(reads[0]), sParam);
+
+//        if (GetClipPosition().GetPosition() == 29681295)
 //        {
-//            alnResult.GetAlignmentFragment1().PrintAlignment();
-//            std::cout << alnResult.GetAlignmentFragment1().GetPercentageIdentity() << std::endl;
+//            alnResult.PrintAlignment();
 //        }
 
         if (reads[0]->IsQualified(alnResult, cParams))
         {
-            ChromosomeRegionWithCi cRegionWithCi = reads[0]->ToRegionWithCi(alnResult);
+            ChromosomeRegionWithCi cRegionWithCi = reads[0]->ToRegionWithCi(alnResult, modifiedFrag.GetStartPos());
             return new Deletion(cRegionWithCi, pTargetReg->IsHeterozygous(), GetClipPosition(), GetReadType(), reads.size());
         }
     }

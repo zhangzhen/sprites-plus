@@ -82,15 +82,17 @@ ChromoFragment FiveEndForwardSCRead::ExtendFragment(const ChromoFragment &cFragm
     return newFrag;
 }
 
-ChromosomeRegionWithCi FiveEndForwardSCRead::ToRegionWithCi(const AlignmentResult &aResult)
+ChromosomeRegionWithCi FiveEndForwardSCRead::ToRegionWithCi(const AlignmentResult &aResult, int refStartPos)
 {
     GenomePosition clipPosition = GetClipPosition();
 
-    int delta = clippedLength - aResult.GetAlignmentFragment1().GetMatch2().GetEnd() - 1;
+    int nHom = aResult.NumOfHomToRight();
+
+    int delta = clippedLength - aResult.GetAlignmentFragment1().GetMatch2().GetEnd() -nHom - 1;
 
     int endPos = clipPosition.GetPosition();
 
-    int startPos = aResult.GetAlignmentFragment1().GetMatch1().GetEnd();
+    int startPos = aResult.GetAlignmentFragment1().GetMatch1().GetEnd() + nHom + refStartPos;
 
     Interval cInterval;
 

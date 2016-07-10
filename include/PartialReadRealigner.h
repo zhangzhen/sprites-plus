@@ -10,7 +10,6 @@ public:
         : IReadRealigner(pSeqAligner)
     {}
 
-private:
     ChromoFragment PreprocessFragment(const ChromoFragment &cFragment, ISoftClippedRead *pRead)
     {
         return cFragment;

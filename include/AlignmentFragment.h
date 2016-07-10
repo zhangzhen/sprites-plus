@@ -44,10 +44,10 @@ public:
 
     void Flip(int origLength1, int origLength2);
 
-    void ShiftMatch1(int val)
-    {
-        match1 += val;
-    }
+//    void ShiftMatch1(int val)
+//    {
+//        match1 += val;
+//    }
 
     int GetMatch2Length() const
     {

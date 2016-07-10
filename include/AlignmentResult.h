@@ -33,6 +33,9 @@ public:
           single(true)
     {}
 
+    std::string GetSeq1() const { return seq1; }
+    std::string GetSeq2() const { return seq2; }
+
     double GetPercentageIdentity1()
     {
         return aFragment1.GetPercentageIdentity();
@@ -61,9 +64,11 @@ public:
 
     void Flip();
 
-    void ShiftMatch1(int val);
+//    void ShiftMatch1(int val);
 
     void PrintAlignment() const;
+
+    int NumOfHomToRight() const;
 
 private:
     std::string seq1;
@@ -77,5 +82,10 @@ private:
     bool single;
 
 };
+
+int NumOfLongestCommonPrefix(const std::string& v, const std::string& w);
+
+int NumOfLongestCommonSuffix(const std::string& v, const std::string& w);
+
 
 #endif // ALIGNMENTRESULT_H
