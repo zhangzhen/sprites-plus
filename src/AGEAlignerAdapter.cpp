@@ -1,9 +1,9 @@
-#include "AGESuffixAligner.h"
+#include "AGEAlignerAdapter.h"
 #include "age/AGEaligner.hh"
 #include "error.h"
 
 
-AlignmentResult AGESuffixAligner::Align(const std::string &v, const std::string &w, const ScoreParam &sParam)
+AlignmentResult AGEAlignerAdapter::Align(const std::string &v, const std::string &w, const ScoreParam &sParam)
 {
 
     int flag = AGEaligner::INDEL_FLAG;

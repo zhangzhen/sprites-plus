@@ -13,6 +13,7 @@ public:
     ISoftClippedRead(const std::string &name,
                      const ChromosomeRegion& alignedRegion,
                      const std::string& sequence,
+                     const std::string& refSeqPart,
                      int mapQuality,
                      int clippedLength,
                      int smallDelSize,
@@ -20,6 +21,7 @@ public:
         : name(name),
           alignedRegion(alignedRegion),
           sequence(sequence),
+          refSeqPart(refSeqPart),
           mapQuality(mapQuality),
           clippedLength(clippedLength),
           smallDelSize(smallDelSize),
@@ -50,6 +52,7 @@ protected:
     std::string name;
     ChromosomeRegion alignedRegion;
     std::string sequence;
+    std::string refSeqPart;
     int mapQuality;
     int clippedLength;
     int smallDelSize;

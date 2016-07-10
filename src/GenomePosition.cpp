@@ -15,3 +15,16 @@ ostream &operator <<(ostream &stream, const GenomePosition &gPos)
            << "\t" << gPos.position;
     return stream;
 }
+
+const GenomePosition operator +(const GenomePosition &one, int x)
+{
+    GenomePosition result = one;
+    result += x;
+    return result;
+\
+}
+
+const GenomePosition operator -(const GenomePosition &one, int x)
+{
+    return one + (-x);
+}

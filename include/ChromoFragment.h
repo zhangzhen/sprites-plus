@@ -24,7 +24,11 @@ public:
 
     GenomePosition GetStart() const { return start; }
 
+    void SetStart(const GenomePosition& newSart) { start = newSart; }
+
     std::string GetSequence() const { return sequence; }
+
+    void SetSequence(const std::string& newSeq) { sequence = newSeq; }
 
 private:
     GenomePosition start;

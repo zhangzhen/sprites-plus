@@ -15,6 +15,8 @@
 #include "WholeReadRealigner.h"
 #include "CustomSeqAligner.h"
 #include "ReverseCustomSeqAligner.h"
+#include "AGEReadRealigner.h"
+#include "AGEAlignerAdapter.h"
 
 #include <boost/program_options/options_description.hpp>
 #include <boost/program_options/parsers.hpp>
@@ -171,10 +173,13 @@ int main(int argc, char *argv[])
     ILibraryInsertSizeEstimator *pEstimator = new BamToolsLibInsertSizeEstimator(pBamReader);
     EstimateInsertSizeForLibrarys(pEstimator, libraries);
 
+    ISequenceFetcher *pSeqFetcher = new HTSlibSequenceFetcher(vm["reffile"].as<std::string>());
+
     ISoftClippedReadsReader *pReadsReader = new BamToolsSCReadsReader(
                 pBamReader,
                 vm["sig-clip"].as<int>(),
-                vm["ignored-num"].as<int>());
+                vm["ignored-num"].as<int>(),
+            pSeqFetcher);
 
     int prevId = -1;
     int currentId;
@@ -199,11 +204,11 @@ int main(int argc, char *argv[])
                                                                             pQualifier,
                                                                             pPosPicker);
 
-    ISequenceFetcher *pSeqFetcher = new HTSlibSequenceFetcher(vm["reffile"].as<std::string>());
+    IReadRealigner *pPrefixRealigner = new AGEReadRealigner(new AGEAlignerAdapter());
+//    IReadRealigner *pPrefixRealigner = new WholeReadRealigner(new ReverseCustomSeqAligner(new CustomSeqAligner()));
 
-    IReadRealigner *pPrefixRealigner = new WholeReadRealigner(new ReverseCustomSeqAligner(new CustomSeqAligner()));
-
-    IReadRealigner *pSuffixRealigner = new WholeReadRealigner(new CustomSeqAligner());
+    IReadRealigner *pSuffixRealigner = pPrefixRealigner;
+//    IReadRealigner *pSuffixRealigner = new WholeReadRealigner(new CustomSeqAligner());
 
     CallParams cParams(vm["min-aligned"].as<int>(), vm["error-rate"].as<double>());
 

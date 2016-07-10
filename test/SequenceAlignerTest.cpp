@@ -1,7 +1,7 @@
 #include "CppUTest/TestHarness.h"
 #include "CustomSeqAligner.h"
 #include "ReverseCustomSeqAligner.h"
-#include "AGESuffixAligner.h"
+#include "AGEAlignerAdapter.h"
 
 #include <algorithm>
 
@@ -27,7 +27,7 @@ TEST_GROUP(SequenceAligner)
 
         pSeqAligner = new CustomSeqAligner();
         pSeqAligner2 = new ReverseCustomSeqAligner(new CustomSeqAligner());
-        pSeqAligner3 = new AGESuffixAligner();
+        pSeqAligner3 = new AGEAlignerAdapter();
 
     }
     void teardown()

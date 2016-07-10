@@ -5,6 +5,7 @@
 FiveEndForwardSCRead::FiveEndForwardSCRead(const std::string &name,
                                            const ChromosomeRegion &alignedRegion,
                                            const std::string &sequence,
+                                           const std::string &refSeqPart,
                                            int mapQuality,
                                            int clippedLength,
                                            int smallDelSize,
@@ -12,6 +13,7 @@ FiveEndForwardSCRead::FiveEndForwardSCRead(const std::string &name,
     : ISoftClippedRead(name,
                        alignedRegion,
                        sequence,
+                       refSeqPart,
                        mapQuality,
                        clippedLength,
                        smallDelSize,
@@ -57,7 +59,27 @@ ChromoFragment FiveEndForwardSCRead::CutFragment(const ChromoFragment &cFragment
 
 ChromoFragment FiveEndForwardSCRead::ExtendFragment(const ChromoFragment &cFragment)
 {
-    return cFragment;
+    int e1 = cFragment.GetEndPos();
+
+    if (e1 >= alignedRegion.GetEndPosition())
+    {
+        return cFragment;
+    }
+
+    ChromoFragment newFrag = cFragment;
+
+    std::string newSeq = refSeqPart;
+
+    int s2 = alignedRegion.GetStartPosition();
+
+    if (s2 <= e1)
+    {
+        newSeq = newSeq.substr(e1 - s2 + 1);
+    }
+
+    newFrag.SetSequence(newFrag.GetSequence() + newSeq);
+
+    return newFrag;
 }
 
 ChromosomeRegionWithCi FiveEndForwardSCRead::ToRegionWithCi(const AlignmentResult &aResult)

@@ -4,11 +4,19 @@
 FiveEndReverseSCRead::FiveEndReverseSCRead(const std::string &name,
                                            const ChromosomeRegion &alignedRegion,
                                            const std::string &sequence,
+                                           const std::string &refSeqPart,
                                            int mapQuality,
                                            int clippedLength,
                                            int smallDelSize,
                                            int smallInsSize)
-    : ISoftClippedRead(name, alignedRegion, sequence, mapQuality, clippedLength, smallDelSize, smallInsSize)
+    : ISoftClippedRead(name,
+                       alignedRegion,
+                       sequence,
+                       refSeqPart,
+                       mapQuality,
+                       clippedLength,
+                       smallDelSize,
+                       smallInsSize)
 {
 }
 
@@ -50,16 +58,47 @@ ChromoFragment FiveEndReverseSCRead::CutFragment(const ChromoFragment &cFragment
 
 ChromoFragment FiveEndReverseSCRead::ExtendFragment(const ChromoFragment &cFragment)
 {
-    return cFragment;
+    int s1 = cFragment.GetStartPos();
+    if (s1 <= alignedRegion.GetStartPosition())
+    {
+        return cFragment;
+    }
+
+    ChromoFragment newFrag = cFragment;
+
+    std::string newSeq = refSeqPart;
+
+    int n = refSeqPart.length();
+
+    int e2 = alignedRegion.GetEndPosition();
+    if (s1 <= e2)
+    {
+        n = alignedRegion.GetLength() - e2 + s1 - 1;
+        newSeq = refSeqPart.substr(0, n);
+    }
+
+    newFrag.SetStart(newFrag.GetStart() - n);
+    newFrag.SetSequence(newSeq + newFrag.GetSequence());
+
+    return newFrag;
 }
 
 ChromosomeRegionWithCi FiveEndReverseSCRead::ToRegionWithCi(const AlignmentResult &aResult)
 {
-    int delta = aResult.GetAlignmentFragment1().GetMatch2().GetStart() - GetSequence().length() + clippedLength;
+    int s1 = aResult.GetAlignmentFragment1().GetMatch1().GetStart();
+    int s2 = aResult.GetAlignmentFragment1().GetMatch2().GetStart();
+
+    if (!aResult.HasSingleFragment())
+    {
+        s1 = aResult.GetAlignmentFragment2().GetMatch1().GetStart();
+        s2 = aResult.GetAlignmentFragment2().GetMatch2().GetStart();
+    }
+
+    int delta = s2 - GetSequence().length() + clippedLength;
 
     int startPos = GetClipPosition().GetPosition();
 
-    int endPos = aResult.GetAlignmentFragment1().GetMatch1().GetStart();
+    int endPos = s1;
 
     Interval cInterval;
 

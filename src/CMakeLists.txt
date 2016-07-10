@@ -24,7 +24,7 @@ DeletionCaller.cpp SpanningPair.cpp error.cpp LeafTargetRegionFinder.cpp
 variantcaller.cpp GenomePosition.cpp TargetRegion.cpp ChromosomeRegion.cpp
 FiveEndForwardSCRead.cpp FiveEndReverseSCRead.cpp HTSlibSequenceFetcher.cpp
 CustomSeqAligner.cpp AlignmentResult.cpp Deletion.cpp AlignmentFragment.cpp
-Interval.cpp readrealigner.cpp)
+Interval.cpp readrealigner.cpp AGEAlignerAdapter.cpp age/AGEaligner.cpp)
 #file(GLOB SOURCES "*.cpp")
 
 add_executable(sprites2 ${SOURCES})

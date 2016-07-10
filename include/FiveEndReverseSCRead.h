@@ -9,6 +9,7 @@ public:
     FiveEndReverseSCRead(const std::string &name,
                          const ChromosomeRegion& alignedRegion,
                          const std::string &sequence,
+                         const std::string &refSeqPart,
                          int mapQuality,
                          int clippedLength,
                          int smallDelSize,

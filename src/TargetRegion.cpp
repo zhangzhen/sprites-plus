@@ -16,11 +16,6 @@ TargetRegion::TargetRegion(int referenceId,
 {
 }
 
-ChromosomeRegion TargetRegion::GetShortChromoRegion() const
-{
-
-}
-
 ostream &operator <<(ostream &stream, const TargetRegion &tRegion)
 {
     stream << tRegion.cRegion

@@ -6,10 +6,14 @@
 using namespace std;
 using namespace BamTools;
 
-BamToolsSCReadsReader::BamToolsSCReadsReader(BamTools::BamReader *pBamReader, int sigClipSize, int ignoredNum)
+BamToolsSCReadsReader::BamToolsSCReadsReader(BamTools::BamReader *pBamReader,
+                                             int sigClipSize,
+                                             int ignoredNum,
+                                             ISequenceFetcher *pSeqFetcher)
     : pBamReader(pBamReader),
       sigClipSize(sigClipSize),
-      ignoredNum(ignoredNum)
+      ignoredNum(ignoredNum),
+      pSeqFetcher(pSeqFetcher)
 {
 }
 
@@ -43,11 +47,14 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
 //                {
 //                    cout << "debug here..." << endl;
 //                }
+                ChromosomeRegion cRegion(al.RefID,
+                                         pBamReader->GetReferenceData()[al.RefID].RefName,
+                        genomePositions[0] + 1,
+                        al.GetEndPosition() + 1);
                 return new FiveEndForwardSCRead(al.Name,
-                                                ChromosomeRegion(al.RefID,pBamReader->GetReferenceData()[al.RefID].RefName,
-                                                    genomePositions[0] + 1,
-                                                    al.GetEndPosition() + 1),
+                                                cRegion,
                                                 al.QueryBases,
+                                                pSeqFetcher->Fetch(cRegion).GetSequence(),
                                                 al.MapQuality,
                                                 al.CigarData[0].Length,
                                                 smallDelSize,
@@ -62,11 +69,14 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
 //                {
 //                    cout << "debug here..." << endl;
 //                }
+
+                ChromosomeRegion cRegion(al.RefID,pBamReader->GetReferenceData()[al.RefID].RefName,
+                        al.Position + 1,
+                        genomePositions[size - 1]);
                 return new FiveEndReverseSCRead(al.Name,
-                                                ChromosomeRegion(al.RefID,pBamReader->GetReferenceData()[al.RefID].RefName,
-                                                    al.Position + 1,
-                                                    genomePositions[size - 1]),
+                                                cRegion,
                                                 al.QueryBases,
+                                                pSeqFetcher->Fetch(cRegion).GetSequence(),
                                                 al.MapQuality,
                                                 al.CigarData[al.CigarData.size() - 1].Length,
                                                 smallDelSize,
