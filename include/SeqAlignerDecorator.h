@@ -15,7 +15,7 @@ public:
         delete pSeqAligner;
     }
 
-    AlignmentResult Align(const std::string &seq1, const std::string &seq2, const ScoreParam &sParam)
+    IAlignmentResult *Align(const std::string &seq1, const std::string &seq2, const ScoreParam &sParam)
     {
         return pSeqAligner->Align(seq1, seq2, sParam);
     }

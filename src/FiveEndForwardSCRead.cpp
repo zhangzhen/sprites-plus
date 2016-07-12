@@ -82,37 +82,66 @@ ChromoFragment FiveEndForwardSCRead::ExtendFragment(const ChromoFragment &cFragm
     return newFrag;
 }
 
-ChromosomeRegionWithCi FiveEndForwardSCRead::ToRegionWithCi(const AlignmentResult &aResult, int refStartPos)
+//ChromosomeRegionWithCi FiveEndForwardSCRead::ToRegionWithCi(const AlignmentResult &aResult, int refStartPos)
+//{
+//    GenomePosition clipPosition = GetClipPosition();
+
+//    int nHom = aResult.NumOfHomToRight();
+
+//    int delta = clippedLength - aResult.GetAlignmentFragment1().GetMatch2().GetEnd() -nHom - 1;
+
+//    int endPos = clipPosition.GetPosition();
+
+//    int startPos = aResult.GetAlignmentFragment1().GetMatch1().GetEnd() + nHom + refStartPos;
+
+//    Interval cInterval;
+
+//    if (delta < 0)
+//    {
+//        startPos += delta;
+//        cInterval = Interval(0, abs(delta));
+//    }
+
+//    if (!aResult.HasSingleFragment())
+//    {
+//        int f2_l1 = aResult.GetAlignmentFragment2().GetMatch1().Length();
+//        int f2_d = refSeqPart.length() - f2_l1;
+//        if (f2_d > 0)
+//            endPos += f2_d;
+//    }
+
+//    return ChromosomeRegionWithCi(GetReferenceId(),
+//                                  GetReferenceName(),
+//                                  startPos,
+//                                  cInterval,
+//                                  endPos,
+//                                  cInterval);
+//}
+
+bool FiveEndForwardSCRead::IsAlnResultQualified(DoubleFragsAlnResult *pAlnResult, const CallParams &cParams)
 {
-    GenomePosition clipPosition = GetClipPosition();
-
-    int nHom = aResult.NumOfHomToRight();
-
-    int delta = clippedLength - aResult.GetAlignmentFragment1().GetMatch2().GetEnd() -nHom - 1;
-
-    int endPos = clipPosition.GetPosition();
-
-    int startPos = aResult.GetAlignmentFragment1().GetMatch1().GetEnd() + nHom + refStartPos;
-
-    Interval cInterval;
-
-    if (delta < 0)
-    {
-        startPos += delta;
-        cInterval = Interval(0, abs(delta));
-    }
-
-    return ChromosomeRegionWithCi(GetReferenceId(),
-                                  GetReferenceName(),
-                                  startPos,
-                                  cInterval,
-                                  endPos,
-                                  cInterval);
+    return IsQualified(pAlnResult->GetAlnFrag1LengthW(), pAlnResult->GetAlnFrag1PercentIdentity(), cParams);
 }
 
-bool FiveEndForwardSCRead::IsQualified(const AlignmentResult &aResult, const CallParams &cParams)
+CallResult *FiveEndForwardSCRead::ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult)
 {
-    return aResult.GetAlignmentFragment1().GetMatch2Length() >= cParams.GetMinClip() &&
-            aResult.GetAlignmentFragment1().GetPercentageIdentity() >= (1 - cParams.GetMaxErrorRate()) * 100;
+    int startPos = refStartPos + pAlnResult->GetAlnFrag1EndV();
+    int endPos = GetClipPosition().GetPosition();
 
+    int f2_l1 = pAlnResult->GetAlnFrag2LengthV();
+    int f2_d = refSeqPart.length() - f2_l1;
+    if (f2_d > 0)
+    {
+        endPos += f2_d;
+    }
+    else
+    {
+        startPos -= f2_d;
+    }
+
+    return new CallResult(ChromosomeRegion(GetReferenceId(),
+                                       GetReferenceName(),
+                                       startPos,
+                                       endPos),
+                      "");
 }

@@ -35,7 +35,7 @@ public:
 
     void PrintAlignment() const;
 
-    double GetPercentageIdentity()
+    double GetPercentageIdentity() const
     {
         if (GetAlignmentLength() == 0) error("Divided by zero.");
 

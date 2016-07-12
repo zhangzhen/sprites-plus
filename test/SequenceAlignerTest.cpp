@@ -2,6 +2,8 @@
 #include "CustomSeqAligner.h"
 #include "ReverseCustomSeqAligner.h"
 #include "AGEAlignerAdapter.h"
+#include "SingleFragAlnResult.h"
+#include "DoubleFragsAlnResult.h"
 
 #include <algorithm>
 
@@ -42,11 +44,13 @@ TEST(SequenceAligner, CustomSeqAlignerAlign)
 {
     ScoreParam sParam(2, -3, -10000);
 
-    AlignmentResult actual = pSeqAligner->Align(s1, s2, sParam);
+    SingleFragAlnResult *pActual = dynamic_cast<SingleFragAlnResult *>(pSeqAligner->Align(s1, s2, sParam));
 
-    CHECK_EQUAL(59, actual.GetScore());
+    CHECK_EQUAL(59, pActual->GetScore());
 
-    CHECK(Interval(118, 149) == actual.GetAlignmentFragment1().GetMatch2());
+    CHECK(Interval(332, 363) == pActual->GetAlnFragMatchV());
+
+    delete pActual;
 
 }
 
@@ -54,9 +58,11 @@ TEST(SequenceAligner, ReverseCustomSeqAlignerAlign)
 {
     ScoreParam sParam(2, -3, -10000);
 
-    AlignmentResult actual = pSeqAligner2->Align(s1_rev, s2_rev, sParam);
+    SingleFragAlnResult *pActual = dynamic_cast<SingleFragAlnResult *>(pSeqAligner2->Align(s1_rev, s2_rev, sParam));
 
-    CHECK(Interval(0, 31) == actual.GetAlignmentFragment1().GetMatch2());
+    CHECK(Interval(0, 31) == pActual->GetAlnFragMatchW());
+
+    delete pActual;
 
 }
 
@@ -73,20 +79,22 @@ TEST(SequenceAligner, AGEAlignerAdapter)
             "CAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA";
 
     ScoreParam sParam(1, -2, -1, -2);
-    AlignmentResult actual = pSeqAligner3->Align(v, w, sParam);
+    DoubleFragsAlnResult *pActual = dynamic_cast<DoubleFragsAlnResult *>(pSeqAligner3->Align(v, w, sParam));
 
     AlignmentFragment expectedAlnFrag1("TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATC",
                                        "TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATC",
                                        Interval(224, 272),
                                        Interval(0, 48));
 
-    CHECK(expectedAlnFrag1 == actual.GetAlignmentFragment1());
+    CHECK(expectedAlnFrag1 == pActual->GetAlnFrag1());
 
     AlignmentFragment expectedAlnFrag2("TTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCCCAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA",
                                        "TTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCCCAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA",
                                        Interval(473, 573),
                                        Interval(49, 149));
 
-    CHECK(expectedAlnFrag2 == actual.GetAlignmentFragment2());
+    CHECK(expectedAlnFrag2 == pActual->GetAlnFrag2());
+
+    delete pActual;
 
 }

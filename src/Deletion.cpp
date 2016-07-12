@@ -6,12 +6,23 @@ using namespace std;
 string Deletion::ToBedpe()
 {
     stringstream ss;
-    ss << cRegionWithCi.GetReferenceName()
-       << "\t" << cRegionWithCi.GetStartPosition() + cRegionWithCi.GetStartCi().GetStart() - 1
-       << "\t" << cRegionWithCi.GetStartPosition() + cRegionWithCi.GetStartCi().GetEnd()
-       << "\t" << cRegionWithCi.GetReferenceName()
-       << "\t" << cRegionWithCi.GetEndPosition() + cRegionWithCi.GetEndCi().GetStart() - 1
-       << "\t" << cRegionWithCi.GetEndPosition() + cRegionWithCi.GetEndCi().GetEnd()
+    ss << cRegion.GetReferenceName()
+       << "\t" << cRegion.GetStartPosition() + startInterval.GetStart() - 1
+       << "\t" << cRegion.GetStartPosition() + startInterval.GetEnd()
+       << "\t" << cRegion.GetReferenceName()
+       << "\t" << cRegion.GetEndPosition() + endInterval.GetStart() - 1
+       << "\t" << cRegion.GetEndPosition() + endInterval.GetEnd()
+       << "\t" << CallName()
+       << "\t" << numOfReads;
+    return ss.str();
+}
+
+string Deletion::ToBed()
+{
+    stringstream ss;
+    ss << cRegion.GetReferenceName()
+       << "\t" << cRegion.GetStartPosition()
+       << "\t" << cRegion.GetEndPosition()
        << "\t" << CallName()
        << "\t" << numOfReads;
     return ss.str();

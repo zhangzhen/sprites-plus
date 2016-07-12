@@ -11,7 +11,7 @@ class CustomSeqAligner : public ISequenceAligner
 public:
     CustomSeqAligner() {}
 
-    AlignmentResult Align(const std::string& v, const std::string& w, const ScoreParam &sParam);
+    IAlignmentResult* Align(const std::string& v, const std::string& w, const ScoreParam &sParam);
 
 };
 

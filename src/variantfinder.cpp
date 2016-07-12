@@ -1,13 +1,13 @@
-#include "variantcaller.h"
+#include "variantfinder.h"
 
 
-IVariantCaller::IVariantCaller(ISoftClippedRead *pRead)
+IVariantFinder::IVariantFinder(ISoftClippedRead *pRead)
     : reads({pRead})
 {
 
 }
 
-void IVariantCaller::AddRead(ISoftClippedRead *pRead)
+void IVariantFinder::AddRead(ISoftClippedRead *pRead)
 {
     if (pRead->GetType() == reads[0]->GetType()
         && pRead->GetClipPosition() == reads[0]->GetClipPosition())

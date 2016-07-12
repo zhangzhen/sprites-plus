@@ -9,7 +9,7 @@ class AGEAlignerAdapter : public ISequenceAligner
 public:
     AGEAlignerAdapter() {}
 
-    AlignmentResult Align(const std::string& v, const std::string& w, const ScoreParam &sParam);
+    IAlignmentResult *Align(const std::string& v, const std::string& w, const ScoreParam &sParam);
 };
 
 #endif // AGEALIGNERADAPTER_H

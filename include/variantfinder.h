@@ -1,5 +1,5 @@
-#ifndef VARIANTCALLER_H
-#define VARIANTCALLER_H
+#ifndef VARIANTFINDER_H
+#define VARIANTFINDER_H
 
 #include "variant.h"
 #include "softclippedread.h"
@@ -8,18 +8,18 @@
 
 #include <vector>
 
-class IVariantCaller
+class IVariantFinder
 {
 public:
-    IVariantCaller(ISoftClippedRead *pRead);
+    IVariantFinder(ISoftClippedRead *pRead);
     void AddRead(ISoftClippedRead *pRead);
     GenomePosition GetClipPosition() { return reads[0]->GetClipPosition(); }
-    virtual ~IVariantCaller() {}
-    virtual IVariant* FindCall(const CallParams& cParams) = 0;
+    virtual ~IVariantFinder() {}
+    virtual IVariant* FindVariant(const CallParams& cParams) = 0;
     std::string GetReadType() { return reads[0]->GetType(); }
 
 protected:
     std::vector<ISoftClippedRead *> reads;
 };
 
-#endif // VARIANTCALLER_H
+#endif // VARIANTFINDER_H

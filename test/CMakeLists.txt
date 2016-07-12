@@ -5,7 +5,7 @@ include_directories(${CPPUTEST_INCLUDE_DIR})
 
 set(LIBRARIES ${LIBRARIES} ${CPPUTEST_LIBRARIES})
 set(sources ../src/AnovaBiPartitionQualifier.cpp ../src/MaxDistDiffBiPartitioner.cpp ../src/CustomSeqAligner.cpp
-../src/error.cpp ../src/Interval.cpp ../src/AlignmentResult.cpp ../src/AlignmentResult.cpp ../src/AlignmentFragment.cpp
+../src/error.cpp ../src/Interval.cpp ../src/DoubleFragsAlnResult.cpp ../src/SingleFragAlnResult.cpp ../src/AlignmentFragment.cpp
 ../src/AGEAlignerAdapter.cpp ../src/age/AGEaligner.cpp)
 set(testSources AnovaQualifierTest.cpp MaxDiffPartitionerTest.cpp SequenceAlignerTest.cpp)
 add_executable(sprites2test testmain.cpp ${testSources} ${sources})

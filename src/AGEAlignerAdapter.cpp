@@ -1,9 +1,10 @@
 #include "AGEAlignerAdapter.h"
 #include "age/AGEaligner.hh"
 #include "error.h"
+#include "DoubleFragsAlnResult.h"
 
 
-AlignmentResult AGEAlignerAdapter::Align(const std::string &v, const std::string &w, const ScoreParam &sParam)
+IAlignmentResult *AGEAlignerAdapter::Align(const std::string &v, const std::string &w, const ScoreParam &sParam)
 {
 
     int flag = AGEaligner::INDEL_FLAG;
@@ -32,5 +33,5 @@ AlignmentResult AGEAlignerAdapter::Align(const std::string &v, const std::string
                                  Interval(f->start1() - 1, f->end1() - 1),
                                  Interval(f->start2() - 1, f->end2() - 1));
 
-    return AlignmentResult(v, w, aligner.score(), aFragment1, aFragment2);
+    return new DoubleFragsAlnResult(v, w, aligner.score(), aFragment1, aFragment2);
 }

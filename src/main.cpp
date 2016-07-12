@@ -1,7 +1,7 @@
 #include "BamToolsRGToLibMapReader.h"
 #include "BamToolsLibInsertSizeEstimator.h"
 #include "BamToolsSCReadsReader.h"
-#include "PerChromDeletionCaller.h"
+#include "PerChromDeletionFinder.h"
 #include "MaxDistDiffBiPartitioner.h"
 #include "AnovaBiPartitionQualifier.h"
 #include "MedianPositionPicker.h"
@@ -12,10 +12,9 @@
 #include "globals.h"
 #include "error.h"
 #include "HTSlibSequenceFetcher.h"
-#include "WholeReadRealigner.h"
 #include "CustomSeqAligner.h"
 #include "ReverseCustomSeqAligner.h"
-#include "AGEReadRealigner.h"
+#include "AGERealignWholeReadCaller.h"
 #include "AGEAlignerAdapter.h"
 
 #include <boost/program_options/options_description.hpp>
@@ -68,27 +67,28 @@ void EstimateInsertSizeForLibrarys(ILibraryInsertSizeEstimator *pEstimator, std:
     }
 }
 
-void FindVariantCalls(PerChromDeletionCaller &caller, const CallParams &cParams, std::ostream& out)
+void FindVariants(PerChromDeletionFinder &finder, const CallParams &cParams, std::ostream& out)
 {
     std::vector<IVariant*> variants;
-    caller.FindCalls(cParams, variants);
-    auto finalVariants = caller.MergeCalls(variants);
+    finder.FindCalls(cParams, variants);
+    auto finalVariants = finder.MergeCalls(variants);
     for (auto &pVariant : finalVariants)
     {
-        out << pVariant->ToBedpe() << std::endl;
+//        out << pVariant->ToBedpe() << std::endl;
+        out << pVariant->ToBed() << std::endl;
     }
-    caller.Clear();
+    finder.Clear();
 }
 
-void FindTargetRegions(PerChromDeletionCaller &caller, std::ostream& out)
+void FindTargetRegions(PerChromDeletionFinder &finder, std::ostream& out)
 {
     std::vector<TargetRegion *> regions;
-    caller.FindTargetRegions(regions);
+    finder.FindTargetRegions(regions);
     for (auto &pRegion : regions)
     {
         out << *pRegion << std::endl;
     }
-    caller.Clear();
+    finder.Clear();
 }
 
 int main(int argc, char *argv[])
@@ -204,31 +204,31 @@ int main(int argc, char *argv[])
                                                                             pQualifier,
                                                                             pPosPicker);
 
-    IReadRealigner *pPrefixRealigner = new AGEReadRealigner(new AGEAlignerAdapter());
+    IRealignmentCaller *pPrefixCaller = new AGERealignWholeReadCaller(new AGEAlignerAdapter());
 //    IReadRealigner *pPrefixRealigner = new WholeReadRealigner(new ReverseCustomSeqAligner(new CustomSeqAligner()));
 
-    IReadRealigner *pSuffixRealigner = pPrefixRealigner;
+    IRealignmentCaller *pSuffixCaller = pPrefixCaller;
 //    IReadRealigner *pSuffixRealigner = new WholeReadRealigner(new CustomSeqAligner());
 
     CallParams cParams(vm["min-aligned"].as<int>(), vm["error-rate"].as<double>());
 
 
     ISoftClippedRead *pRead;
-    PerChromDeletionCaller caller(pRegionToLeftFinder, pRegionToRightFinder, pSeqFetcher, pPrefixRealigner, pSuffixRealigner);
+    PerChromDeletionFinder finder(pRegionToLeftFinder, pRegionToRightFinder, pSeqFetcher, pPrefixCaller, pSuffixCaller);
     while ((pRead = pReadsReader->NextRead()))
     {
         currentId = pRead->GetReferenceId();
         if (prevId != -1 && prevId != currentId)
         {
 //            FindTargetRegions(caller, std::cout);
-            FindVariantCalls(caller, cParams, std::cout);
+            FindVariants(finder, cParams, std::cout);
         }
-        caller.AddRead(pRead);
+        finder.AddRead(pRead);
         prevId = currentId;
     }
 //    FindTargetRegions(caller, std::cout);
 
-    FindVariantCalls(caller, cParams, std::cout);
+    FindVariants(finder, cParams, std::cout);
 
     return 0;
 }

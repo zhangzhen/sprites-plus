@@ -1,31 +1,31 @@
-#include "PerChromDeletionCaller.h"
+#include "PerChromDeletionFinder.h"
 #include <iterator>
 
 using namespace std;
 
-PerChromDeletionCaller::PerChromDeletionCaller(ITargetRegionFinder *pRegionToLeftFinder,
+PerChromDeletionFinder::PerChromDeletionFinder(ITargetRegionFinder *pRegionToLeftFinder,
 //                                                 ITargetRegionFinder *pRegionToRightFinder)
                                                ITargetRegionFinder *pRegionToRightFinder,
                                                ISequenceFetcher *pSeqFetcher,
-                                               IReadRealigner *pPrefixRealigner,
-                                               IReadRealigner *pSuffixRealigner)
+                                               IRealignmentCaller *pPrefixCaller,
+                                               IRealignmentCaller *pSuffixCaller)
     : pRegionToLeftFinder(pRegionToLeftFinder),
 //      pRegionToRightFinder(pRegionToRightFinder)
       pRegionToRightFinder(pRegionToRightFinder),
       pSeqFetcher(pSeqFetcher),
-      pPrefixRealigner(pPrefixRealigner),
-      pSuffixRealigner(pSuffixRealigner)
+      pPrefixCaller(pPrefixCaller),
+      pSuffixCaller(pSuffixCaller)
 {
 }
 
-void PerChromDeletionCaller::AddRead(ISoftClippedRead *pRead)
+void PerChromDeletionFinder::AddRead(ISoftClippedRead *pRead)
 {
     int pos = pRead->GetClipPosition().GetPosition();
-    if (callerMap.count(pos))
+    if (finderMap.count(pos))
     {
-        if (pRead->GetType() == callerMap[pos]->GetReadType())
+        if (pRead->GetType() == finderMap[pos]->GetReadType())
         {
-            callerMap[pos]->AddRead(pRead);
+            finderMap[pos]->AddRead(pRead);
         }
         else
         {
@@ -36,30 +36,30 @@ void PerChromDeletionCaller::AddRead(ISoftClippedRead *pRead)
     {
         if (pRead->GetType() == "5F")
         {
-            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder, pSeqFetcher, pPrefixRealigner);
+            finderMap[pos] = new DeletionFinder(pRead, pRegionToRightFinder, pSeqFetcher, pPrefixCaller);
 //            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder);
         }
         else if (pRead->GetType() == "5R")
         {
-            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder, pSeqFetcher, pSuffixRealigner);
+            finderMap[pos] = new DeletionFinder(pRead, pRegionToLeftFinder, pSeqFetcher, pSuffixCaller);
 //            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder);
         }
     }
 }
 
-void PerChromDeletionCaller::Clear()
+void PerChromDeletionFinder::Clear()
 {
-    callerMap.clear();
+    finderMap.clear();
     conflictSet.clear();
 }
 
-void PerChromDeletionCaller::FindTargetRegions(std::vector<TargetRegion *> &regions)
+void PerChromDeletionFinder::FindTargetRegions(std::vector<TargetRegion *> &regions)
 {
     TargetRegion *pReg;
 //    copy(begin(conflictSet), end(conflictSet), ostream_iterator<int>(cout, " "));
 //    cout << callerMap.size() << endl;
 
-    for (auto &elt : callerMap)
+    for (auto &elt : finderMap)
     {
         if (conflictSet.count(elt.first))
         {
@@ -72,16 +72,16 @@ void PerChromDeletionCaller::FindTargetRegions(std::vector<TargetRegion *> &regi
     }
 }
 
-void PerChromDeletionCaller::FindCalls(const CallParams &cParams, std::vector<IVariant *> &variants)
+void PerChromDeletionFinder::FindCalls(const CallParams &cParams, std::vector<IVariant *> &variants)
 {
     IVariant *pVariant;
-    for (auto &elt : callerMap)
+    for (auto &elt : finderMap)
     {
         if (conflictSet.count(elt.first))
         {
             continue;
         }
-        if((pVariant = elt.second->FindCall(cParams)))
+        if((pVariant = elt.second->FindVariant(cParams)))
         {
             variants.push_back(pVariant);
         }
@@ -89,7 +89,7 @@ void PerChromDeletionCaller::FindCalls(const CallParams &cParams, std::vector<IV
 
 }
 
-std::vector<IVariant *> PerChromDeletionCaller::MergeCalls(const std::vector<IVariant *> &variants)
+std::vector<IVariant *> PerChromDeletionFinder::MergeCalls(const std::vector<IVariant *> &variants)
 {
     vector<IVariant*> result;
 

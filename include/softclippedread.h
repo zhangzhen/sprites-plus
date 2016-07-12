@@ -1,10 +1,12 @@
 #ifndef SOFTCLIPPEDREAD_H
 #define SOFTCLIPPEDREAD_H
 
-#include "AlignmentResult.h"
-#include "ChromosomeRegionWithCi.h"
+#include "ChromosomeRegion.h"
 #include "ChromoFragment.h"
 #include "CallParams.h"
+#include "CallResult.h"
+#include "SingleFragAlnResult.h"
+#include "DoubleFragsAlnResult.h"
 
 
 class ISoftClippedRead
@@ -37,9 +39,13 @@ public:
 
     virtual GenomePosition GetClipPosition() = 0;
 
-    virtual bool IsQualified(const AlignmentResult& aResult, const CallParams& cParams) = 0;
+    virtual bool IsAlnResultQualified(DoubleFragsAlnResult *pAlnResult, const CallParams& cParams) = 0;
 
-    virtual ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult, int refStartPos) = 0;
+//    virtual ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult, int refStartPos) = 0;
+
+//    virtual CallResult ToCallResult(int refStartPos, const SingleFragAlnResult& alnResult) = 0;
+
+    virtual CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult) = 0;
 
     virtual ChromoFragment CutFragment(const ChromoFragment& cFragment) = 0;
 
@@ -57,6 +63,9 @@ protected:
     int clippedLength;
     int smallDelSize;
     int smallInsSize;
+
 };
+
+bool IsQualified(int matchLen, int percentIdent, const CallParams& cParams);
 
 #endif // SOFTCLIPPEDREAD_H

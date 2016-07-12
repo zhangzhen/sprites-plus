@@ -1,7 +1,7 @@
 #ifndef VARIANT_H
 #define VARIANT_H
 
-#include "ChromosomeRegionWithCi.h"
+#include "ChromosomeRegion.h"
 #include "GenomePosition.h"
 #include "Interval.h"
 
@@ -11,12 +11,16 @@
 class IVariant
 {
 public:
-    IVariant(const ChromosomeRegionWithCi& cRegionWithCi,
+    IVariant(const ChromosomeRegion& cRegion,
+             const Interval& startInterval,
+             const Interval& endInterval,
              bool heterozygous,
              const GenomePosition& fromClipPosition,
              const std::string& fromReadType,
              int numOfReads)
-        : cRegionWithCi(cRegionWithCi),
+        : cRegion(cRegion),
+          startInterval(startInterval),
+          endInterval(endInterval),
           heterozygous(heterozygous),
           fromClipPosition(fromClipPosition),
           fromReadType(fromReadType),
@@ -27,7 +31,7 @@ public:
 
     int GetLength() const
     {
-        return cRegionWithCi.GetLength() - 2;
+        return cRegion.GetLength() - 2;
     }
 
     std::string CallName()
@@ -40,7 +44,7 @@ public:
 
     bool QuasiEquals(IVariant& other)
     {
-        return GetType() == other.GetType() && cRegionWithCi.QuasiEquals(other.cRegionWithCi);
+        return GetType() == other.GetType() && cRegion == other.cRegion;
     }
 
     int GetNumOfReads() const { return numOfReads; }
@@ -49,8 +53,12 @@ public:
 
     virtual std::string ToBedpe() = 0;
 
+    virtual std::string ToBed() = 0;
+
 protected:
-    ChromosomeRegionWithCi cRegionWithCi;
+    ChromosomeRegion cRegion;
+    Interval startInterval;
+    Interval endInterval;
     bool heterozygous;
     GenomePosition fromClipPosition;
     std::string fromReadType;

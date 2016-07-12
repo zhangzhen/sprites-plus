@@ -25,9 +25,11 @@ public:
 
     ChromoFragment ExtendFragment(const ChromoFragment &cFragment);
 
-    ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult, int refStartPos);
+//    ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult, int refStartPos);
 
-    bool IsQualified(const AlignmentResult &aResult, const CallParams &cParams);
+    bool IsAlnResultQualified(DoubleFragsAlnResult *pAlnResult, const CallParams &cParams);
+
+    CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult);
 };
 
 #endif // FIVEENDFORWARDSCREAD_H

@@ -1,9 +1,11 @@
 #include "CustomSeqAligner.h"
 #include "error.h"
+#include "SingleFragAlnResult.h"
 
 #include <vector>
 #include <algorithm>
 #include <sstream>
+
 
 typedef std::vector<int> DPCells;
 typedef std::vector<DPCells> DPMatrix;
@@ -15,7 +17,7 @@ std::string InsertIndel(std::string s, size_t pos)
     return s;
 }
 
-AlignmentResult CustomSeqAligner::Align(const std::string &v, const std::string &w, const ScoreParam &sParam)
+IAlignmentResult *CustomSeqAligner::Align(const std::string &v, const std::string &w, const ScoreParam &sParam)
 {
     if(v.empty() || w.empty()) {
         error("CustomSeqAligner::Align error: empty input sequence");
@@ -115,13 +117,13 @@ AlignmentResult CustomSeqAligner::Align(const std::string &v, const std::string 
     int match1_start = i;
     int match2_start = j;
 
-    return AlignmentResult(v,
-                           w,
-                           score,
-                           AlignmentFragment(v_aligned,
-                                             w_aligned,
-                                             Interval(match1_start, match1_end),
-                                             Interval(match2_start, match2_end)));
+    return new SingleFragAlnResult(v,
+                                   w,
+                                   score,
+                                   AlignmentFragment(v_aligned,
+                                                     w_aligned,
+                                                     Interval(match1_start, match1_end),
+                                                     Interval(match2_start, match2_end)));
 
 }
 

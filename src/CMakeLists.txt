@@ -16,15 +16,16 @@ set(LIBRARIES ${LIBRARIES} ${Boost_LIBRARIES})
 
 include_directories(../include)
 
-set(SOURCES main.cpp Library.cpp PerChromDeletionCaller.cpp BamToolsRGToLibMapReader.cpp
+set(SOURCES main.cpp Library.cpp PerChromDeletionFinder.cpp BamToolsRGToLibMapReader.cpp
 BamToolsLibInsertSizeEstimator.cpp BamToolsSCReadsReader.cpp BamToolsPairsToLeftReader.cpp
 BamToolsPairsToRightReader.cpp TargetRegionToLeftFinder.cpp TargetRegionToRightFinder.cpp
 MaxDistDiffBiPartitioner.cpp AnovaBiPartitionQualifier.cpp MedianPositionPicker.cpp
-DeletionCaller.cpp SpanningPair.cpp error.cpp LeafTargetRegionFinder.cpp
-variantcaller.cpp GenomePosition.cpp TargetRegion.cpp ChromosomeRegion.cpp
+DeletionFinder.cpp SpanningPair.cpp error.cpp LeafTargetRegionFinder.cpp
+variantfinder.cpp GenomePosition.cpp TargetRegion.cpp ChromosomeRegion.cpp
 FiveEndForwardSCRead.cpp FiveEndReverseSCRead.cpp HTSlibSequenceFetcher.cpp
-CustomSeqAligner.cpp AlignmentResult.cpp Deletion.cpp AlignmentFragment.cpp
-Interval.cpp AGEAlignerAdapter.cpp age/AGEaligner.cpp)
+CustomSeqAligner.cpp Deletion.cpp AlignmentFragment.cpp
+Interval.cpp AGEAlignerAdapter.cpp age/AGEaligner.cpp AGERealignWholeReadCaller.cpp
+softclippedread.cpp SingleFragAlnResult.cpp DoubleFragsAlnResult.cpp)
 #file(GLOB SOURCES "*.cpp")
 
 add_executable(sprites2 ${SOURCES})

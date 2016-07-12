@@ -1,18 +1,17 @@
-#ifndef PERCHROMDELETIONCALLER_H
-#define PERCHROMDELETIONCALLER_H
+#ifndef PERCHROMDELETIONFINDER_H
+#define PERCHROMDELETIONFINDER_H
 
-#include "DeletionCaller.h"
+#include "DeletionFinder.h"
 #include "api/BamReader.h"
 
-class PerChromDeletionCaller
+class PerChromDeletionFinder
 {
 public:
-    PerChromDeletionCaller(ITargetRegionFinder *pRegionToLeftFinder,
-//                         ITargetRegionFinder *pRegionToRightFinder);
+    PerChromDeletionFinder(ITargetRegionFinder *pRegionToLeftFinder,
                            ITargetRegionFinder *pRegionToRightFinder,
                            ISequenceFetcher *pSeqFetcher,
-                           IReadRealigner *pPrefixRealigner,
-                           IReadRealigner *pSuffixRealigner);
+                           IRealignmentCaller *pPrefixCaller,
+                           IRealignmentCaller *pSuffixCaller);
     void AddRead(ISoftClippedRead *pRead);
     void Clear();
     void FindTargetRegions(std::vector<TargetRegion *> &regions);
@@ -20,13 +19,13 @@ public:
     std::vector<IVariant*> MergeCalls(const std::vector<IVariant*>& variants);
 
 private:
-    std::map<int, DeletionCaller*> callerMap;
+    std::map<int, DeletionFinder*> finderMap;
     std::set<int> conflictSet;
     ITargetRegionFinder *pRegionToLeftFinder;
     ITargetRegionFinder *pRegionToRightFinder;
     ISequenceFetcher *pSeqFetcher;
-    IReadRealigner *pPrefixRealigner;
-    IReadRealigner *pSuffixRealigner;
+    IRealignmentCaller *pPrefixCaller;
+    IRealignmentCaller *pSuffixCaller;
 };
 
-#endif // PERCHROMDELETIONCALLER_H
+#endif // PERCHROMDELETIONFINDER_H
