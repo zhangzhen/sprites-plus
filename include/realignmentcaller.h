@@ -29,7 +29,7 @@ public:
 
         IAlignmentResult *pAlnResult = pSeqAligner->Align(v, w, MakeScoreParam());
 
-        if (pRead->GetClipPosition().GetPosition() == 34905297)
+        if (pRead->GetClipPosition().GetPosition() == 153451567)
         {
             std::cout << cFragment.GetSequence() << std::endl;
             std::cout << modifiedFrag.GetStartPos() << std::endl;
@@ -48,9 +48,6 @@ public:
         return MakeCallResult(pRead, modifiedFrag.GetStartPos(), pAlnResult);
     }
 
-protected:
-    ISequenceFetcher *pSeqFetcher;
-
 private:
     ISequenceAligner *pSeqAligner;
 
@@ -59,6 +56,10 @@ private:
     virtual ScoreParam MakeScoreParam() = 0;
     virtual bool IsAlnResultQualified(ISoftClippedRead *pRead, IAlignmentResult *pAlnResult, const CallParams& cParams) = 0;
     virtual CallResult *MakeCallResult(ISoftClippedRead *pRead, int refStartPos, IAlignmentResult *pAlnResult) = 0;
+
+protected:
+    ISequenceFetcher *pSeqFetcher;
+
 };
 
 #endif // REALIGNMENTCALLER

@@ -10,6 +10,8 @@
 #include "sequencefetcher.h"
 
 
+const double MIN_PERCENT_IDENTITY = 95.0;
+
 class ISoftClippedRead
 {
 public:

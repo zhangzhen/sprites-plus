@@ -156,7 +156,7 @@ CallResult *FiveEndForwardSCRead::ToCallResult(int refStartPos, DoubleFragsAlnRe
         int n_id = NumOfIdenticalChars(v, w) + pAlnResult->GetAlnFrag2().NumOfIdenticalBases();
         int aln_len = n_bases + pAlnResult->GetAlnFrag2().GetAlignmentLength();
         double percentId = 100.0f * n_id / aln_len;
-        if (percentId >= 90)
+        if (percentId >= MIN_PERCENT_IDENTITY)
         {
             endPos -= n_bases;
         }

@@ -83,9 +83,15 @@ public:
 
     std::string WBasesBetweenTwoFrags() const
     {
+        return WBasesBetweenTwoFragsExtLeft(0);
+    }
+
+    std::string WBasesBetweenTwoFragsExtLeft(int shift) const
+    {
+        assert(shift >= 0);
         int n_bases = NumOfWBasesBetweenTwoFrags();
         if (n_bases == 0) return "";
-        return w.substr(GetAlnFrag1EndW() + 1, n_bases);
+        return w.substr(GetAlnFrag1EndW() + 1 - shift, n_bases + shift);
     }
 
 private:

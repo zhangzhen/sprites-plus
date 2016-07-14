@@ -68,5 +68,7 @@ private:
 
 int NumOfIdenticalChars(const std::string &v, const std::string &w);
 
+bool IsLastCharIdentical(const std::string &v, const std::string &w);
+
 #endif // ALIGNMENTFRAGMENT
 

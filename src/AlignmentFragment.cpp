@@ -42,3 +42,8 @@ int NumOfIdenticalChars(const std::string &v, const std::string &w)
     }
     return s;
 }
+
+bool IsLastCharIdentical(const std::string &v, const std::string &w)
+{
+    return v.back() == w.back();
+}
