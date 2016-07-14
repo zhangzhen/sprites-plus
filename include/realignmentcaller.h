@@ -2,6 +2,7 @@
 #define REALIGNMENTCALLER
 
 #include "sequencealigner.h"
+#include "sequencefetcher.h"
 #include "CallResult.h"
 #include "softclippedread.h"
 #include "ChromoFragment.h"
@@ -11,13 +12,16 @@
 class IRealignmentCaller
 {
 public:
-    IRealignmentCaller(ISequenceAligner *pSeqAligner)
-        : pSeqAligner(pSeqAligner)
+    IRealignmentCaller(ISequenceAligner *pSeqAligner, ISequenceFetcher *pSeqFetcher)
+        : pSeqAligner(pSeqAligner),
+          pSeqFetcher(pSeqFetcher)
     {}
     virtual ~IRealignmentCaller() {}
 
-    CallResult *Call(ISoftClippedRead *pRead, const ChromoFragment& cFragment, const CallParams& cParams)
+    CallResult *Call(ISoftClippedRead *pRead, const ChromosomeRegion& cRegion, const CallParams& cParams)
     {
+        ChromoFragment cFragment = pSeqFetcher->Fetch(cRegion);
+
         ChromoFragment modifiedFrag = PreprocessFragment(pRead, cFragment);
 
         std::string v = modifiedFrag.GetSequence();
@@ -25,16 +29,16 @@ public:
 
         IAlignmentResult *pAlnResult = pSeqAligner->Align(v, w, MakeScoreParam());
 
-//        if (pRead->GetClipPosition().GetPosition() == 98353306)
-//        {
-//            std::cout << cFragment.GetSequence() << std::endl;
-//            std::cout << modifiedFrag.GetStartPos() << std::endl;
-//            std::cout << modifiedFrag.GetSequence() << std::endl;
-//            std::cout << pRead->GetAlignedRegion() << std::endl;
-//            std::cout << v << std::endl;
-//            std::cout << "#####################" << std::endl;
-//            pAlnResult->PrintAlignment();
-//        }
+        if (pRead->GetClipPosition().GetPosition() == 34905297)
+        {
+            std::cout << cFragment.GetSequence() << std::endl;
+            std::cout << modifiedFrag.GetStartPos() << std::endl;
+            std::cout << modifiedFrag.GetSequence() << std::endl;
+            std::cout << pRead->GetAlignedRegion() << std::endl;
+            std::cout << w << std::endl;
+            std::cout << "#####################" << std::endl;
+            pAlnResult->PrintAlignment();
+        }
 
         if (!IsAlnResultQualified(pRead, pAlnResult, cParams))
         {
@@ -43,6 +47,9 @@ public:
 
         return MakeCallResult(pRead, modifiedFrag.GetStartPos(), pAlnResult);
     }
+
+protected:
+    ISequenceFetcher *pSeqFetcher;
 
 private:
     ISequenceAligner *pSeqAligner;

@@ -7,8 +7,8 @@
 class AGERealignWholeReadCaller : public IRealignmentCaller
 {
 public:
-    AGERealignWholeReadCaller(ISequenceAligner *pSeqAligner)
-        : IRealignmentCaller(pSeqAligner)
+    AGERealignWholeReadCaller(ISequenceAligner *pSeqAligner, ISequenceFetcher *pSeqFetcher)
+        : IRealignmentCaller(pSeqAligner, pSeqFetcher)
     {}
 
     // IRealignmentCaller interface

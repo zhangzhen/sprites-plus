@@ -29,7 +29,7 @@ public:
 
     bool IsAlnResultQualified(DoubleFragsAlnResult *pAlnResult, const CallParams &cParams);
 
-    CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult);
+    CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult, ISequenceFetcher *pSeqFetcher);
 };
 
 #endif // FIVEENDFORWARDSCREAD_H

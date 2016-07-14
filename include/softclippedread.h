@@ -7,6 +7,7 @@
 #include "CallResult.h"
 #include "SingleFragAlnResult.h"
 #include "DoubleFragsAlnResult.h"
+#include "sequencefetcher.h"
 
 
 class ISoftClippedRead
@@ -45,7 +46,7 @@ public:
 
 //    virtual CallResult ToCallResult(int refStartPos, const SingleFragAlnResult& alnResult) = 0;
 
-    virtual CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult) = 0;
+    virtual CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult, ISequenceFetcher *pSeqFetcher) = 0;
 
     virtual ChromoFragment CutFragment(const ChromoFragment& cFragment) = 0;
 

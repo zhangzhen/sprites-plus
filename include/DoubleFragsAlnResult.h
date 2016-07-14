@@ -28,6 +28,16 @@ public:
         return alnFrag2.GetMatch1().GetStart();
     }
 
+    int GetAlnFrag1EndW() const
+    {
+        return alnFrag1.GetMatch2().GetEnd();
+    }
+
+    int GetAlnFrag2StartW() const
+    {
+        return alnFrag2.GetMatch2().GetStart();
+    }
+
     int GetAlnFrag1LengthV() const
     {
         return alnFrag1.GetMatch1().Length();
@@ -48,6 +58,11 @@ public:
         return alnFrag2.GetMatch2().Length();
     }
 
+//    std::string GetAlnFrag1AlignedW() const
+//    {
+//        return alnFrag1.GetAlignedS2();
+//    }
+
     double GetAlnFrag1PercentIdentity() const
     {
         return alnFrag1.GetPercentageIdentity();
@@ -60,6 +75,18 @@ public:
 
     AlignmentFragment GetAlnFrag1() const { return alnFrag1; }
     AlignmentFragment GetAlnFrag2() const { return alnFrag2; }
+
+    int NumOfWBasesBetweenTwoFrags() const
+    {
+        return GetAlnFrag2StartW() - GetAlnFrag1EndW() - 1;
+    }
+
+    std::string WBasesBetweenTwoFrags() const
+    {
+        int n_bases = NumOfWBasesBetweenTwoFrags();
+        if (n_bases == 0) return "";
+        return w.substr(GetAlnFrag1EndW() + 1, n_bases);
+    }
 
 private:
     AlignmentFragment alnFrag1;

@@ -36,12 +36,12 @@ void PerChromDeletionFinder::AddRead(ISoftClippedRead *pRead)
     {
         if (pRead->GetType() == "5F")
         {
-            finderMap[pos] = new DeletionFinder(pRead, pRegionToRightFinder, pSeqFetcher, pPrefixCaller);
+            finderMap[pos] = new DeletionFinder(pRead, pRegionToRightFinder, pPrefixCaller);
 //            callerMap[pos] = new DeletionCaller(pRead, pRegionToRightFinder);
         }
         else if (pRead->GetType() == "5R")
         {
-            finderMap[pos] = new DeletionFinder(pRead, pRegionToLeftFinder, pSeqFetcher, pSuffixCaller);
+            finderMap[pos] = new DeletionFinder(pRead, pRegionToLeftFinder, pSuffixCaller);
 //            callerMap[pos] = new DeletionCaller(pRead, pRegionToLeftFinder);
         }
     }

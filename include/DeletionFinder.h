@@ -11,14 +11,12 @@ class DeletionFinder : public IVariantFinder
 public:
     DeletionFinder(ISoftClippedRead *pRead,
                    ITargetRegionFinder *pRegionFinder,
-                   ISequenceFetcher *pSeqFetcher,
                    IRealignmentCaller *pRealnCaller);
     TargetRegion *FindTargetRegion();
     IVariant *FindVariant(const CallParams& cParams);
 
 private:
     ITargetRegionFinder *pRegionFinder;
-    ISequenceFetcher *pSeqFetcher;
     IRealignmentCaller *pRealnCaller;
 };
 

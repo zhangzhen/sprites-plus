@@ -6,11 +6,9 @@
 
 DeletionFinder::DeletionFinder(ISoftClippedRead *pRead,
                                ITargetRegionFinder *pRegionFinder,
-                               ISequenceFetcher *pSeqFetcher,
                                IRealignmentCaller *pRealnCaller)
     : IVariantFinder(pRead),
       pRegionFinder(pRegionFinder),
-      pSeqFetcher(pSeqFetcher),
       pRealnCaller(pRealnCaller)
 {
 }
@@ -26,13 +24,12 @@ IVariant *DeletionFinder::FindVariant(const CallParams &cParams)
     TargetRegion *pTargetReg;
     if((pTargetReg = FindTargetRegion()))
     {
-        ChromoFragment cFragment = pSeqFetcher->Fetch(pTargetReg->GetChromosomeRegion());
 
-//        ScoreParam sParam(2, -3, -10000);
+        ChromosomeRegion cRegion = pTargetReg->GetChromosomeRegion();
 
         CallResult *pCallRes;
 
-        if((pCallRes = pRealnCaller->Call(reads[0], cFragment, cParams)))
+        if((pCallRes = pRealnCaller->Call(reads[0], cRegion, cParams)))
         {
             return new Deletion(pCallRes->GetChromoRegion(), Interval(), Interval(), pTargetReg->IsHeterozygous(), GetClipPosition(), GetReadType(), reads.size());
         }

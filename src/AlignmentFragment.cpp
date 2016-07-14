@@ -5,16 +5,12 @@
 
 int AlignmentFragment::NumOfIdenticalBases() const
 {
-    int s = 0;
-    for (size_t i = 0; i < alignedS1.length(); ++i)
-    {
-        if (alignedS1[i] == alignedS2[i]) s++;
-    }
-    return s;
+    return NumOfIdenticalChars(alignedS1, alignedS2);
 }
 
 void AlignmentFragment::PrintAlignment() const
 {
+    std::cout << match1 << " to " << match2 << std::endl;
     std::cout << alignedS1 << std::endl;
     std::cout << alignedS2 << std::endl;
 }
@@ -33,4 +29,16 @@ bool AlignmentFragment::operator ==(const AlignmentFragment &other) const
             alignedS2 == other.alignedS2 &&
             match1 == other.match1 &&
             match2 == other.match2;
+}
+
+int NumOfIdenticalChars(const std::string &v, const std::string &w)
+{
+    assert(v.length() == w.length());
+
+    int s = 0;
+    for (size_t i = 0; i < v.length(); ++i)
+    {
+        if (v[i] == w[i]) s++;
+    }
+    return s;
 }

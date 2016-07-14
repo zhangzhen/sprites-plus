@@ -31,6 +31,9 @@ public:
     Interval GetMatch1() const { return match1; }
     Interval GetMatch2() const { return match2; }
 
+    std::string GetAlignedS1() const { return alignedS1; }
+    std::string GetAlignedS2() const { return alignedS2; }
+
     int NumOfIdenticalBases() const;
 
     void PrintAlignment() const;
@@ -62,6 +65,8 @@ private:
     Interval match1;
     Interval match2;
 };
+
+int NumOfIdenticalChars(const std::string &v, const std::string &w);
 
 #endif // ALIGNMENTFRAGMENT
 

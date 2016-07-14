@@ -126,7 +126,7 @@ bool FiveEndReverseSCRead::IsAlnResultQualified(DoubleFragsAlnResult *pAlnResult
     return IsQualified(pAlnResult->GetAlnFrag2LengthW(), pAlnResult->GetAlnFrag2PercentIdentity(), cParams);
 }
 
-CallResult *FiveEndReverseSCRead::ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult)
+CallResult *FiveEndReverseSCRead::ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult, ISequenceFetcher *pSeqFetcher)
 {
 
     int startPos = GetClipPosition().GetPosition();
@@ -143,6 +143,22 @@ CallResult *FiveEndReverseSCRead::ToCallResult(int refStartPos, DoubleFragsAlnRe
     else
     {
         endPos += f1_d;
+    }
+
+    int n_bases = pAlnResult->NumOfWBasesBetweenTwoFrags();
+    if (f1_d == 0 && n_bases > 0)
+    {
+        int s = alignedRegion.GetEndPosition() + 1;
+        int e = s + n_bases - 1;
+        std::string v = pSeqFetcher->Fetch(ChromosomeRegion(GetReferenceId(), GetReferenceName(), s, e)).GetSequence();
+        std::string w = pAlnResult->WBasesBetweenTwoFrags();
+        int n_id = NumOfIdenticalChars(v, w) + pAlnResult->GetAlnFrag1().NumOfIdenticalBases();
+        int aln_len = n_bases + pAlnResult->GetAlnFrag1().NumOfIdenticalBases();
+        double percentId = 100.0f * n_id / aln_len;
+        if (percentId >= 95)
+        {
+            startPos += n_bases;
+        }
     }
 
     return new CallResult(ChromosomeRegion(GetReferenceId(),

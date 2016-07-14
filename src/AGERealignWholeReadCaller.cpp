@@ -23,5 +23,5 @@ bool AGERealignWholeReadCaller::IsAlnResultQualified(ISoftClippedRead *pRead, IA
 
 CallResult *AGERealignWholeReadCaller::MakeCallResult(ISoftClippedRead *pRead, int refStartPos, IAlignmentResult *pAlnResult)
 {
-    return pRead->ToCallResult(refStartPos, dynamic_cast<DoubleFragsAlnResult *>(pAlnResult));
+    return pRead->ToCallResult(refStartPos, dynamic_cast<DoubleFragsAlnResult *>(pAlnResult), pSeqFetcher);
 }

@@ -7,8 +7,8 @@
 class OrigRealignWholeReadCaller : public IRealignmentCaller
 {
 public:
-    OrigRealignWholeReadCaller(ISequenceAligner *pSeqAligner)
-        : IRealignmentCaller(pSeqAligner)
+    OrigRealignWholeReadCaller(ISequenceAligner *pSeqAligner, ISequenceFetcher *pSeqFetcher)
+        : IRealignmentCaller(pSeqAligner, pSeqFetcher)
     {}
 
     // IRealignmentCaller interface

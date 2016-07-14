@@ -7,8 +7,8 @@
 class RealignClippedPartCaller : public IRealignmentCaller
 {
 public:
-    RealignClippedPartCaller() (ISequenceAligner *pSeqAligner)
-        : IRealignmentCaller(pSeqAligner)
+    RealignClippedPartCaller() (ISequenceAligner *pSeqAligner, ISequenceFetcher *pSeqFetcher)
+        : IRealignmentCaller(pSeqAligner, pSeqFetcher)
     {}
 
 

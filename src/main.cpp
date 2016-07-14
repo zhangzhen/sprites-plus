@@ -204,7 +204,7 @@ int main(int argc, char *argv[])
                                                                             pQualifier,
                                                                             pPosPicker);
 
-    IRealignmentCaller *pPrefixCaller = new AGERealignWholeReadCaller(new AGEAlignerAdapter());
+    IRealignmentCaller *pPrefixCaller = new AGERealignWholeReadCaller(new AGEAlignerAdapter(), pSeqFetcher);
 //    IReadRealigner *pPrefixRealigner = new WholeReadRealigner(new ReverseCustomSeqAligner(new CustomSeqAligner()));
 
     IRealignmentCaller *pSuffixCaller = pPrefixCaller;
