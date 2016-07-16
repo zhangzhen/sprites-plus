@@ -15,8 +15,9 @@ public:
     void AddRead(ISoftClippedRead *pRead);
     void Clear();
     void FindTargetRegions(std::vector<TargetRegion *> &regions);
-    void FindCalls(const CallParams& cParams, std::vector<IVariant*> &variants);
-    std::vector<IVariant*> MergeCalls(const std::vector<IVariant*>& variants);
+    void FindCalls(const CallParams& cParams, std::vector<IVariant *> &variants);
+    std::vector<IVariant*> MergeCalls(const std::vector<IVariant *>& variants);
+    void DetermineMicroHom(std::vector<IVariant *> &variants);
 
 private:
     std::map<int, DeletionFinder*> finderMap;
@@ -27,5 +28,9 @@ private:
     IRealignmentCaller *pPrefixCaller;
     IRealignmentCaller *pSuffixCaller;
 };
+
+int NumOfLongestCommonPrefix(const std::string& v, const std::string& w);
+
+int NumOfLongestCommonSuffix(const std::string& v, const std::string& w);
 
 #endif // PERCHROMDELETIONFINDER_H

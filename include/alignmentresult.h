@@ -14,6 +14,10 @@ public:
 
     virtual ~IAlignmentResult() {}
 
+    std::string GetV() const { return v; }
+
+    std::string GetW() const { return w; }
+
     int GetScore() const { return score; }
 
     virtual void PrintAlignment()  = 0;

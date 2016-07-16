@@ -29,16 +29,16 @@ public:
 
         IAlignmentResult *pAlnResult = pSeqAligner->Align(v, w, MakeScoreParam());
 
-        if (pRead->GetClipPosition().GetPosition() == 153451567)
-        {
-            std::cout << cFragment.GetSequence() << std::endl;
-            std::cout << modifiedFrag.GetStartPos() << std::endl;
-            std::cout << modifiedFrag.GetSequence() << std::endl;
-            std::cout << pRead->GetAlignedRegion() << std::endl;
-            std::cout << w << std::endl;
-            std::cout << "#####################" << std::endl;
-            pAlnResult->PrintAlignment();
-        }
+//        if (pRead->GetClipPosition().GetPosition() == 153451567)
+//        {
+//            std::cout << cFragment.GetSequence() << std::endl;
+//            std::cout << modifiedFrag.GetStartPos() << std::endl;
+//            std::cout << modifiedFrag.GetSequence() << std::endl;
+//            std::cout << pRead->GetAlignedRegion() << std::endl;
+//            std::cout << w << std::endl;
+//            std::cout << "#####################" << std::endl;
+//            pAlnResult->PrintAlignment();
+//        }
 
         if (!IsAlnResultQualified(pRead, pAlnResult, cParams))
         {

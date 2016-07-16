@@ -49,6 +49,8 @@ public:
 
     int GetNumOfReads() const { return numOfReads; }
 
+    ChromosomeRegion GetChromoRegion() const { return cRegion; }
+
     virtual std::string GetType() = 0;
 
     virtual std::string ToBedpe() = 0;

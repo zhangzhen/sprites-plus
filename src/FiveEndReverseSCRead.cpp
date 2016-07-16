@@ -145,30 +145,42 @@ CallResult *FiveEndReverseSCRead::ToCallResult(int refStartPos, DoubleFragsAlnRe
         endPos += f1_d;
     }
 
+    std::string microIns = "";
+
     int n_bases = pAlnResult->NumOfWBasesBetweenTwoFrags();
     if (f1_d <= 0 && n_bases > 0)
     {
-        int s = alignedRegion.GetEndPosition() + 1;
-        int e = s + n_bases - f1_d - 1;
-        int aln_len_f1 = pAlnResult->GetAlnFrag1().GetAlignmentLength();
+        int len = n_bases - f1_d;
 
-        std::string t1 = pSeqFetcher->Fetch(ChromosomeRegion(GetReferenceId(), GetReferenceName(), s, e)).GetSequence();
+        int s = alignedRegion.GetEndPosition() + 1;
+        int e = s + len - 1;
+
+        std::string t1_l = pSeqFetcher->Fetch(ChromosomeRegion(GetReferenceId(), GetReferenceName(), s, e)).GetSequence();
         std::string t2 = pAlnResult->WBasesBetweenTwoFragsExtLeft(-f1_d);
 
-        std::string v = pAlnResult->GetAlnFrag1().GetAlignedS1().substr(0, aln_len_f1 + f1_d) + t1;
-        std::string w = pAlnResult->GetAlnFrag1().GetAlignedS2().substr(0, aln_len_f1 + f1_d) + t2;
+        int n_mismatch1 = len - NumOfIdenticalChars(t1_l, t2);
 
-        double percentId = 100.0f * NumOfIdenticalChars(v, w) / v.length();
-        if (percentId >= MIN_PERCENT_IDENTITY)
+        std::string t1_r = pAlnResult->GetV().substr(pAlnResult->GetAlnFrag2StartV() - len, len);
+
+        int n_mismatch2 = len - NumOfIdenticalChars(t1_r, t2);
+
+//        if (GetClipPosition().GetPosition() == 34905297)
+//        {
+//            std::cout << t1_r << std::endl;
+//            std::cout << t2 << std::endl;
+//        }
+
+        if (n_mismatch1 <= 1)
         {
-            if (!IsLastCharIdentical(t1, t2))
-            {
-                endPos -= n_bases;
-            }
-            else
-            {
-                startPos += n_bases;
-            }
+            startPos += n_bases;
+        }
+        else if (n_mismatch2 <= 1)
+        {
+            endPos -= n_bases;
+        }
+        else
+        {
+            microIns = t2;
         }
     }
 
@@ -176,5 +188,5 @@ CallResult *FiveEndReverseSCRead::ToCallResult(int refStartPos, DoubleFragsAlnRe
                                        GetReferenceName(),
                                        startPos,
                                        endPos),
-                      "");
+                      microIns);
 }

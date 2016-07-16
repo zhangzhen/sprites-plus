@@ -20,8 +20,4 @@ private:
     IRealignmentCaller *pRealnCaller;
 };
 
-int NumOfLongestCommonPrefix(const std::string& v, const std::string& w);
-
-int NumOfLongestCommonSuffix(const std::string& v, const std::string& w);
-
 #endif // DELETIONFINDER_H
