@@ -24,8 +24,6 @@ public:
 
     virtual double GetPercentIdentity() = 0;
 
-    virtual std::string GetMicroIns() = 0;
-
     virtual void Flip() = 0;
 
 protected:

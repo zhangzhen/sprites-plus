@@ -8,12 +8,10 @@ using namespace BamTools;
 
 BamToolsSCReadsReader::BamToolsSCReadsReader(BamTools::BamReader *pBamReader,
                                              int sigClipSize,
-                                             int ignoredNum,
-                                             ISequenceFetcher *pSeqFetcher)
+                                             int ignoredNum)
     : pBamReader(pBamReader),
       sigClipSize(sigClipSize),
-      ignoredNum(ignoredNum),
-      pSeqFetcher(pSeqFetcher)
+      ignoredNum(ignoredNum)
 {
 }
 
@@ -54,7 +52,6 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
                 return new FiveEndForwardSCRead(al.Name,
                                                 cRegion,
                                                 al.QueryBases,
-                                                pSeqFetcher->Fetch(cRegion).GetSequence(),
                                                 al.MapQuality,
                                                 al.CigarData[0].Length,
                                                 smallDelSize,
@@ -76,7 +73,6 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
                 return new FiveEndReverseSCRead(al.Name,
                                                 cRegion,
                                                 al.QueryBases,
-                                                pSeqFetcher->Fetch(cRegion).GetSequence(),
                                                 al.MapQuality,
                                                 al.CigarData[al.CigarData.size() - 1].Length,
                                                 smallDelSize,

@@ -4,7 +4,6 @@
 FiveEndReverseSCRead::FiveEndReverseSCRead(const std::string &name,
                                            const ChromosomeRegion &alignedRegion,
                                            const std::string &sequence,
-                                           const std::string &refSeqPart,
                                            int mapQuality,
                                            int clippedLength,
                                            int smallDelSize,
@@ -12,7 +11,6 @@ FiveEndReverseSCRead::FiveEndReverseSCRead(const std::string &name,
     : ISoftClippedRead(name,
                        alignedRegion,
                        sequence,
-                       refSeqPart,
                        mapQuality,
                        clippedLength,
                        smallDelSize,
@@ -56,34 +54,32 @@ ChromoFragment FiveEndReverseSCRead::CutFragment(const ChromoFragment &cFragment
     return cFragment;
 }
 
-ChromoFragment FiveEndReverseSCRead::ExtendFragment(const ChromoFragment &cFragment)
+ChromoFragment FiveEndReverseSCRead::ExtendFragment(const ChromoFragment &cFragment, ISequenceFetcher *pSeqFetcher)
 {
     if (GetReferenceId() != cFragment.GetReferenceId())
     {
         error("This fragment cannot be cut because the fragment and the read are not on the same chromosome.");
     }
 
-    int s1 = cFragment.GetStartPos();
-    if (s1 <= alignedRegion.GetStartPosition())
+    int t0 = cFragment.GetStartPos();
+
+    int c0 = alignedRegion.GetStartPosition();
+    int c1 = alignedRegion.GetEndPosition();
+    int cx = c1 + clippedLength;
+
+    if (t0 <= c0)
     {
         return cFragment;
     }
 
+    std::string extSeq = (t0 > cx) ?
+                pSeqFetcher->Fetch(ChromosomeRegion(GetReferenceId(), GetReferenceName(), c0, cx)).GetSequence() :
+                pSeqFetcher->Fetch(ChromosomeRegion(GetReferenceId(), GetReferenceName(), c0, t0 - 1)).GetSequence();
+
     ChromoFragment newFrag = cFragment;
 
-    std::string newSeq = refSeqPart;
-
-    int n = refSeqPart.length();
-
-    int e2 = alignedRegion.GetEndPosition();
-    if (s1 <= e2)
-    {
-        n = alignedRegion.GetLength() - e2 + s1 - 1;
-        newSeq = refSeqPart.substr(0, n);
-    }
-
-    newFrag.SetStart(newFrag.GetStart() - n);
-    newFrag.SetSequence(newSeq + newFrag.GetSequence());
+    newFrag.SetStart(newFrag.GetStart() - extSeq.length());
+    newFrag.SetSequence(extSeq + newFrag.GetSequence());
 
     return newFrag;
 }
@@ -126,67 +122,86 @@ bool FiveEndReverseSCRead::IsAlnResultQualified(DoubleFragsAlnResult *pAlnResult
     return IsQualified(pAlnResult->GetAlnFrag2LengthW(), pAlnResult->GetAlnFrag2PercentIdentity(), cParams);
 }
 
-CallResult *FiveEndReverseSCRead::ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult, ISequenceFetcher *pSeqFetcher)
+CallResult *FiveEndReverseSCRead::ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult)
 {
+    int f1_e_v = pAlnResult->GetAlnFrag1EndV();
+    int f2_s_v = pAlnResult->GetAlnFrag2StartV();
 
     int startPos = GetClipPosition().GetPosition();
-    int endPos = refStartPos + pAlnResult->GetAlnFrag2StartV();
+    int endPos = refStartPos + f2_s_v;
 
     int f1_l1 = pAlnResult->GetAlnFrag1LengthV();
 
-    int f1_d = refSeqPart.length() - f1_l1;
+    int f1_d = alignedRegion.GetLength() - f1_l1;
 
-    if (f1_d > 0)
-    {
-        startPos -= f1_d;
-    }
-    else
-    {
-        endPos += f1_d;
-    }
+    startPos -= f1_d;
+
+    Interval cInterval;
 
     std::string microIns = "";
 
     int n_bases = pAlnResult->NumOfWBasesBetweenTwoFrags();
-    if (f1_d <= 0 && n_bases > 0)
+
+    std::string v = pAlnResult->GetV();
+
+    if (n_bases > 0)
     {
-        int len = n_bases - f1_d;
+        std::string v1 = v.substr(f1_e_v + 1, n_bases);
+        std::string w = pAlnResult->WBasesBetweenTwoFrags();
+        int n_mismatch1 = n_bases - NumOfIdenticalChars(v1, w);
 
-        int s = alignedRegion.GetEndPosition() + 1;
-        int e = s + len - 1;
-
-        std::string t1_l = pSeqFetcher->Fetch(ChromosomeRegion(GetReferenceId(), GetReferenceName(), s, e)).GetSequence();
-        std::string t2 = pAlnResult->WBasesBetweenTwoFragsExtLeft(-f1_d);
-
-        int n_mismatch1 = len - NumOfIdenticalChars(t1_l, t2);
-
-        std::string t1_r = pAlnResult->GetV().substr(pAlnResult->GetAlnFrag2StartV() - len, len);
-
-        int n_mismatch2 = len - NumOfIdenticalChars(t1_r, t2);
-
-//        if (GetClipPosition().GetPosition() == 34905297)
-//        {
-//            std::cout << t1_r << std::endl;
-//            std::cout << t2 << std::endl;
-//        }
+        std::string v2 = v.substr(f2_s_v - n_bases, n_bases);
+        int n_mismatch2 = n_bases - NumOfIdenticalChars(v2, w);
 
         if (n_mismatch1 <= 1)
         {
             startPos += n_bases;
+            f1_e_v += n_bases;
         }
         else if (n_mismatch2 <= 1)
         {
             endPos -= n_bases;
+            f2_s_v -= n_bases;
         }
         else
         {
-            microIns = t2;
+            microIns = v;
         }
+
+        if (n_mismatch1 <= 1 && n_mismatch2 <= 1)
+        {
+            cInterval.SetStart(-n_bases);
+        }
+
     }
+
+    std::string s1 = v.substr(f2_s_v);
+    std::string t1 = v.substr(f1_e_v + 1, s1.length());
+
+//    if (GetClipPosition().GetPosition() == 10111162)
+//    {
+//        std::cout << s1 << std::endl;
+//        std::cout << t1 << std::endl;
+//    }
+
+    int nr = NumOfLongestCommonPrefix(s1, t1);
+    std::string micro_hom_r = v.substr(f2_s_v, nr);
+
+    std::string s2 = v.substr(0, f1_e_v);
+    std::string t2 = v.substr(f2_s_v - s2.length(), s2.length());
+
+    int nl = NumOfLongestCommonSuffix(s2, t2);
+    std::string micro_hom_l = v.substr(f1_e_v - nl, nl);
+
+    cInterval = cInterval.merge(Interval(-nl, nr));
+
 
     return new CallResult(ChromosomeRegion(GetReferenceId(),
                                        GetReferenceName(),
                                        startPos,
                                        endPos),
-                      microIns);
+                          cInterval,
+                          cInterval,
+                      microIns,
+                          micro_hom_l + micro_hom_r);
 }

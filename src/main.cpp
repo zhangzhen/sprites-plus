@@ -178,8 +178,7 @@ int main(int argc, char *argv[])
     ISoftClippedReadsReader *pReadsReader = new BamToolsSCReadsReader(
                 pBamReader,
                 vm["sig-clip"].as<int>(),
-                vm["ignored-num"].as<int>(),
-            pSeqFetcher);
+                vm["ignored-num"].as<int>());
 
     int prevId = -1;
     int currentId;

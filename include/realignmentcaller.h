@@ -29,7 +29,7 @@ public:
 
         IAlignmentResult *pAlnResult = pSeqAligner->Align(v, w, MakeScoreParam());
 
-//        if (pRead->GetClipPosition().GetPosition() == 153451567)
+//        if (pRead->GetClipPosition().GetPosition() == 10111162)
 //        {
 //            std::cout << cFragment.GetSequence() << std::endl;
 //            std::cout << modifiedFrag.GetStartPos() << std::endl;

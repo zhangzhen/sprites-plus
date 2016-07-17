@@ -102,7 +102,6 @@ private:
 public:
     void PrintAlignment();
     double GetPercentIdentity();
-    std::string GetMicroIns();
 
     void Flip();
 };

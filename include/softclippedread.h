@@ -18,7 +18,6 @@ public:
     ISoftClippedRead(const std::string &name,
                      const ChromosomeRegion& alignedRegion,
                      const std::string& sequence,
-                     const std::string& refSeqPart,
                      int mapQuality,
                      int clippedLength,
                      int smallDelSize,
@@ -26,7 +25,6 @@ public:
         : name(name),
           alignedRegion(alignedRegion),
           sequence(sequence),
-          refSeqPart(refSeqPart),
           mapQuality(mapQuality),
           clippedLength(clippedLength),
           smallDelSize(smallDelSize),
@@ -48,11 +46,11 @@ public:
 
 //    virtual CallResult ToCallResult(int refStartPos, const SingleFragAlnResult& alnResult) = 0;
 
-    virtual CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult, ISequenceFetcher *pSeqFetcher) = 0;
+    virtual CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult) = 0;
 
     virtual ChromoFragment CutFragment(const ChromoFragment& cFragment) = 0;
 
-    virtual ChromoFragment ExtendFragment(const ChromoFragment& cFragment) = 0;
+    virtual ChromoFragment ExtendFragment(const ChromoFragment& cFragment, ISequenceFetcher *pSeqFetcher) = 0;
 
     virtual std::string GetType() = 0;
     virtual std::string GetClippedPart() = 0;
@@ -61,7 +59,6 @@ protected:
     std::string name;
     ChromosomeRegion alignedRegion;
     std::string sequence;
-    std::string refSeqPart;
     int mapQuality;
     int clippedLength;
     int smallDelSize;
@@ -70,5 +67,9 @@ protected:
 };
 
 bool IsQualified(int matchLen, int percentIdent, const CallParams& cParams);
+
+int NumOfLongestCommonPrefix(const std::string& v, const std::string& w);
+
+int NumOfLongestCommonSuffix(const std::string& v, const std::string& w);
 
 #endif // SOFTCLIPPEDREAD_H

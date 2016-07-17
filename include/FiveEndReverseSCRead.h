@@ -9,7 +9,6 @@ public:
     FiveEndReverseSCRead(const std::string &name,
                          const ChromosomeRegion& alignedRegion,
                          const std::string &sequence,
-                         const std::string &refSeqPart,
                          int mapQuality,
                          int clippedLength,
                          int smallDelSize,
@@ -23,13 +22,13 @@ public:
 
     ChromoFragment CutFragment(const ChromoFragment &cFragment);
 
-    ChromoFragment ExtendFragment(const ChromoFragment &cFragment);
+    ChromoFragment ExtendFragment(const ChromoFragment &cFragment, ISequenceFetcher *pSeqFetcher);
 
 //    ChromosomeRegionWithCi ToRegionWithCi(const AlignmentResult& aResult, int refStartPos);
 
     bool IsAlnResultQualified(DoubleFragsAlnResult *pAlnResult, const CallParams &cParams);
 
-    CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult, ISequenceFetcher *pSeqFetcher);
+    CallResult *ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult);
 };
 
 #endif // FIVEENDREVERSESCREAD_H

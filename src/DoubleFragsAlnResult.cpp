@@ -15,11 +15,6 @@ double DoubleFragsAlnResult::GetPercentIdentity()
     return 100.0f*(alnFrag1.NumOfIdenticalBases() + alnFrag2.NumOfIdenticalBases()) / (alnFrag1.GetAlignmentLength() + alnFrag2.GetAlignmentLength());
 }
 
-std::string DoubleFragsAlnResult::GetMicroIns()
-{
-    return "";
-}
-
 void DoubleFragsAlnResult::Flip()
 {
     std::reverse(v.begin(), v.end());

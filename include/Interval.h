@@ -52,6 +52,10 @@ public:
 
     void Flip(int origLength);
 
+    Interval merge(const Interval &other) const;
+
+    bool overlaps(const Interval &other) const;
+
     friend std::ostream& operator <<(std::ostream& stream, const Interval& interval);
 
 private:

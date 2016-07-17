@@ -5,7 +5,6 @@
 FiveEndForwardSCRead::FiveEndForwardSCRead(const std::string &name,
                                            const ChromosomeRegion &alignedRegion,
                                            const std::string &sequence,
-                                           const std::string &refSeqPart,
                                            int mapQuality,
                                            int clippedLength,
                                            int smallDelSize,
@@ -13,7 +12,6 @@ FiveEndForwardSCRead::FiveEndForwardSCRead(const std::string &name,
     : ISoftClippedRead(name,
                        alignedRegion,
                        sequence,
-                       refSeqPart,
                        mapQuality,
                        clippedLength,
                        smallDelSize,
@@ -57,27 +55,26 @@ ChromoFragment FiveEndForwardSCRead::CutFragment(const ChromoFragment &cFragment
     return cFragment;
 }
 
-ChromoFragment FiveEndForwardSCRead::ExtendFragment(const ChromoFragment &cFragment)
+ChromoFragment FiveEndForwardSCRead::ExtendFragment(const ChromoFragment &cFragment, ISequenceFetcher *pSeqFetcher)
 {
-    int e1 = cFragment.GetEndPos();
+    int t1 = cFragment.GetEndPos();
 
-    if (e1 >= alignedRegion.GetEndPosition())
+    int c0 = alignedRegion.GetStartPosition();
+    int c1 = alignedRegion.GetEndPosition();
+    int cx = c0 - clippedLength;
+
+    if (t1 >= c1)
     {
         return cFragment;
     }
 
+    std::string extSeq = (t1 < cx) ?
+                pSeqFetcher->Fetch(ChromosomeRegion(GetReferenceId(), GetReferenceName(), cx, c1)).GetSequence() :
+                pSeqFetcher->Fetch(ChromosomeRegion(GetReferenceId(), GetReferenceName(), t1 + 1, c1)).GetSequence();
+
     ChromoFragment newFrag = cFragment;
 
-    std::string newSeq = refSeqPart;
-
-    int s2 = alignedRegion.GetStartPosition();
-
-    if (s2 <= e1)
-    {
-        newSeq = newSeq.substr(e1 - s2 + 1);
-    }
-
-    newFrag.SetSequence(newFrag.GetSequence() + newSeq);
+    newFrag.SetSequence(newFrag.GetSequence() + extSeq);
 
     return newFrag;
 }
@@ -123,48 +120,77 @@ bool FiveEndForwardSCRead::IsAlnResultQualified(DoubleFragsAlnResult *pAlnResult
     return IsQualified(pAlnResult->GetAlnFrag1LengthW(), pAlnResult->GetAlnFrag1PercentIdentity(), cParams);
 }
 
-CallResult *FiveEndForwardSCRead::ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult, ISequenceFetcher *pSeqFetcher)
+CallResult *FiveEndForwardSCRead::ToCallResult(int refStartPos, DoubleFragsAlnResult *pAlnResult)
 {
-    int startPos = refStartPos + pAlnResult->GetAlnFrag1EndV();
+    int f1_e_v = pAlnResult->GetAlnFrag1EndV();
+    int f2_s_v = pAlnResult->GetAlnFrag2StartV();
+
+    int startPos = refStartPos + f1_e_v;
     int endPos = GetClipPosition().GetPosition();
 
     int f2_l1 = pAlnResult->GetAlnFrag2LengthV();
-    int f2_d = refSeqPart.length() - f2_l1;
-    if (f2_d > 0)
-    {
-        endPos += f2_d;
-    }
-    else
-    {
-        startPos -= f2_d;
-    }
+    int f2_d = alignedRegion.GetLength() - f2_l1;
+
+    endPos += f2_d;
+
+    Interval cInterval;
+
+    std::string microIns = "";
 
     int n_bases = pAlnResult->NumOfWBasesBetweenTwoFrags();
 
-//    if (GetClipPosition().GetPosition() == 145580076)
-//    {
-//        pAlnResult->PrintAlignment();
-//        std::cout << f2_d << " " << n_bases << std::endl;
-//    }
+    std::string v = pAlnResult->GetV();
 
-    if (f2_d == 0 && n_bases > 0)
+    if (n_bases > 0)
     {
-        int e = alignedRegion.GetStartPosition() - 1;
-        int s = e - n_bases + 1;
-        std::string v = pSeqFetcher->Fetch(ChromosomeRegion(GetReferenceId(), GetReferenceName(), s, e)).GetSequence();
+        std::string v1 = v.substr(f2_s_v - n_bases, n_bases);
         std::string w = pAlnResult->WBasesBetweenTwoFrags();
-        int n_id = NumOfIdenticalChars(v, w) + pAlnResult->GetAlnFrag2().NumOfIdenticalBases();
-        int aln_len = n_bases + pAlnResult->GetAlnFrag2().GetAlignmentLength();
-        double percentId = 100.0f * n_id / aln_len;
-        if (percentId >= MIN_PERCENT_IDENTITY)
+        int n_mismatch1 = n_bases - NumOfIdenticalChars(v1, w);
+
+        std::string v2 = v.substr(f1_e_v + 1, n_bases);
+        int n_mismatch2 = n_bases - NumOfIdenticalChars(v2, w);
+
+        if (n_mismatch1 <= 1)
         {
             endPos -= n_bases;
+            f2_s_v -= n_bases;
+        }
+        else if (n_mismatch2 <= 1)
+        {
+            startPos += n_bases;
+            f1_e_v += n_bases;
+        }
+        else
+        {
+            microIns = v;
+        }
+
+        if (n_mismatch1 <= 1 && n_mismatch2 <= 1)
+        {
+            cInterval.SetEnd(n_bases);
         }
     }
+
+    std::string s1 = v.substr(f2_s_v);
+    std::string t1 = v.substr(f1_e_v + 1, s1.length());
+
+    int nr = NumOfLongestCommonPrefix(s1, t1);
+    std::string micro_hom_r = v.substr(f2_s_v, nr);
+
+    std::string s2 = v.substr(0, f1_e_v);
+    std::string t2 = v.substr(f2_s_v - s2.length(), s2.length());
+
+    int nl = NumOfLongestCommonSuffix(s2, t2);
+    std::string micro_hom_l = v.substr(f1_e_v - nl, nl);
+
+    cInterval = cInterval.merge(Interval(-nl, nr));
 
     return new CallResult(ChromosomeRegion(GetReferenceId(),
                                        GetReferenceName(),
                                        startPos,
                                        endPos),
-                      "");
+                          cInterval,
+                          cInterval,
+                      microIns,
+                          micro_hom_l + micro_hom_r);
 }

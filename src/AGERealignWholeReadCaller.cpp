@@ -3,7 +3,7 @@
 
 ChromoFragment AGERealignWholeReadCaller::PreprocessFragment(ISoftClippedRead *pRead, const ChromoFragment &cFragment)
 {
-    return pRead->ExtendFragment(cFragment);
+    return pRead->ExtendFragment(cFragment, pSeqFetcher);
 }
 
 std::string AGERealignWholeReadCaller::GetSeqFromRead(ISoftClippedRead *pRead)
@@ -23,5 +23,5 @@ bool AGERealignWholeReadCaller::IsAlnResultQualified(ISoftClippedRead *pRead, IA
 
 CallResult *AGERealignWholeReadCaller::MakeCallResult(ISoftClippedRead *pRead, int refStartPos, IAlignmentResult *pAlnResult)
 {
-    return pRead->ToCallResult(refStartPos, dynamic_cast<DoubleFragsAlnResult *>(pAlnResult), pSeqFetcher);
+    return pRead->ToCallResult(refStartPos, dynamic_cast<DoubleFragsAlnResult *>(pAlnResult));
 }

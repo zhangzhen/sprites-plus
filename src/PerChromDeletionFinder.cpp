@@ -117,48 +117,23 @@ std::vector<IVariant *> PerChromDeletionFinder::MergeCalls(const std::vector<IVa
     return result;
 }
 
-void PerChromDeletionFinder::DetermineMicroHom(std::vector<IVariant *> &variants)
-{
-    const int WINDOW_SIZE = 50;
+//void PerChromDeletionFinder::DetermineMicroHom(std::vector<IVariant *> &variants)
+//{
+//    const int WINDOW_SIZE = 50;
 
-    for (auto pVar: variants)
-    {
-        ChromosomeRegion cRegion = pVar->GetChromoRegion();
-        int s0 = cRegion.GetStartPosition();
-        int e0 = cRegion.GetEndPosition();
-        std::string v = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), s0 + 1, s0 + WINDOW_SIZE)).GetSequence();
-        std::string w = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), e0, e0 + WINDOW_SIZE - 1)).GetSequence();
-        int n_r = NumOfLongestCommonPrefix(v, w);
-        std::string micro_hom_r =  v.substr(0, n_r);
+//    for (auto pVar: variants)
+//    {
+//        ChromosomeRegion cRegion = pVar->GetChromoRegion();
+//        int s0 = cRegion.GetStartPosition();
+//        int e0 = cRegion.GetEndPosition();
+//        std::string v = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), s0 + 1, s0 + WINDOW_SIZE)).GetSequence();
+//        std::string w = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), e0, e0 + WINDOW_SIZE - 1)).GetSequence();
+//        int n_r = NumOfLongestCommonPrefix(v, w);
+//        std::string micro_hom_r =  v.substr(0, n_r);
 
-        v = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), s0 + 1 - WINDOW_SIZE, s0)).GetSequence();
-        w = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), e0 - WINDOW_SIZE, e0 - 1)).GetSequence();
-        int n_l = NumOfLongestCommonSuffix(v, w);
-        std::string micro_hom_l = v.substr(0, n_l);
-    }
-}
-
-
-int NumOfLongestCommonPrefix(const std::string &v, const std::string &w)
-{
-
-    int n = std::min(v.length(), w.length());
-    int i = 0;
-
-    while (i < n && v[i] == w[i])
-    {
-        i++;
-    }
-
-    return i;
-}
-
-int NumOfLongestCommonSuffix(const std::string &v, const std::string &w)
-{
-    std::string v1;
-    std::reverse_copy(v.begin(), v.end(), v1.begin());
-    std::string w1;
-    std::reverse_copy(w.begin(), w.end(), w1.begin());
-
-    return NumOfLongestCommonPrefix(v, w);
-}
+//        v = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), s0 + 1 - WINDOW_SIZE, s0)).GetSequence();
+//        w = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), e0 - WINDOW_SIZE, e0 - 1)).GetSequence();
+//        int n_l = NumOfLongestCommonSuffix(v, w);
+//        std::string micro_hom_l = v.substr(0, n_l);
+//    }
+//}

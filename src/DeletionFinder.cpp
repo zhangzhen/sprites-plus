@@ -31,6 +31,10 @@ IVariant *DeletionFinder::FindVariant(const CallParams &cParams)
 
         if((pCallRes = pRealnCaller->Call(reads[0], cRegion, cParams)))
         {
+//            if (GetClipPosition().GetPosition() == 10111162)
+//            {
+//                std::cout << *pCallRes << std::endl;
+//            }
             return new Deletion(pCallRes->GetChromoRegion(), Interval(), Interval(), pTargetReg->IsHeterozygous(), GetClipPosition(), GetReadType(), reads.size());
         }
 
