@@ -29,6 +29,10 @@ public:
 
     std::string GetMicroHom() const { return microHom; }
 
+    Interval GetStartInterval() const { return startInterval; }
+
+    Interval GetEndInterval() const { return endInterval; }
+
     friend std::ostream& operator <<(std::ostream& stream, const CallResult& cResult);
 
 private:

@@ -22,6 +22,8 @@ public:
 
     int GetLength() const { return interval.Length(); }
 
+    Interval GetInterval() const { return interval; }
+
     void CutHead(int newPos)
     {
         if (newPos > interval.GetStart())

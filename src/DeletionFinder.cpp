@@ -35,7 +35,15 @@ IVariant *DeletionFinder::FindVariant(const CallParams &cParams)
 //            {
 //                std::cout << *pCallRes << std::endl;
 //            }
-            return new Deletion(pCallRes->GetChromoRegion(), Interval(), Interval(), pTargetReg->IsHeterozygous(), GetClipPosition(), GetReadType(), reads.size());
+            return new Deletion(pCallRes->GetChromoRegion(),
+                                pCallRes->GetStartInterval(),
+                                pCallRes->GetEndInterval(),
+                                pTargetReg->IsHeterozygous(),
+                                GetClipPosition(),
+                                GetReadType(),
+                                reads.size(),
+                                pCallRes->GetMicroHom(),
+                                pCallRes->GetMicroIns());
         }
 
     }

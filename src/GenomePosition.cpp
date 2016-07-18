@@ -12,7 +12,7 @@ GenomePosition::GenomePosition(int referenceId, const string &referenceName, int
 ostream &operator <<(ostream &stream, const GenomePosition &gPos)
 {
     stream << gPos.referenceName
-           << "\t" << gPos.position;
+           << ":" << gPos.position;
     return stream;
 }
 

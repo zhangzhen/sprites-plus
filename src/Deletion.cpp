@@ -20,10 +20,13 @@ string Deletion::ToBedpe()
 string Deletion::ToBed()
 {
     stringstream ss;
+    string alternatives = otherPositions.size() ?
+             join(otherPositions.begin(), otherPositions.end(), ";") : "NA";
     ss << cRegion.GetReferenceName()
        << "\t" << cRegion.GetStartPosition()
        << "\t" << cRegion.GetEndPosition()
        << "\t" << CallName()
-       << "\t" << numOfReads;
+       << "\t" << numOfReads
+       << "\t" << alternatives;
     return ss.str();
 }

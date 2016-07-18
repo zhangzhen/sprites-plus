@@ -12,14 +12,18 @@ public:
              bool heterozygous,
              const GenomePosition& fromClipPosition,
              const std::string& fromReadType,
-             int numOfReads)
+             int numOfReads,
+             const std::string& microHom,
+             const std::string& microIns)
         : IVariant(cRegion,
                    startInterval,
                    endInterval,
                    heterozygous,
                    fromClipPosition,
                    fromReadType,
-                   numOfReads)
+                   numOfReads,
+                   microHom),
+          microIns(microIns)
     {}
 
     std::string GetType() { return "DEL"; }
@@ -28,6 +32,8 @@ public:
 
     std::string ToBed();
 
+private:
+    std::string microIns;
 };
 
 

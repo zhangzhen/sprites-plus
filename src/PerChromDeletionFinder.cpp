@@ -1,6 +1,12 @@
 #include "PerChromDeletionFinder.h"
+#include "EndPoint.h"
+#include "VariantMerger.h"
+
 #include <iterator>
 #include <algorithm>
+#include <queue>
+#include <set>
+
 
 using namespace std;
 
@@ -92,48 +98,94 @@ void PerChromDeletionFinder::FindCalls(const CallParams &cParams, std::vector<IV
 
 std::vector<IVariant *> PerChromDeletionFinder::MergeCalls(const std::vector<IVariant *> &variants)
 {
+    std::vector<Interval> intervals;
+    intervals.reserve(variants.size());
+    for (auto pVar: variants)
+    {
+        intervals.push_back(pVar->GetChromoRegion().GetInterval());
+    }
+
+    std::vector<IndexCluster> iClusters = ClusterIntervalsByIndex(intervals);
+
+//    std::cout << iClusters.size() << std::endl;
+
     vector<IVariant*> result;
 
-    if (variants.empty()) return result;
-
-    size_t current = 0;
-    result.push_back(variants[current]);
-    int s = variants[current]->GetNumOfReads();
-
-    for (size_t i = 1; i < variants.size(); ++i)
+    for (size_t i = 0; i < iClusters.size(); ++i)
     {
-        if (variants[current]->QuasiEquals(*variants[i]))
+        VariantMerger vMerger(variants[iClusters[i][0]]);
+        for (size_t j = 1; j < iClusters[i].size(); ++j)
         {
-            s += variants[i]->GetNumOfReads();
+            vMerger.AddVariant(variants[iClusters[i][j]]);
         }
-        else
-        {
-            current = i;
-            result.push_back(variants[current]);
-            s = variants[current]->GetNumOfReads();
-        }
+        result.push_back(vMerger.merge());
     }
+
+//    if (variants.empty()) return result;
+
+//    size_t current = 0;
+//    result.push_back(variants[current]);
+//    int s = variants[current]->GetNumOfReads();
+
+//    for (size_t i = 1; i < variants.size(); ++i)
+//    {
+//        if (variants[current]->QuasiEquals(*variants[i]))
+//        {
+//            s += variants[i]->GetNumOfReads();
+//        }
+//        else
+//        {
+//            current = i;
+//            result.push_back(variants[current]);
+//            s = variants[current]->GetNumOfReads();
+//        }
+//    }
 
     return result;
 }
 
-//void PerChromDeletionFinder::DetermineMicroHom(std::vector<IVariant *> &variants)
-//{
-//    const int WINDOW_SIZE = 50;
 
-//    for (auto pVar: variants)
-//    {
-//        ChromosomeRegion cRegion = pVar->GetChromoRegion();
-//        int s0 = cRegion.GetStartPosition();
-//        int e0 = cRegion.GetEndPosition();
-//        std::string v = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), s0 + 1, s0 + WINDOW_SIZE)).GetSequence();
-//        std::string w = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), e0, e0 + WINDOW_SIZE - 1)).GetSequence();
-//        int n_r = NumOfLongestCommonPrefix(v, w);
-//        std::string micro_hom_r =  v.substr(0, n_r);
+std::vector<IndexCluster> ClusterIntervalsByIndex(const std::vector<Interval> &intervals)
+{
+    vector<IndexCluster> result;
 
-//        v = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), s0 + 1 - WINDOW_SIZE, s0)).GetSequence();
-//        w = pSeqFetcher->Fetch(ChromosomeRegion(cRegion.GetReferenceId(), cRegion.GetReferenceName(), e0 - WINDOW_SIZE, e0 - 1)).GetSequence();
-//        int n_l = NumOfLongestCommonSuffix(v, w);
-//        std::string micro_hom_l = v.substr(0, n_l);
-//    }
-//}
+    vector<EndPoint> points;
+    points.reserve(intervals.size()*2);
+
+    for (size_t i = 0; i < intervals.size(); ++i)
+    {
+        points.push_back(EndPoint(intervals[i].GetStart(), i, true));
+        points.push_back(EndPoint(intervals[i].GetEnd(), i, false));
+    }
+
+    sort(points.begin(), points.end());
+
+    set<size_t> usedIndice;
+    queue<size_t> buffer;
+
+    for (auto p: points)
+    {
+        if (p.IsLeft()) buffer.push(p.GetOwnerIndex());
+        else
+        {
+            if (usedIndice.count(p.GetOwnerIndex())) continue;
+            IndexCluster clu;
+            while (!buffer.empty())
+            {
+                clu.push_back(buffer.front());
+                usedIndice.insert(buffer.front());
+                buffer.pop();
+            }
+            if (!clu.empty()) result.push_back(clu);
+        }
+    }
+    IndexCluster clu;
+    while (!buffer.empty()) {
+        clu.push_back(buffer.front());
+        usedIndice.insert(buffer.front());
+        buffer.pop();
+    }
+    if (!clu.empty()) result.push_back(clu);
+
+    return result;
+}

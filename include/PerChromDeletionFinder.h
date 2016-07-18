@@ -29,4 +29,8 @@ private:
     IRealignmentCaller *pSuffixCaller;
 };
 
+typedef std::vector<std::size_t> IndexCluster;
+
+std::vector<IndexCluster> ClusterIntervalsByIndex(const std::vector<Interval> &intervals);
+
 #endif // PERCHROMDELETIONFINDER_H
