@@ -29,8 +29,21 @@ TargetRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
         pairs.push_back(pPair);
     }
 
+    if (pairs.size() == 0)
+    {
+        return NULL;
+    }
+
     std::vector<int> insertSizes(pairs.size());
     transform(begin(pairs), end(pairs), begin(insertSizes), [](SpanningPair *p){ return p->GetInsertSize(); });
+
+//    if (gPos.GetPosition() == 42056489)
+//    {
+//        for (auto p : pairs)
+//        {
+//            cout << *p << endl;
+//        }
+//    }
 
     labels = pPartitioner->Partition(insertSizes);
     heterozygous = pQualifier->IsQualified(insertSizes, labels);
@@ -49,6 +62,7 @@ TargetRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
     {
         qualifiedInsertSizes = insertSizes;
     }
+
     if (IsInsertSizeAnormalous(qualifiedInsertSizes, pPairsReader->GetMeanInsertSize(), 100))
     {
         return GetFinalRegion(gPos);

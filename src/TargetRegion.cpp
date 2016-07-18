@@ -3,12 +3,13 @@
 using namespace std;
 
 TargetRegion::TargetRegion(int referenceId,
+                           const string& referenceName,
                            int startPos,
                            int endPos,
                            int fromClipPosition,
                            int numOfPairs,
                            bool heterozygous)
-    : cRegion(referenceId, startPos, endPos),
+    : cRegion(referenceId, referenceName, startPos, endPos),
       fromClipPosition(fromClipPosition),
       numOfPairs(numOfPairs),
       heterozygous(heterozygous)

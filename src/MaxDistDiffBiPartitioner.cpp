@@ -13,6 +13,11 @@ MaxDistDiffBiPartitioner::MaxDistDiffBiPartitioner()
 
 std::vector<int> MaxDistDiffBiPartitioner::Partition(const std::vector<int> &insertSizes)
 {
+    if (insertSizes.size() == 1)
+    {
+        return {0};
+    }
+
     vector<int> indices(insertSizes.size());
     iota(begin(indices), end(indices), 0);
     sort(begin(indices), end(indices),

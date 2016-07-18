@@ -37,11 +37,25 @@ SpanningPair *BamToolsPairsToLeftReader::NextPair()
             rg = NORGTAGREADGROUPNAME;
         }
 
+        string xt;
+        if (al.GetTag("XT", xt))
+        {
+            xt = xt.substr(0,1);
+            if (xt == "R") {
+                continue;
+            }
+        }
+
         if (!al.IsReverseStrand() && al.IsMateReverseStrand() && al.RefID == al.MateRefID
-                && al.GetEndPosition() < gPos.GetPosition() && al.Position < al.MatePosition
+                && al.GetEndPosition() <= gPos.GetPosition() && al.MatePosition + 1 > gPos.GetPosition()
                 && pLib->InLibrary(rg))
         {
-            return new SpanningPair(al.RefID, abs(al.InsertSize), al.Position + 1, al.MatePosition + 1, al.Length);
+            return new SpanningPair(al.RefID,
+                                    pBamReader->GetReferenceData()[al.RefID].RefName,
+                                    abs(al.InsertSize),
+                                    al.Position + 1,
+                                    al.MatePosition + 1,
+                                    al.Length);
         }
     }
 

@@ -4,17 +4,20 @@
 #include "softclippedreadsreader.h"
 #include "api/BamReader.h"
 
+
 class BamToolsSCReadsReader : public ISoftClippedReadsReader
 {
 public:
-    BamToolsSCReadsReader(BamTools::BamReader *pBamReader, int minClip, int allowedNum);
+    BamToolsSCReadsReader(BamTools::BamReader *pBamReader,
+                          int sigClipSize,
+                          int ignoredNum);
 
     ISoftClippedRead *NextRead();
 
 private:
     BamTools::BamReader *pBamReader;
-    int minClip;
-    int allowedNum;
+    int sigClipSize;
+    int ignoredNum;
 };
 
 #endif // BAMTOOLSSCREADSREADER_H

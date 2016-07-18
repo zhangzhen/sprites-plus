@@ -6,6 +6,7 @@
 class IBiPartitioner
 {
 public:
+    virtual ~IBiPartitioner() {}
     virtual std::vector<int> Partition(const std::vector<int> &insertSizes) = 0;
 };
 

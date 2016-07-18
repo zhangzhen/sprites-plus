@@ -1,0 +1,100 @@
+#include "CppUTest/TestHarness.h"
+#include "CustomSeqAligner.h"
+#include "ReverseCustomSeqAligner.h"
+#include "AGEAlignerAdapter.h"
+#include "SingleFragAlnResult.h"
+#include "DoubleFragsAlnResult.h"
+
+#include <algorithm>
+
+TEST_GROUP(SequenceAligner)
+{
+    std::string s1, s2, s1_rev, s2_rev;
+    ISequenceAligner *pSeqAligner, *pSeqAligner2, *pSeqAligner3;
+
+    void setup()
+    {
+        s1 = "GGGTTGGGGGTAAGGTCACAGATCCACAGGATCCCATGGCAGAAGAATTTTTCTTAGTACAGAACAAAATGAAAAGTCTCCCATGTCTACTTCTTTCTACACAGACACGGCAACCATCCG"
+                "ATTTCTCAATCTTTTCCCCACCTTTCCCCCCTTTCTATTCCACAAAACCGCCATTGTCATCATGGCGCGTTCTCAATGAGCTGTTGGGTACACCTCCCAGACGGGGTGGTGGCTGGGCAG"
+                "AGGGGCTCCTCACTTCCCAGTAGGGGCGGCCGGGCAGAGGCGCCCCTCACCTCCCGGACGGGGCGGCTGGCCGGGCGGGGGGCTGACCACCCCCACCTCCCTCCCGGACGGGGCGGCTGG"
+                "CCGGGCGGGGGGCTGACCCCCCACCTCCCTCCCAGACAGGGCGGCTGGCCGGGCTGGGGGCTGACCCCCCCACCTCCCTCCCAGACGGGGCGGCTGGCCGGGTGGGGGGCTGACCACCCC"
+                "CACCTCCCTCCCGGACGGGGCGGCTGGCCGGGCTGAGGGCTGACCCCCCACCTCCCTCCCGGACAGGGTAGCTGCCGGGCAGAGACACTCCTCACTTCCCAGACGGGGTGGTTGCCGGGC"
+                "GGAGGGGCTCCTCACTTCTCAGGCGGGGCGGCTGCCGGGCGGAGGGGCT";
+
+        s2 = "CAAGCATCTGTTTAACAAAGCACATCTTGCACCGCCATTAATCCATTTAACCCTGAGTGGACACAGAACATGTTTCAGAGAGCACCGGGTTGGGGGTAAGGTCACAGATACACAGGATC"
+                "CCCCTCCCTCCCGGACGGGGCGGCTGGCCGG";
+
+        reverse_copy(begin(s1), end(s1), back_inserter(s1_rev));
+        reverse_copy(begin(s2), end(s2), back_inserter(s2_rev));
+
+        pSeqAligner = new CustomSeqAligner();
+        pSeqAligner2 = new ReverseCustomSeqAligner(new CustomSeqAligner());
+        pSeqAligner3 = new AGEAlignerAdapter();
+
+    }
+    void teardown()
+    {
+        delete pSeqAligner;
+        delete pSeqAligner2;
+        delete pSeqAligner3;
+    }
+};
+
+TEST(SequenceAligner, CustomSeqAlignerAlign)
+{
+    ScoreParam sParam(2, -3, -10000);
+
+    SingleFragAlnResult *pActual = dynamic_cast<SingleFragAlnResult *>(pSeqAligner->Align(s1, s2, sParam));
+
+    CHECK_EQUAL(59, pActual->GetScore());
+
+    CHECK(Interval(332, 363) == pActual->GetAlnFragMatchV());
+
+    delete pActual;
+
+}
+
+TEST(SequenceAligner, ReverseCustomSeqAlignerAlign)
+{
+    ScoreParam sParam(2, -3, -10000);
+
+    SingleFragAlnResult *pActual = dynamic_cast<SingleFragAlnResult *>(pSeqAligner2->Align(s1_rev, s2_rev, sParam));
+
+    CHECK(Interval(0, 31) == pActual->GetAlnFragMatchW());
+
+    delete pActual;
+
+}
+
+TEST(SequenceAligner, AGEAlignerAdapter)
+{
+    std::string v = "TGCTTTTATACGTGACATGCATGGACACAGCAGCCTCTAAATATCTTGACATTTTTCTCTCGTAAGCAGAATCACTAACATTTTATTGAGTATAACTTTT"
+            "TTAGCTAATTCCCTCACCGTTTTATGTGGTAAAAGTCACTATTTTCCTTGGGAGCAGAGCAGGCCGTGAACCCAGGTCTGTCTGCTTTGAAACACATTCA"
+            "CACTGTACTGCCACTGGGTAATGATGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATCATCATCATCACCACCATCATCATCATC"
+            "ATCATCATCACCACCATCATCATTTCATCAGGCCTCAAAAGTTTACCTGCATGATTTACTTTGACCCTAACCATATTTTCCACCTGTTTCCTAGGAGTCT"
+            "TTTCCAGTATTCCTCTGTACTCCTCCCTCTCTCAGCCCATAGAGTCGCAATACACAATTATGGCTTCTTTATGTTTCACCTCTTGTTGTTCACTATGCTT"
+            "TTATGTTTCCTTATCTCCTCCTCCCAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAAGCTGGGGCTGTGGGTACCACATGGGC"
+            "TGTCCCCAGCCCATGTAGCACCTGCCAGGGCTCTGCACATCTCATCAAGAGCTG";
+    std::string w = "TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATCTTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCC"
+            "CAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA";
+
+    ScoreParam sParam(1, -2, -1, -2);
+    DoubleFragsAlnResult *pActual = dynamic_cast<DoubleFragsAlnResult *>(pSeqAligner3->Align(v, w, sParam));
+
+    AlignmentFragment expectedAlnFrag1("TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATC",
+                                       "TGGGAAACAAAATTATTCCTTCAAATCAGGTGCTAATTCTTCTCAAATC",
+                                       Interval(224, 272),
+                                       Interval(0, 48));
+
+    CHECK(expectedAlnFrag1 == pActual->GetAlnFrag1());
+
+    AlignmentFragment expectedAlnFrag2("TTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCCCAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA",
+                                       "TTTCACCTCTTGTTGTTCACTATGCTTTTATGTTTCCTTATCTCCTCCTCCCAGTCAGACTGTCCAGTCTTTGAGGGTGTAAATCATGTGTCCACCACAAA",
+                                       Interval(473, 573),
+                                       Interval(49, 149));
+
+    CHECK(expectedAlnFrag2 == pActual->GetAlnFrag2());
+
+    delete pActual;
+
+}

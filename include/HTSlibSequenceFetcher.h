@@ -4,14 +4,15 @@
 #include "sequencefetcher.h"
 #include "htslib/faidx.h"
 
-class HTSlibSequenceFetcher : ISequenceFetcher
+class HTSlibSequenceFetcher : public ISequenceFetcher
 {
 public:
-    HTSlibSequenceFetcher(faidx_t *faidx);
-    std::string Fetch(const ChromosomeRegion& region);
+    HTSlibSequenceFetcher(const std::string &fastaFile);
+    ~HTSlibSequenceFetcher();
+    ChromoFragment Fetch(const ChromosomeRegion& region);
 
 private:
-    faidx_t *faidx;
+    faidx_t *fai;
 };
 
 #endif // HTSLIBSEQUENCEFETCHER_H

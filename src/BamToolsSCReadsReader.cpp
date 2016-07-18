@@ -6,10 +6,12 @@
 using namespace std;
 using namespace BamTools;
 
-BamToolsSCReadsReader::BamToolsSCReadsReader(BamTools::BamReader *pBamReader, int minClip, int allowedNum)
+BamToolsSCReadsReader::BamToolsSCReadsReader(BamTools::BamReader *pBamReader,
+                                             int sigClipSize,
+                                             int ignoredNum)
     : pBamReader(pBamReader),
-      minClip(minClip),
-      allowedNum(allowedNum)
+      sigClipSize(sigClipSize),
+      ignoredNum(ignoredNum)
 {
 }
 
@@ -30,18 +32,25 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
 
             for (auto &ci: al.CigarData)
             {
-                if (ci.Type == 'D') smallDelSize = ci.Length;
-                else if (ci.Type == 'I') smallInsSize = ci.Length;
+                if (ci.Type == 'D') smallDelSize += ci.Length;
+                else if (ci.Type == 'I') smallInsSize += ci.Length;
             }
 
             if (!al.IsReverseStrand() && al.Position == genomePositions[0] &&
-                    clipSizes[0] >= allowedNum &&
+                    clipSizes[0] >= sigClipSize &&
                     (size == 1 ||
-                     (size == 2 && clipSizes[1] <= 5)))
+                     (size == 2 && clipSizes[1] <= ignoredNum)))
             {
+//                if (genomePositions[0] + 1 == 37130093)
+//                {
+//                    cout << "debug here..." << endl;
+//                }
+                ChromosomeRegion cRegion(al.RefID,
+                                         pBamReader->GetReferenceData()[al.RefID].RefName,
+                        genomePositions[0] + 1,
+                        al.GetEndPosition());
                 return new FiveEndForwardSCRead(al.Name,
-                                                al.RefID,
-                                                genomePositions[0] + 1,
+                                                cRegion,
                                                 al.QueryBases,
                                                 al.MapQuality,
                                                 al.CigarData[0].Length,
@@ -49,13 +58,20 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
                                                 smallInsSize);
             }
             if (al.IsReverseStrand() && al.Position != genomePositions[size - 1] &&
-                    clipSizes[size - 1] >= allowedNum &&
+                    clipSizes[size - 1] >= sigClipSize &&
                     (size == 1 ||
-                     (size == 2 && clipSizes[0] <= 5)))
+                     (size == 2 && clipSizes[0] <= ignoredNum)))
             {
+//                if (genomePositions[0] + 1 == 37130093)
+//                {
+//                    cout << "debug here..." << endl;
+//                }
+
+                ChromosomeRegion cRegion(al.RefID,pBamReader->GetReferenceData()[al.RefID].RefName,
+                        al.Position + 1,
+                        genomePositions[size - 1]);
                 return new FiveEndReverseSCRead(al.Name,
-                                                al.RefID,
-                                                genomePositions[size - 1] + 1,
+                                                cRegion,
                                                 al.QueryBases,
                                                 al.MapQuality,
                                                 al.CigarData[al.CigarData.size() - 1].Length,

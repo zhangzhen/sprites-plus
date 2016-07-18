@@ -13,7 +13,7 @@ TargetRegionToRightFinder::TargetRegionToRightFinder(ISpanningPairsReader *pPair
 
 TargetRegion *TargetRegionToRightFinder::GetFinalRegion(const GenomePosition &gPos)
 {
-    cout << gPos << endl;
+//    cout << gPos << endl;
 
     std::vector<int> positions;
     if (heterozygous)
@@ -34,6 +34,7 @@ TargetRegion *TargetRegionToRightFinder::GetFinalRegion(const GenomePosition &gP
     int end = start + pPairsReader->GetMaxInsertSize();
 
     return new TargetRegion(pairs[0]->GetReferenceId(),
+            pairs[0]->GetReferenceName(),
             start,
             end,
             gPos.GetPosition(),

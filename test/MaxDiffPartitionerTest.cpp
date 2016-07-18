@@ -50,3 +50,12 @@ TEST(MaxDistDiffBiPartitioner, Partition2)
     auto actual = pPartitioner->Partition(insertSizes);
     CHECK_TRUE(expected == actual);
 }
+
+TEST(MaxDistDiffBiPartitioner, PartitionHet)
+{
+    vector<int> insertSizes = {7268, 497, 498, 584};
+    vector<int> expected = {1, 0, 0, 0};
+
+    auto actual = pPartitioner->Partition(insertSizes);
+    CHECK_TRUE(expected == actual);
+}
