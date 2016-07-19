@@ -15,11 +15,17 @@ BamToolsSCReadsReader::BamToolsSCReadsReader(BamTools::BamReader *pBamReader,
 {
 }
 
+void BamToolsSCReadsReader::Init()
+{
+    pBamReader->Rewind();
+}
+
 
 ISoftClippedRead *BamToolsSCReadsReader::NextRead()
 {
     BamAlignment al;
-    while (pBamReader->GetNextAlignment(al)) {
+    while (pBamReader->GetNextAlignment(al))
+    {
         vector<int> clipSizes, readPositions, genomePositions;
         if (!al.GetSoftClips(clipSizes, readPositions, genomePositions)) continue;
 //        if (al.MapQuality < minMapQual || !al.GetSoftClips(clipSizes, readPositions, genomePositions)) continue;

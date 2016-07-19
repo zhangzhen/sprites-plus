@@ -186,10 +186,20 @@ int main(int argc, char *argv[])
     ISpanningPairsReader *pPairsToLeftReader;
     ISpanningPairsReader *pPairsToRightReader;
 
+    BamTools::BamReader *pBamReader2 = new BamTools::BamReader();
+    if (!pBamReader2->Open(bamfile))
+    {
+        error("Could not open the input BAM file.");
+    }
+    if (!pBamReader2->LocateIndex())
+    {
+        error("Could not locate the index file");
+    }
+
     if (libraries.size() == 1)
     {
-        pPairsToLeftReader = new BamToolsPairsToLeftReader(libraries.begin()->second, pBamReader);
-        pPairsToRightReader = new BamToolsPairsToRightReader(libraries.begin()->second, pBamReader);
+        pPairsToLeftReader = new BamToolsPairsToLeftReader(libraries.begin()->second, pBamReader2);
+        pPairsToRightReader = new BamToolsPairsToRightReader(libraries.begin()->second, pBamReader2);
     }
     IBiPartitioner* pPartitioner = new MaxDistDiffBiPartitioner();
     IBiPartitionQualifier* pQualifier = new AnovaBiPartitionQualifier(vm["alpha-level"].as<double>());
@@ -214,20 +224,24 @@ int main(int argc, char *argv[])
 
     ISoftClippedRead *pRead;
     PerChromDeletionFinder finder(pRegionToLeftFinder, pRegionToRightFinder, pSeqFetcher, pPrefixCaller, pSuffixCaller);
+
+    pReadsReader->Init();
+
     while ((pRead = pReadsReader->NextRead()))
     {
         currentId = pRead->GetReferenceId();
+//        std::cout << currentId << std::endl;
         if (prevId != -1 && prevId != currentId)
         {
-//            FindTargetRegions(caller, std::cout);
-            FindVariants(finder, cParams, std::cout);
+            FindTargetRegions(finder, std::cout);
+//            FindVariants(finder, cParams, std::cout);
         }
         finder.AddRead(pRead);
         prevId = currentId;
     }
-//    FindTargetRegions(caller, std::cout);
+    FindTargetRegions(finder, std::cout);
 
-    FindVariants(finder, cParams, std::cout);
+//    FindVariants(finder, cParams, std::cout);
 
     return 0;
 }

@@ -6,6 +6,7 @@
 class ISoftClippedReadsReader
 {
 public:
+    virtual void Init() = 0;
     virtual ISoftClippedRead* NextRead() = 0;
 };
 

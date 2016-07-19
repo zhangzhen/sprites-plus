@@ -12,6 +12,8 @@ public:
                           int sigClipSize,
                           int ignoredNum);
 
+    void Init();
+
     ISoftClippedRead *NextRead();
 
 private:
