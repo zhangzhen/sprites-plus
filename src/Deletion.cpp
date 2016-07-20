@@ -1,4 +1,5 @@
 #include "Deletion.h"
+#include "globals.h"
 
 using namespace std;
 

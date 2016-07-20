@@ -6,7 +6,7 @@
 class ILibraryInsertSizeEstimator
 {
 public:
-    virtual bool estimate(Library* pLib) = 0;
+    virtual void estimate(Library* pLib) = 0;
 };
 
 #endif // LIBRARYINSERTSIZEESTIMATOR_H

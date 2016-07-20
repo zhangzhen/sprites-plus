@@ -5,6 +5,7 @@
 #include "MaxDistDiffBiPartitioner.h"
 #include "AnovaBiPartitionQualifier.h"
 #include "MedianPositionPicker.h"
+#include "CompositeTargetRegionFinder.h"
 #include "TargetRegionToLeftFinder.h"
 #include "TargetRegionToRightFinder.h"
 #include "BamToolsPairsToLeftReader.h"
@@ -74,8 +75,8 @@ void FindVariants(PerChromDeletionFinder &finder, const CallParams &cParams, std
     auto finalVariants = finder.MergeCalls(variants);
     for (auto &pVariant : finalVariants)
     {
-//        out << pVariant->ToBedpe() << std::endl;
-        out << pVariant->ToBed() << std::endl;
+        out << pVariant->ToBedpe() << std::endl;
+//        out << pVariant->ToBed() << std::endl;
     }
     finder.Clear();
 }
@@ -173,6 +174,8 @@ int main(int argc, char *argv[])
     ILibraryInsertSizeEstimator *pEstimator = new BamToolsLibInsertSizeEstimator(pBamReader);
     EstimateInsertSizeForLibrarys(pEstimator, libraries);
 
+//    std::cout << *libraries.begin()->second << std::endl;
+
     ISequenceFetcher *pSeqFetcher = new HTSlibSequenceFetcher(vm["reffile"].as<std::string>());
 
     ISoftClippedReadsReader *pReadsReader = new BamToolsSCReadsReader(
@@ -182,9 +185,6 @@ int main(int argc, char *argv[])
 
     int prevId = -1;
     int currentId;
-
-    ISpanningPairsReader *pPairsToLeftReader;
-    ISpanningPairsReader *pPairsToRightReader;
 
     BamTools::BamReader *pBamReader2 = new BamTools::BamReader();
     if (!pBamReader2->Open(bamfile))
@@ -196,22 +196,26 @@ int main(int argc, char *argv[])
         error("Could not locate the index file");
     }
 
-    if (libraries.size() == 1)
-    {
-        pPairsToLeftReader = new BamToolsPairsToLeftReader(libraries.begin()->second, pBamReader2);
-        pPairsToRightReader = new BamToolsPairsToRightReader(libraries.begin()->second, pBamReader2);
-    }
+    CompositeTargetRegionFinder tRegionToLeftFinder;
+    CompositeTargetRegionFinder tRegionToRightFinder;
+
     IBiPartitioner* pPartitioner = new MaxDistDiffBiPartitioner();
     IBiPartitionQualifier* pQualifier = new AnovaBiPartitionQualifier(vm["alpha-level"].as<double>());
     IPositionPicker* pPosPicker = new MedianPositionPicker();
-    ITargetRegionFinder *pRegionToLeftFinder = new TargetRegionToLeftFinder(pPairsToLeftReader,
-                                                                            pPartitioner,
-                                                                            pQualifier,
-                                                                            pPosPicker);
-    ITargetRegionFinder *pRegionToRightFinder = new TargetRegionToRightFinder(pPairsToRightReader,
-                                                                            pPartitioner,
-                                                                            pQualifier,
-                                                                            pPosPicker);
+
+    for (auto elt: libraries)
+    {
+        ISpanningPairsReader *pPairsToLeftReader = new BamToolsPairsToLeftReader(elt.second, pBamReader2);
+        tRegionToLeftFinder.Add(new TargetRegionToLeftFinder(pPairsToLeftReader,
+                                                             pPartitioner,
+                                                             pQualifier,
+                                                             pPosPicker));
+        ISpanningPairsReader *pPairsToRightReader = new BamToolsPairsToRightReader(elt.second, pBamReader2);
+        tRegionToRightFinder.Add(new TargetRegionToRightFinder(pPairsToRightReader,
+                                                               pPartitioner,
+                                                               pQualifier,
+                                                               pPosPicker));
+    }
 
     IRealignmentCaller *pPrefixCaller = new AGERealignWholeReadCaller(new AGEAlignerAdapter(), pSeqFetcher);
 //    IReadRealigner *pPrefixRealigner = new WholeReadRealigner(new ReverseCustomSeqAligner(new CustomSeqAligner()));
@@ -223,7 +227,7 @@ int main(int argc, char *argv[])
 
 
     ISoftClippedRead *pRead;
-    PerChromDeletionFinder finder(pRegionToLeftFinder, pRegionToRightFinder, pSeqFetcher, pPrefixCaller, pSuffixCaller);
+    PerChromDeletionFinder finder(&tRegionToLeftFinder, &tRegionToRightFinder, pSeqFetcher, pPrefixCaller, pSuffixCaller);
 
     pReadsReader->Init();
 
@@ -233,15 +237,15 @@ int main(int argc, char *argv[])
 //        std::cout << currentId << std::endl;
         if (prevId != -1 && prevId != currentId)
         {
-            FindTargetRegions(finder, std::cout);
-//            FindVariants(finder, cParams, std::cout);
+//            FindTargetRegions(finder, std::cout);
+            FindVariants(finder, cParams, std::cout);
         }
+
         finder.AddRead(pRead);
         prevId = currentId;
     }
-    FindTargetRegions(finder, std::cout);
-
-//    FindVariants(finder, cParams, std::cout);
+//    FindTargetRegions(finder, std::cout);
+    FindVariants(finder, cParams, std::cout);
 
     return 0;
 }

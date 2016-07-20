@@ -24,6 +24,8 @@ public:
 
     Interval GetInterval() const { return interval; }
 
+    ChromosomeRegion *Merge(const ChromosomeRegion &other);
+
     void CutHead(int newPos)
     {
         if (newPos > interval.GetStart())

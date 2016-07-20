@@ -2,6 +2,9 @@
 #include "globals.h"
 #include "statistics.h"
 
+#include <algorithm>
+#include <iterator>
+
 using namespace std;
 using namespace BamTools;
 
@@ -11,13 +14,13 @@ BamToolsLibInsertSizeEstimator::BamToolsLibInsertSizeEstimator(BamTools::BamRead
 }
 
 
-bool BamToolsLibInsertSizeEstimator::estimate(Library *pLib)
+void BamToolsLibInsertSizeEstimator::estimate(Library *pLib)
 {
     BamAlignment al;
     size_t cnt = 0;
     vector<int> insertSizes;
 
-    while (pBamReader->GetNextAlignmentCore(al) && cnt < 10000)
+    while (pBamReader->GetNextAlignment(al) && cnt < 10000)
     {
         string rg;
         if (!al.GetTag("RG", rg))
@@ -32,6 +35,9 @@ bool BamToolsLibInsertSizeEstimator::estimate(Library *pLib)
             cnt++;
         }
     }
+
+//    cout << insertSizes.size() << endl;
+//    copy(insertSizes.begin(), insertSizes.end(), ostream_iterator<int>(cout, ", "));
 
     double meanInsertSize = GetMean(begin(insertSizes), end(insertSizes));
     double insertSizeSd = GetStandardDeviation(begin(insertSizes), end(insertSizes));

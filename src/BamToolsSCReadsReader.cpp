@@ -51,10 +51,13 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
 //                {
 //                    cout << "debug here..." << endl;
 //                }
+                int s = genomePositions[0] + 1;
+                int e = al.GetEndPosition();
+                if (s > e) continue;
                 ChromosomeRegion cRegion(al.RefID,
                                          pBamReader->GetReferenceData()[al.RefID].RefName,
-                        genomePositions[0] + 1,
-                        al.GetEndPosition());
+                        s,
+                        e);
                 return new FiveEndForwardSCRead(al.Name,
                                                 cRegion,
                                                 al.QueryBases,
@@ -72,10 +75,12 @@ ISoftClippedRead *BamToolsSCReadsReader::NextRead()
 //                {
 //                    cout << "debug here..." << endl;
 //                }
-
+                int s = al.Position + 1;
+                int e = genomePositions[size - 1];
+                if (s > e) continue;
                 ChromosomeRegion cRegion(al.RefID,pBamReader->GetReferenceData()[al.RefID].RefName,
-                        al.Position + 1,
-                        genomePositions[size - 1]);
+                        s,
+                        e);
                 return new FiveEndReverseSCRead(al.Name,
                                                 cRegion,
                                                 al.QueryBases,

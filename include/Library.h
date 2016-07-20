@@ -20,6 +20,8 @@ public:
         return readGroups.count(readGroup);
     }
 
+    friend std::ostream& operator <<(std::ostream& stream, const Library& lib);
+
 private:
     std::string name;
     int meanInsertSize;

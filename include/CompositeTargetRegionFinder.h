@@ -2,12 +2,11 @@
 #define COMPOSITETARGETREGIONFINDER_H
 
 #include "targetregionfinder.h"
-#include "chromosomeregionmerge.h"
 
 class CompositeTargetRegionFinder : public ITargetRegionFinder
 {
 public:
-    CompositeTargetRegionFinder(IChromosomeRegionMerger *pRegionMerger);
+    CompositeTargetRegionFinder() {}
     void Add(ITargetRegionFinder *pRegionFinder)
     {
         children.push_back(pRegionFinder);
@@ -16,7 +15,6 @@ public:
 
 private:
     std::vector<ITargetRegionFinder*> children;
-    IChromosomeRegionMerger *pRegionMerger;
 };
 
 #endif // COMPOSITETARGETREGIONFINDER_H

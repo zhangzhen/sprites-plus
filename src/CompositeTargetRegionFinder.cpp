@@ -1,20 +1,18 @@
 #include "CompositeTargetRegionFinder.h"
 
-CompositeTargetRegionFinder::CompositeTargetRegionFinder(IChromosomeRegionMerger *pRegionMerger)
-    : pRegionMerger(pRegionMerger)
-{
-}
 
-ChromosomeRegion *CompositeTargetRegionFinder::FindRegion(const GenomePosition &gPos)
+TargetRegion *CompositeTargetRegionFinder::FindRegion(const GenomePosition &gPos)
 {
-    std::vector<ChromosomeRegion*> regions;
+    std::vector<TargetRegion*> regions;
     for (auto &finder : children)
     {
-        ChromosomeRegion *pRegion = finder->FindRegion(gPos);
+        TargetRegion *pRegion = finder->FindRegion(gPos);
         if (pRegion)
         {
             regions.push_back(pRegion);
         }
     }
-    return pRegionMerger->Merge(regions);
+
+    if (regions.empty()) return NULL;
+    return regions.front();
 }

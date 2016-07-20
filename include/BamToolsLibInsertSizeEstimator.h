@@ -8,7 +8,7 @@ class BamToolsLibInsertSizeEstimator : public ILibraryInsertSizeEstimator
 {
 public:
     BamToolsLibInsertSizeEstimator(BamTools::BamReader *pBamReader);
-    bool estimate(Library *pLib);
+    void estimate(Library *pLib);
 
 private:
     BamTools::BamReader *pBamReader;

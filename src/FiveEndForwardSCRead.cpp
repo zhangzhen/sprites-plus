@@ -171,6 +171,11 @@ CallResult *FiveEndForwardSCRead::ToCallResult(int refStartPos, DoubleFragsAlnRe
         }
     }
 
+    if (startPos >= endPos)
+    {
+        return NULL;
+    }
+
     std::string s1 = v.substr(f2_s_v);
     std::string t1 = v.substr(f1_e_v + 1, s1.length());
 

@@ -26,7 +26,7 @@ FiveEndForwardSCRead.cpp FiveEndReverseSCRead.cpp HTSlibSequenceFetcher.cpp
 CustomSeqAligner.cpp Deletion.cpp AlignmentFragment.cpp
 Interval.cpp AGEAlignerAdapter.cpp age/AGEaligner.cpp AGERealignWholeReadCaller.cpp
 softclippedread.cpp SingleFragAlnResult.cpp DoubleFragsAlnResult.cpp
-CallResult.cpp VariantMerger.cpp)
+CallResult.cpp VariantMerger.cpp CompositeTargetRegionFinder.cpp)
 #file(GLOB SOURCES "*.cpp")
 
 add_executable(sprites2 ${SOURCES})

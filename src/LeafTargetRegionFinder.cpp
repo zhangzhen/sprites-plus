@@ -20,8 +20,6 @@ TargetRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
 {
     Clear();
 
-//    cout << gPos << endl;
-
     pPairsReader->Init(gPos);
     SpanningPair *pPair;
     while ((pPair = pPairsReader->NextPair()))

@@ -12,6 +12,19 @@ ChromosomeRegion::ChromosomeRegion(int referenceId,
 {
 }
 
+ChromosomeRegion *ChromosomeRegion::Merge(const ChromosomeRegion &other)
+{
+    if (referenceId == other.GetReferenceId() && interval.overlaps(other.interval))
+    {
+        Interval newInterval = interval.merge(other.interval);
+        return new ChromosomeRegion(referenceId,
+                                    referenceName,
+                                    newInterval.GetStart(),
+                                    newInterval.GetEnd());
+    }
+    return this;
+}
+
 bool operator ==(const ChromosomeRegion &one, const ChromosomeRegion &two)
 {
     return one.referenceId == two.referenceId && one.interval == two.interval;
