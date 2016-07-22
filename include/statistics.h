@@ -32,7 +32,7 @@ double GetStandardDeviation(ForwardIterator begin, ForwardIterator end)
     return sqrt(sum / distance(begin, end));
 }
 
-inline bool IsInsertSizeAnormalous(const std::vector<int>& insertSizes, int libMean, int diffThreshold)
+inline bool IsInsertSizeAnomalous(const std::vector<int>& insertSizes, int libMean, int diffThreshold)
 {
     int mean = (int)round(GetMean(begin(insertSizes), end(insertSizes)));
     return abs(mean - libMean) >= diffThreshold;

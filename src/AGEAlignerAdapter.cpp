@@ -26,7 +26,7 @@ IAlignmentResult *AGEAlignerAdapter::Align(const std::string &v, const std::stri
                                  Interval(f->start1() - 1, f->end1() - 1),
                                  Interval(f->start2() - 1, f->end2() - 1));
 
-    if (!(f=f->next())) error("The second alignment fragment is not avaiable.");
+    if (!(f=f->next())) return NULL;
 
     AlignmentFragment aFragment2(f->ali1(),
                                  f->ali2(),

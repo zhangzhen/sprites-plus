@@ -18,6 +18,7 @@ ScoreParam AGERealignWholeReadCaller::MakeScoreParam()
 
 bool AGERealignWholeReadCaller::IsAlnResultQualified(ISoftClippedRead *pRead, IAlignmentResult *pAlnResult, const CallParams& cParams)
 {
+    if (!pAlnResult) return false;
     return pRead->IsAlnResultQualified(dynamic_cast<DoubleFragsAlnResult *>(pAlnResult), cParams);
 }
 

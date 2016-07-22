@@ -61,7 +61,7 @@ TargetRegion *LeafTargetRegionFinder::FindRegion(const GenomePosition &gPos)
         qualifiedInsertSizes = insertSizes;
     }
 
-    if (IsInsertSizeAnormalous(qualifiedInsertSizes, pPairsReader->GetMeanInsertSize(), 100))
+    if (IsInsertSizeAnomalous(qualifiedInsertSizes, pPairsReader->GetMeanInsertSize(), 50))
     {
         return GetFinalRegion(gPos);
     }
