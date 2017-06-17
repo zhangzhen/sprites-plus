@@ -138,17 +138,31 @@ CallResult *FiveEndForwardSCRead::ToCallResult(int refStartPos, DoubleFragsAlnRe
     std::string microIns = "";
 
     int n_bases = pAlnResult->NumOfWBasesBetweenTwoFrags();
+	if (n_bases >= pAlnResult->NumOfVBasesBetweenTwoFrags())
+	{
+		return NULL;
+	}
 
     std::string v = pAlnResult->GetV();
 
     if (n_bases > 0)
     {
+		if (f2_s_v < n_bases)
+		{
+			return NULL;
+		}
         std::string v1 = v.substr(f2_s_v - n_bases, n_bases);
         std::string w = pAlnResult->WBasesBetweenTwoFrags();
         int n_mismatch1 = n_bases - NumOfIdenticalChars(v1, w);
 
         std::string v2 = v.substr(f1_e_v + 1, n_bases);
-        int n_mismatch2 = n_bases - NumOfIdenticalChars(v2, w);
+		if (v2.length() < n_bases)
+		{
+			return NULL;
+		}
+		//if (w == "TGAGAATTAAATGAAGTCATGTATGGG")
+		//	pAlnResult->PrintAlignment();
+		int n_mismatch2 = n_bases - NumOfIdenticalChars(v2, w);
 
         if (n_mismatch1 <= 1)
         {

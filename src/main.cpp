@@ -75,8 +75,8 @@ void FindVariants(PerChromDeletionFinder &finder, const CallParams &cParams, std
     auto finalVariants = finder.MergeCalls(variants);
     for (auto &pVariant : finalVariants)
     {
-        out << pVariant->ToBedpe() << std::endl;
-//        out << pVariant->ToBed() << std::endl;
+        // out << pVariant->ToBedpe() << std::endl;
+        out << pVariant->ToBed() << std::endl;
     }
     finder.Clear();
 }

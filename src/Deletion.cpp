@@ -28,6 +28,8 @@ string Deletion::ToBed()
        << "\t" << cRegion.GetEndPosition()
        << "\t" << CallName()
        << "\t" << numOfReads
+       << "\t" << microHom
+       << "\t" << microIns
        << "\t" << alternatives;
     return ss.str();
 }

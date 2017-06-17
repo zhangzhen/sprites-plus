@@ -30,7 +30,7 @@ CallResult.cpp VariantMerger.cpp CompositeTargetRegionFinder.cpp)
 #file(GLOB SOURCES "*.cpp")
 
 add_executable(sprites2 ${SOURCES})
-set(LIBRARIES ${LIBRARIES} ${HTSlib_LIBRARIES} $ENV{BAMTOOLS_HOME}/lib/libbamtools.a z)
+set(LIBRARIES ${LIBRARIES} ${HTSlib_LIBRARIES} $ENV{BAMTOOLS_HOME}/lib/libbamtools.a z pthread)
 
 target_link_libraries(sprites2 ${LIBRARIES})
 

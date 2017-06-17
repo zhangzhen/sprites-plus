@@ -8,3 +8,4 @@ result*
 output
 CMakeLists.txt.user
 bin/
+build/
